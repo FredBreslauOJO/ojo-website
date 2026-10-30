@@ -3,2115 +3,667 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OJO Studio — Wireframe v0.4</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<title>OJO Portfolio — Estilos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap">
 <style>
-/* ── TOKENS ── */
-:root {
-  --bg:         #FFFFFF;
-  --surface:    #F7F7F6;
-  --surface2:   #EFEFEE;
-  --wire:       #E2E2DF;
-  --wire-dash:  #D4D4D0;
-  --fg:         #0E0E0D;
-  --fg-muted:   #6B6B69;
-  --fg-dim:     #B0B0AE;
-  --ann:        #2146D4;
-  --ann-bg:     rgba(33,70,212,.05);
-  --ann-border: rgba(33,70,212,.18);
-  --err:        #C8281E;
-  --err-bg:     rgba(200,40,30,.06);
-  --warn:       #B45309;
-  --ok:         #15803D;
-  --nav-h:      52px;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg:         #0E0E0D;
-    --surface:    #161615;
-    --surface2:   #1E1E1C;
-    --wire:       #2C2C2A;
-    --wire-dash:  #3A3A38;
-    --fg:         #F0F0EE;
-    --fg-muted:   #9A9A98;
-    --fg-dim:     #5A5A58;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg:         #0E0E0D;
-  --surface:    #161615;
-  --surface2:   #1E1E1C;
-  --wire:       #2C2C2A;
-  --wire-dash:  #3A3A38;
-  --fg:         #F0F0EE;
-  --fg-muted:   #9A9A98;
-  --fg-dim:     #5A5A58;
-  color-scheme: dark;
-}
-
-/* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:'IBM Plex Sans',sans-serif;
-  font-size:14px;
-  line-height:1.6;
-  background:var(--bg);
-  color:var(--fg);
-  min-height:100vh;
-  cursor:none;
+:root{
+  --bg:#F5F4F1;--fg:#0E0E0D;--muted:#6B6B69;--dim:#B0B0AE;--wire:#DDDBD7;
+  color-scheme:light;
 }
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--fg);cursor:none;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 button{font:inherit;cursor:none;border:none;background:none}
-input,textarea,select{font:inherit}
-img{max-width:100%;display:block}
 
-/* ── CURSOR ── */
-#cursor{
-  position:fixed;
-  width:20px;height:20px;
-  border:1.5px solid var(--fg);
-  border-radius:50%;
-  pointer-events:none;
-  z-index:9999;
-  transform:translate(-50%,-50%);
-  transition:transform .1s,opacity .2s;
-  mix-blend-mode:difference;
-}
-#cursor.hover{transform:translate(-50%,-50%) scale(1.8)}
+/* ── cursor ── */
+#cur{position:fixed;width:14px;height:14px;border:1.5px solid var(--fg);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s,border-color .1s,width .1s,height .1s;mix-blend-mode:multiply}
+#cur.big{transform:translate(-50%,-50%) scale(2.5);border-color:rgba(14,14,13,.25)}
+#cur.cosmos{border-color:#fff;mix-blend-mode:normal;border-radius:0;width:20px;height:20px;transform:translate(-50%,-50%) rotate(45deg)}
 
-/* ── NAV ── */
-#nav{
-  position:fixed;top:0;left:0;right:0;
-  height:var(--nav-h);
-  display:flex;align-items:center;
-  padding:0 24px;
-  background:var(--bg);
-  border-bottom:1px solid var(--wire);
-  z-index:500;
-  transition:transform .3s;
-  gap:0;
+/* ── nav ── */
+nav{position:fixed;top:0;left:0;right:0;padding:0 32px;height:52px;display:flex;align-items:center;z-index:200;mix-blend-mode:multiply}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;letter-spacing:.04em;margin-right:auto}
+.nav-tabs{display:flex}
+.nav-tab{font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--muted);padding:6px 16px;border-bottom:1px solid transparent;transition:all .15s}
+.nav-tab.active,.nav-tab:hover{color:var(--fg);border-bottom-color:var(--fg)}
+
+/* ── switcher ── */
+.style-switcher{position:fixed;top:52px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:2px;padding:10px 0;background:var(--bg);border-bottom:1px solid var(--wire);z-index:150;transition:background .3s,border-color .3s}
+.style-switcher.dark{background:#07070A;border-color:rgba(255,255,255,.08)}
+.sw-btn{font-size:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border:1px solid transparent;border-radius:2px;color:var(--muted);transition:all .15s}
+.sw-btn.active{border-color:var(--fg);color:var(--fg)}
+.sw-btn:hover{color:var(--fg)}
+.style-switcher.dark .sw-btn{color:rgba(255,255,255,.3)}
+.style-switcher.dark .sw-btn.active{border-color:rgba(255,255,255,.5);color:#fff}
+.style-switcher.dark .sw-btn:hover{color:rgba(255,255,255,.7)}
+.style-switcher.dark .nav-logo-dark{color:#fff}
+
+/* ── style label ── */
+.style-label{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;z-index:100;pointer-events:none;transition:color .3s}
+.style-label.dark{color:rgba(255,255,255,.25)}
+
+/* ── card colors ── */
+.bg-1{background:#1C2936}.bg-2{background:#2C1810}.bg-3{background:#0D1F0E}
+.bg-4{background:#1A1226}.bg-5{background:#241512}.bg-6{background:#0E1820}
+
+/* ════════════════════════════════════
+   STYLE A — CARD SCROLL
+═══════════════════════════════════════ */
+#style-a{display:none;position:relative}
+#style-a.active{display:block}
+
+.cd-card{position:absolute;border-radius:6px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.18),0 8px 24px rgba(0,0,0,.1);cursor:none}
+.cd-card-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'IBM Plex Mono',monospace;color:rgba(255,255,255,.15);letter-spacing:.08em}
+.cd-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,rgba(0,0,0,.1) 50%,transparent 100%)}
+.cd-card-info{position:absolute;bottom:0;left:0;right:0;padding:28px 24px;color:#fff}
+.cd-card-cat{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:.6;margin-bottom:8px}
+.cd-card-title{font-size:22px;font-weight:300;line-height:1.2;margin-bottom:4px}
+.cd-card-client{font-size:12px;opacity:.6}
+
+.card-info-panel{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:420px;text-align:center;padding:0 0 40px;pointer-events:none;opacity:0;transition:opacity .4s}
+.card-info-panel.show{opacity:1}
+.card-review-source{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.card-review-text{font-family:'Playfair Display',serif;font-size:15px;font-style:italic;color:var(--fg);line-height:1.5;max-width:360px;margin:0 auto}
+.case-counter{position:absolute;top:50%;left:60px;transform:translateY(-50%);font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.06em}
+.case-counter span{font-size:32px;font-weight:300;color:var(--fg);display:block;line-height:1}
+.case-meta-side{position:absolute;top:50%;right:60px;transform:translateY(-50%);text-align:right;font-size:12px;color:var(--muted);line-height:2;opacity:0;transition:opacity .4s}
+.case-meta-side.show{opacity:1}
+.progress-dots{position:absolute;bottom:28px;right:40px;display:flex;gap:6px}
+.prog-dot{width:4px;height:4px;border-radius:50%;background:var(--wire);transition:background .3s,transform .3s}
+.prog-dot.active{background:var(--fg);transform:scale(1.4)}
+
+/* ════════════════════════════════════
+   STYLE B — EDITORIAL GRID
+═══════════════════════════════════════ */
+#style-b{display:none;min-height:100vh;padding:80px 48px}
+#style-b.active{display:block}
+.ed-header{margin-bottom:64px;padding-bottom:24px;border-bottom:1px solid var(--wire)}
+.ed-title-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.ed-title{font-size:clamp(32px,5vw,56px);font-weight:300;letter-spacing:-.01em}
+.ed-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim)}
+.ed-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1px;background:var(--wire);border:1px solid var(--wire)}
+.ed-item{background:var(--bg);padding:32px;cursor:none;transition:background .15s;display:flex;flex-direction:column;gap:20px}
+.ed-item:hover{background:#EEECEA}
+.ed-item.wide{grid-column:span 8}.ed-item.tall{grid-row:span 2}.ed-item.narrow{grid-column:span 4}.ed-item.half{grid-column:span 6}
+.ed-item-num{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--dim)}
+.ed-item-title{font-size:clamp(20px,2.5vw,32px);font-weight:300;letter-spacing:-.01em;line-height:1.1;margin-top:auto}
+.ed-item.wide .ed-item-title{font-size:clamp(28px,3.5vw,48px)}
+.ed-item-client{font-size:12px;color:var(--muted);margin-top:4px}
+.ed-item-cat{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:auto}
+.ed-img{width:100%;aspect-ratio:16/9;background:var(--wire);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim)}
+.ed-item.wide .ed-img{aspect-ratio:21/9}
+
+/* ════════════════════════════════════
+   STYLE C — INDEX LIST
+═══════════════════════════════════════ */
+#style-c{display:none;min-height:100vh;padding:80px 48px}
+#style-c.active{display:block}
+.idx-header{margin-bottom:48px}
+.idx-title{font-size:clamp(28px,4vw,48px);font-weight:300;margin-bottom:4px}
+.idx-sub{font-size:13px;color:var(--muted)}
+.idx-list{border-top:1px solid var(--wire)}
+.idx-item{display:grid;grid-template-columns:48px 1fr auto 120px;align-items:center;gap:24px;padding:20px 0;border-bottom:1px solid var(--wire);cursor:none;position:relative;transition:padding-left .2s}
+.idx-item:hover{padding-left:12px}
+.idx-item-hover-img{position:absolute;left:50%;top:50%;width:200px;aspect-ratio:3/2;transform:translate(-50%,-50%) scale(.9);opacity:0;background:var(--wire);border-radius:3px;pointer-events:none;z-index:10;transition:opacity .2s,transform .2s;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);box-shadow:0 16px 48px rgba(0,0,0,.12)}
+.idx-item:hover .idx-item-hover-img{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.idx-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim)}
+.idx-name{font-size:22px;font-weight:300}
+.idx-cat{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+.idx-year{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);text-align:right}
+
+/* ════════════════════════════════════
+   STYLE D — FILMSTRIP
+═══════════════════════════════════════ */
+#style-d{display:none;height:100vh;overflow:hidden;position:relative}
+#style-d.active{display:block}
+.film-track{display:flex;height:100vh;transition:transform .7s cubic-bezier(.76,0,.24,1)}
+.film-slide{width:100vw;height:100vh;flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden}
+.film-slide-visual{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;color:rgba(255,255,255,.25);position:relative}
+.film-slide-visual::after{content:'';position:absolute;right:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.08)}
+.film-slide-info{padding:80px 64px;display:flex;flex-direction:column;justify-content:flex-end;background:var(--bg)}
+.film-slide-num{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-bottom:auto;padding-top:80px}
+.film-slide-cat{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+.film-slide-title{font-size:clamp(36px,5vw,64px);font-weight:300;letter-spacing:-.02em;line-height:1.05;margin-bottom:16px}
+.film-slide-desc{font-size:14px;font-weight:300;color:var(--muted);line-height:1.7;max-width:380px;margin-bottom:40px}
+.film-slide-btn{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--fg);padding-bottom:4px;width:fit-content}
+.film-nav{position:absolute;bottom:40px;right:64px;display:flex;gap:12px;z-index:10}
+.film-nav-btn{width:40px;height:40px;border:1px solid var(--wire);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);transition:all .15s}
+.film-nav-btn:hover{border-color:var(--fg);color:var(--fg)}
+.film-counter{position:absolute;bottom:44px;left:64px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+
+/* ════════════════════════════════════
+   STYLE E — DERIVA (campo gravitacional)
+═══════════════════════════════════════ */
+#style-e{display:none;position:fixed;inset:0;top:92px;background:#07070A;overflow:hidden}
+#style-e.active{display:block}
+
+/* grain overlay */
+#style-e::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  opacity:.55;
 }
-#nav.hidden{transform:translateY(-100%)}
-.nav-logo{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:13px;font-weight:500;
-  letter-spacing:.04em;
-  margin-right:auto;
+
+/* scan line */
+.e-scanline{
+  position:absolute;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);
+  z-index:2;pointer-events:none;
+  animation:scan 8s linear infinite;
 }
-.nav-links{display:flex;gap:0;align-items:center}
-.nav-link{
-  font-size:13px;
-  color:var(--fg-muted);
-  padding:6px 14px;
-  transition:color .15s;
-  position:relative;
+@keyframes scan{0%{top:-2px}100%{top:calc(100vh + 2px)}}
+
+/* drift field */
+#drift-field{
+  position:absolute;inset:0;
+  transform-style:preserve-3d;
 }
-.nav-link:hover,.nav-link.active{color:var(--fg)}
-.nav-link.active::after{
+#drift-layer{
+  position:absolute;inset:0;
+  will-change:transform;
+}
+
+/* cada card flutuante */
+.drift-card{
+  position:absolute;
+  border-radius:4px;
+  overflow:hidden;
+  cursor:none;
+  transform-origin:center center;
+  will-change:transform;
+  transition:box-shadow .4s;
+}
+.drift-card::after{
   content:'';
-  position:absolute;bottom:-1px;left:14px;right:14px;
-  height:1px;background:var(--fg);
-}
-.nav-actions{display:flex;gap:8px;align-items:center;margin-left:8px}
-.nav-btn{
-  font-size:12px;font-family:'IBM Plex Mono',monospace;
-  padding:5px 10px;
-  border:1px solid var(--wire);
-  border-radius:3px;
-  color:var(--fg-muted);
-  transition:all .15s;
-}
-.nav-btn:hover{border-color:var(--fg-muted);color:var(--fg)}
-.nav-lang{
-  font-size:11px;font-family:'IBM Plex Mono',monospace;
-  letter-spacing:.06em;color:var(--fg-dim);
-  padding:5px 8px;
-  cursor:none;
-}
-.lang-active{color:var(--fg);font-weight:500}
-
-/* ── ANNOTATIONS ── */
-body.annotations .ann-note{display:flex}
-.ann-note{
-  display:none;
-  align-items:flex-start;gap:8px;
-  font-size:11px;font-family:'IBM Plex Mono',monospace;
-  color:var(--ann);
-  background:var(--ann-bg);
-  border:1px solid var(--ann-border);
-  border-radius:3px;
-  padding:8px 10px;
-  margin:8px 0;
-  line-height:1.5;
-}
-.ann-note::before{content:'//';opacity:.5;flex-shrink:0;margin-top:1px}
-.ann-toggle{
-  position:fixed;bottom:20px;left:20px;
-  font-size:11px;font-family:'IBM Plex Mono',monospace;
-  padding:6px 10px;
-  background:var(--ann-bg);
-  border:1px solid var(--ann-border);
-  border-radius:3px;color:var(--ann);
-  z-index:800;
-}
-
-/* ── WIRE PLACEHOLDERS ── */
-.wire-ph{
-  border:1.5px dashed var(--wire-dash);
+  position:absolute;inset:0;
   border-radius:4px;
-  background:var(--surface);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--fg-dim);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;text-align:center;
-}
-
-/* ── VIEWS ── */
-.view{
-  display:none;
-  min-height:100vh;
-  padding-top:var(--nav-h);
-}
-.view.active{display:block}
-
-/* ── ENTRY GATE ── */
-#entry-gate{
-  position:fixed;inset:0;
-  z-index:700;
-  background:var(--bg);
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:0;
-}
-#entry-gate.hidden{display:none}
-.gate-eyebrow{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;letter-spacing:.18em;
-  color:var(--fg-dim);
-  text-transform:uppercase;
-  margin-bottom:40px;
-}
-.gate-phrase{
-  font-size:clamp(13px,2.5vw,18px);
-  font-weight:300;
-  letter-spacing:.08em;
-  color:var(--fg-muted);
-  text-align:center;
-  max-width:480px;
-  margin-bottom:64px;
-  line-height:1.8;
-}
-.gate-phrase em{font-style:normal;color:var(--fg)}
-.gate-options{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:2px;
-  width:min(640px,90vw);
-}
-.gate-option{
-  padding:40px 32px;
-  border:1px solid var(--wire);
-  cursor:none;
-  transition:all .2s;
-  position:relative;
-  overflow:hidden;
-}
-.gate-option:hover{background:var(--surface);border-color:var(--fg-dim)}
-.gate-option-label{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;letter-spacing:.14em;
-  color:var(--fg-dim);text-transform:uppercase;
-  margin-bottom:12px;
-}
-.gate-option-title{
-  font-size:20px;font-weight:400;
-  margin-bottom:8px;color:var(--fg);
-}
-.gate-option-desc{
-  font-size:12px;color:var(--fg-muted);
-  line-height:1.6;
-}
-.gate-option-glyph{
-  position:absolute;bottom:20px;right:24px;
-  font-size:32px;color:var(--wire);
-  font-family:'IBM Plex Mono',monospace;
-  transition:color .2s;
-}
-.gate-option:hover .gate-option-glyph{color:var(--fg-dim)}
-.gate-option.jornada{border-right:none}
-
-/* ── PROGRESS BAR ── */
-#progress-bar{
-  position:fixed;top:var(--nav-h);left:0;
-  height:2px;background:var(--fg);
-  width:0%;z-index:600;
-  transition:width .1s linear;
-}
-
-/* ── SKELETON LOADING ── */
-@keyframes skeleton {
-  0%{background-position:200% 0}
-  100%{background-position:-200% 0}
-}
-.skel{
-  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface) 50%,var(--surface2) 75%);
-  background-size:200% 100%;
-  animation:skeleton 1.5s infinite;
-  border-radius:3px;
-}
-.skel-card{
-  border:1px solid var(--wire);
-  border-radius:4px;
-  overflow:hidden;
-}
-.skel-card .skel-img{height:200px}
-.skel-card .skel-body{padding:20px;display:flex;flex-direction:column;gap:10px}
-.skel-card .skel-line{height:12px}
-.skel-card .skel-line.sm{width:60%;height:10px}
-.skel-card .skel-line.xs{width:40%;height:10px}
-
-/* ── TOAST ── */
-#toast-system{
-  position:fixed;bottom:20px;right:20px;
-  z-index:900;
-  display:flex;flex-direction:column;gap:8px;
+  border:1px solid rgba(255,255,255,.06);
   pointer-events:none;
+  transition:border-color .4s;
 }
-.toast{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 14px;
-  background:var(--surface);
-  border:1px solid var(--wire);
-  border-radius:4px;
-  font-size:12px;
-  font-family:'IBM Plex Mono',monospace;
-  color:var(--fg-muted);
-  opacity:0;
-  transform:translateY(8px);
-  transition:all .25s;
-  pointer-events:auto;
-  max-width:320px;
+.drift-card:hover::after{border-color:rgba(255,255,255,.22)}
+.drift-card .dc-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.drift-card .dc-label{font-family:'IBM Plex Mono',monospace;letter-spacing:.1em;color:rgba(255,255,255,.12);text-transform:uppercase;text-align:center;line-height:1.6}
+.drift-card .dc-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.6) 100%);transition:opacity .4s}
+.drift-card:hover .dc-overlay{opacity:0.3}
+.drift-card .dc-meta{
+  position:absolute;bottom:0;left:0;right:0;padding:20px 18px;
+  opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s;
+  color:#fff;
 }
-.toast.show{opacity:1;transform:translateY(0)}
-.toast.error{border-color:rgba(200,40,30,.3);color:var(--err)}
-.toast.warn{border-color:rgba(180,83,9,.3);color:var(--warn)}
-.toast-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.toast.error .toast-dot{background:var(--err)}
-.toast.warn .toast-dot{background:var(--warn)}
-.toast-dismiss{margin-left:auto;opacity:.5;font-size:11px;cursor:none}
-.toast-dismiss:hover{opacity:1}
+.drift-card:hover .dc-meta{opacity:1;transform:translateY(0)}
+.drift-card .dc-meta-cat{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px}
+.drift-card .dc-meta-title{font-size:15px;font-weight:300;line-height:1.2}
 
-/* ── OFFLINE BANNER ── */
-#offline-banner{
-  display:none;
-  position:fixed;top:var(--nav-h);left:0;right:0;
-  background:#1a1000;
-  border-bottom:1px solid rgba(180,83,9,.4);
-  color:rgba(251,191,36,.9);
-  font-size:11px;font-family:'IBM Plex Mono',monospace;
-  padding:6px 24px;
-  text-align:center;
-  z-index:490;
-  letter-spacing:.04em;
-}
-#offline-banner.show{display:block}
-
-/* ── SECTION WRAPPER ── */
-.section{
-  max-width:1100px;
-  margin:0 auto;
-  padding:80px 24px;
-}
-.section-sm{padding:40px 24px}
-.section + .section{padding-top:0}
-
-/* ── PAGE HEADER ── */
-.page-header{
-  padding:64px 24px 40px;
-  max-width:1100px;margin:0 auto;
-  border-bottom:1px solid var(--wire);
-  margin-bottom:0;
-}
-.page-tag{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;letter-spacing:.14em;color:var(--fg-dim);
-  text-transform:uppercase;margin-bottom:16px;
-}
-.page-title{font-size:clamp(28px,5vw,48px);font-weight:300;letter-spacing:-.01em}
-
-/* ── HOME VIEW ── */
-#view-home .hero{
-  min-height:calc(100vh - var(--nav-h));
-  display:flex;flex-direction:column;
-  justify-content:center;
-  padding:80px 24px;
-  max-width:1100px;margin:0 auto;
-}
-.hero-eyebrow{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;letter-spacing:.18em;color:var(--fg-dim);
-  text-transform:uppercase;margin-bottom:32px;
-}
-.hero-title{
-  font-size:clamp(32px,6vw,72px);
-  font-weight:300;
-  letter-spacing:-.02em;
-  line-height:1.1;
-  max-width:800px;
-  margin-bottom:32px;
-}
-.hero-title span{color:var(--fg-muted)}
-.hero-sub{
-  font-size:15px;font-weight:300;
-  color:var(--fg-muted);
-  max-width:460px;
-  margin-bottom:64px;
-  line-height:1.7;
-}
-.hero-cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.btn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:10px 20px;
-  font-size:13px;
-  border-radius:3px;
-  transition:all .2s;
-}
-.btn-primary{
-  background:var(--fg);color:var(--bg);
-}
-.btn-primary:hover{opacity:.85}
-.btn-ghost{
-  border:1px solid var(--wire);color:var(--fg-muted);
-}
-.btn-ghost:hover{border-color:var(--fg-muted);color:var(--fg)}
-.btn-sm{padding:7px 14px;font-size:12px}
-
-.home-reel{
-  width:100%;aspect-ratio:16/7;
-  border-top:1px solid var(--wire);
-  border-bottom:1px solid var(--wire);
-  font-size:12px;
-}
-.home-work{padding:80px 24px;max-width:1100px;margin:0 auto}
-.home-work-header{
-  display:flex;justify-content:space-between;align-items:baseline;
-  margin-bottom:40px;
-}
-.home-work-title{font-size:20px;font-weight:400}
-.home-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:1px;
-  background:var(--wire);
-  border:1px solid var(--wire);
-}
-.home-card{
-  background:var(--bg);
-  padding:28px;
-  transition:background .15s;
-}
-.home-card:hover{background:var(--surface)}
-.home-card-img{
-  aspect-ratio:16/9;
-  margin-bottom:20px;
-  font-size:11px;
-}
-.home-card-cat{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;letter-spacing:.1em;color:var(--fg-dim);
-  text-transform:uppercase;margin-bottom:8px;
-}
-.home-card-title{font-size:16px;font-weight:400;margin-bottom:6px}
-.home-card-client{font-size:12px;color:var(--fg-muted)}
-.home-card.featured{grid-column:span 2}
-.home-card.featured .home-card-img{aspect-ratio:16/6}
-
-/* ── SOBRE VIEW ── */
-.sobre-intro{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:80px;
-  padding:80px 24px;
-  max-width:1100px;margin:0 auto;
-  align-items:start;
-}
-.sobre-text p{margin-bottom:20px;font-weight:300;line-height:1.8;color:var(--fg-muted)}
-.sobre-text p strong{color:var(--fg);font-weight:500}
-.sobre-visual{aspect-ratio:4/5;font-size:12px}
-.sobre-frentes{
-  border-top:1px solid var(--wire);
-  padding:80px 24px;
-  max-width:1100px;margin:0 auto;
-}
-.sobre-frentes-title{font-size:13px;color:var(--fg-muted);margin-bottom:40px}
-.frentes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
-.frente-item{padding-top:20px;border-top:1px solid var(--wire)}
-.frente-num{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;
-  color:var(--fg-dim);margin-bottom:12px;
-}
-.frente-name{font-size:14px;font-weight:500;margin-bottom:8px}
-.frente-desc{font-size:12px;color:var(--fg-muted);line-height:1.6}
-
-/* ── PORTFOLIO VIEW ── */
-.portfolio-filters{
-  display:flex;gap:8px;flex-wrap:wrap;
-  padding:24px;
-  border-bottom:1px solid var(--wire);
-  position:sticky;top:var(--nav-h);background:var(--bg);z-index:100;
-}
-.filter-btn{
-  font-size:12px;font-family:'IBM Plex Mono',monospace;
-  padding:5px 12px;
-  border:1px solid var(--wire);border-radius:3px;
-  color:var(--fg-muted);
-  transition:all .15s;
-}
-.filter-btn.active,.filter-btn:hover{
-  border-color:var(--fg);color:var(--fg);
-}
-.portfolio-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);
-  gap:1px;background:var(--wire);
-  border:1px solid var(--wire);
-  margin:24px;
-}
-.port-card{
-  background:var(--bg);
-  cursor:none;
-  transition:background .15s;
-}
-.port-card:hover{background:var(--surface)}
-.port-card .port-thumb{aspect-ratio:16/9;font-size:12px}
-.port-card .port-info{padding:24px}
-.port-card-cat{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;
-  letter-spacing:.1em;color:var(--fg-dim);
-  text-transform:uppercase;margin-bottom:10px;
-}
-.port-card-title{font-size:18px;font-weight:400;margin-bottom:6px}
-.port-card-client{font-size:12px;color:var(--fg-muted);margin-bottom:16px}
-.port-card-scope{font-size:11px;color:var(--fg-dim);font-style:italic}
-.port-card.featured{grid-column:span 2}
-.port-card.featured .port-thumb{aspect-ratio:21/8}
-
-/* Portfolio empty state */
-.portfolio-empty{
-  display:none;
-  flex-direction:column;align-items:center;justify-content:center;
-  padding:120px 24px;text-align:center;
-  gap:16px;
-}
-.portfolio-empty.show{display:flex}
-.portfolio-empty-glyph{
-  font-size:40px;color:var(--wire);
-  font-family:'IBM Plex Mono',monospace;
-  margin-bottom:8px;
-}
-.portfolio-empty-title{font-size:16px;color:var(--fg-muted)}
-.portfolio-empty-sub{font-size:13px;color:var(--fg-dim);max-width:300px}
-.portfolio-empty-action{
-  margin-top:8px;
-  font-size:12px;
-  color:var(--fg-dim);
-  border-bottom:1px solid var(--wire);
-  padding-bottom:2px;
+/* halo ao redor do card ativo */
+.drift-card.is-focus{
+  box-shadow:0 0 0 1px rgba(255,255,255,.12),0 32px 80px rgba(0,0,0,.6),0 0 120px rgba(255,255,255,.03);
 }
 
-/* Portfolio skeleton */
-.portfolio-skel-grid{
-  display:grid;grid-template-columns:repeat(2,1fr);
-  gap:1px;background:var(--wire);
-  border:1px solid var(--wire);
-  margin:24px;
-}
-.portfolio-skel-grid .skel-card{border:none;background:var(--bg);padding:0}
-.portfolio-skel-grid .skel-card .skel-img{aspect-ratio:16/9;height:auto;border-radius:0}
-.portfolio-skel-grid .skel-card .skel-body{padding:24px}
-
-/* ── CASE VIEW ── */
-.case-header{
-  padding:80px 24px 40px;
-  max-width:1100px;margin:0 auto;
-}
-.case-meta-row{
-  display:flex;gap:32px;flex-wrap:wrap;
-  margin-bottom:40px;
-}
-.case-meta-item{display:flex;flex-direction:column;gap:4px}
-.case-meta-label{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;
-  letter-spacing:.1em;color:var(--fg-dim);text-transform:uppercase;
-}
-.case-meta-value{font-size:13px;color:var(--fg-muted)}
-.case-title{font-size:clamp(28px,5vw,56px);font-weight:300;margin-bottom:24px}
-.case-summary{
-  font-size:16px;font-weight:300;color:var(--fg-muted);
-  max-width:660px;line-height:1.8;
-}
-.case-position{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;
-  color:var(--fg-dim);margin-bottom:24px;
-}
-
-/* Case blocks */
-.case-blocks{max-width:1100px;margin:0 auto;padding:0 24px 80px}
-.block{margin-bottom:64px}
-.block-text{max-width:680px}
-.block-text h2{font-size:22px;font-weight:400;margin-bottom:20px}
-.block-text p{font-size:15px;font-weight:300;line-height:1.8;color:var(--fg-muted);margin-bottom:16px}
-.block-text p strong{color:var(--fg);font-weight:500}
-.block-image-full .wire-ph{width:100%;aspect-ratio:21/9}
-.block-image-split{display:grid;grid-template-columns:1fr 1fr;gap:2px}
-.block-image-split .wire-ph{aspect-ratio:4/3}
-.block-video .wire-ph{width:100%;aspect-ratio:16/9}
-.block-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
-.block-gallery .wire-ph{aspect-ratio:1}
-.block-quote{
-  border-left:2px solid var(--fg);
-  padding:24px 32px;
-  font-size:clamp(18px,3vw,28px);font-weight:300;
-  font-style:italic;color:var(--fg-muted);
-  line-height:1.5;
-}
-.block-metric{
-  display:flex;gap:2px;
-  border:1px solid var(--wire);
-  overflow:hidden;border-radius:3px;
-}
-.metric-item{
-  flex:1;padding:32px 24px;
-  border-right:1px solid var(--wire);
-}
-.metric-item:last-child{border-right:none}
-.metric-value{
-  font-size:clamp(32px,5vw,56px);
-  font-weight:300;letter-spacing:-.02em;
-  margin-bottom:8px;
-}
-.metric-label{font-size:12px;color:var(--fg-muted);font-family:'IBM Plex Mono',monospace}
-.block-credits{
-  padding:32px;
-  border:1px solid var(--wire);
-  border-radius:3px;
-  background:var(--surface);
-}
-.block-credits-title{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;
-  letter-spacing:.14em;text-transform:uppercase;
-  color:var(--fg-dim);margin-bottom:24px;
-}
-.credits-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.credit-role{font-size:11px;color:var(--fg-dim);margin-bottom:4px;font-family:'IBM Plex Mono',monospace}
-.credit-name{font-size:13px;color:var(--fg-muted)}
-
-.case-nav-footer{
-  border-top:1px solid var(--wire);
-  display:grid;grid-template-columns:1fr 1fr;
-}
-.case-nav-prev,.case-nav-next{
-  padding:40px 24px;
-  transition:background .15s;
-}
-.case-nav-prev:hover,.case-nav-next:hover{background:var(--surface)}
-.case-nav-next{border-left:1px solid var(--wire);text-align:right}
-.case-nav-dir{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;
-  letter-spacing:.14em;color:var(--fg-dim);text-transform:uppercase;
-  margin-bottom:8px;
-}
-.case-nav-name{font-size:16px;color:var(--fg-muted)}
-
-/* ── VESTÍGIO VIEW ── */
-#view-vestigio{background:var(--bg)}
-.vestigio-scene{
-  min-height:70vh;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  border-bottom:1px solid var(--wire);
-  position:relative;overflow:hidden;
-}
-.vestigio-3d{
-  width:280px;height:280px;
-  position:relative;
-}
-.vestigio-ring{
+/* coordenadas flutuando */
+.drift-coord{
   position:absolute;
-  border-radius:50%;
-  border:1.5px solid var(--wire-dash);
-  animation:orbit linear infinite;
-}
-.vestigio-ring:nth-child(1){
-  width:100%;height:100%;top:0;left:0;
-  animation-duration:12s;
-}
-.vestigio-ring:nth-child(2){
-  width:70%;height:70%;top:15%;left:15%;
-  animation-duration:8s;animation-direction:reverse;
-  border-style:dashed;
-}
-.vestigio-ring:nth-child(3){
-  width:40%;height:40%;top:30%;left:30%;
-  animation-duration:5s;
-}
-.vestigio-core{
-  position:absolute;
-  width:24px;height:24px;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  background:var(--fg);
-  border-radius:50%;
-  opacity:.15;
-}
-@keyframes orbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.vestigio-info{
-  max-width:560px;margin:0 auto;
-  text-align:center;
-  padding:64px 24px 40px;
-}
-.vestigio-eyebrow{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;letter-spacing:.18em;
-  color:var(--fg-dim);text-transform:uppercase;
-  margin-bottom:24px;
-}
-.vestigio-title{font-size:28px;font-weight:300;margin-bottom:16px}
-.vestigio-desc{font-size:14px;color:var(--fg-muted);line-height:1.8;margin-bottom:32px}
-.vestigio-meta{
-  display:flex;gap:0;justify-content:center;
-  border:1px solid var(--wire);
-  border-radius:3px;overflow:hidden;margin-bottom:32px;
-}
-.vestigio-meta-item{
-  flex:1;padding:12px 16px;border-right:1px solid var(--wire);
-  text-align:left;
-}
-.vestigio-meta-item:last-child{border-right:none}
-.vestigio-meta-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--fg-dim);text-transform:uppercase;margin-bottom:4px}
-.vestigio-meta-value{font-size:12px;color:var(--fg-muted)}
-.vestigio-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-
-/* ── CONTATO VIEW ── */
-.contato-layout{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:0;min-height:calc(100vh - var(--nav-h));
-}
-.contato-info{
-  padding:80px 48px;
-  border-right:1px solid var(--wire);
-}
-.contato-title{font-size:clamp(24px,4vw,40px);font-weight:300;margin-bottom:32px}
-.contato-text{
-  font-size:14px;font-weight:300;color:var(--fg-muted);
-  line-height:1.8;margin-bottom:48px;
-}
-.contato-detail{
-  display:flex;flex-direction:column;gap:20px;
-  padding-top:32px;border-top:1px solid var(--wire);
-}
-.contato-detail-item{display:flex;flex-direction:column;gap:4px}
-.contato-detail-label{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;
-  letter-spacing:.1em;color:var(--fg-dim);text-transform:uppercase;
-}
-.contato-detail-value{font-size:13px;color:var(--fg-muted)}
-
-/* Form */
-.contato-form-wrap{padding:80px 48px}
-.form-title{font-size:16px;font-weight:400;margin-bottom:32px}
-#form-contato{display:flex;flex-direction:column;gap:0}
-.form-field{margin-bottom:24px;position:relative}
-.form-label{
-  display:flex;justify-content:space-between;align-items:center;
-  font-size:11px;font-family:'IBM Plex Mono',monospace;
-  letter-spacing:.08em;color:var(--fg-dim);text-transform:uppercase;
-  margin-bottom:8px;
-}
-.field-dot{
-  width:5px;height:5px;border-radius:50%;
-  border:1px solid var(--fg-dim);
-  transition:background .2s,border-color .2s;
-}
-.field-dot.filled{background:var(--fg);border-color:var(--fg)}
-.form-field input,
-.form-field textarea,
-.form-field select{
-  width:100%;
-  background:transparent;
-  border:none;
-  border-bottom:1px solid var(--wire);
-  padding:10px 0;
-  font-size:14px;color:var(--fg);
-  outline:none;
-  transition:border-color .2s;
-}
-.form-field input:focus,
-.form-field textarea:focus,
-.form-field select:focus{
-  border-color:var(--fg);
-}
-.form-field textarea{resize:vertical;min-height:100px}
-
-/* Field error state */
-.form-field.has-error input,
-.form-field.has-error textarea,
-.form-field.has-error select{
-  border-color:var(--err);
-}
-.field-error-msg{
-  display:none;
-  font-size:11px;font-family:'IBM Plex Mono',monospace;
-  color:var(--err);margin-top:6px;
-}
-.form-field.has-error .field-error-msg{display:block}
-
-/* Form states */
-.form-state{display:none;flex-direction:column;align-items:center;text-align:center;padding:40px;gap:16px}
-.form-state.show{display:flex}
-.form-state-icon{font-size:32px;font-family:'IBM Plex Mono',monospace;color:var(--fg-dim)}
-.form-state-title{font-size:16px;color:var(--fg)}
-.form-state-desc{font-size:13px;color:var(--fg-muted);max-width:320px;line-height:1.7}
-.form-state.error .form-state-icon{color:var(--err)}
-.form-state.error .form-state-title{color:var(--err)}
-.form-state.timeout .form-state-icon{color:var(--warn)}
-.form-state.timeout .form-state-title{color:var(--warn)}
-.form-footer{
-  display:flex;justify-content:space-between;
-  align-items:center;margin-top:8px;
-}
-.form-dots{display:flex;gap:4px}
-.form-dot-indicator{
-  width:4px;height:4px;border-radius:50%;
-  background:var(--wire);
-  transition:background .2s;
-}
-.form-dot-indicator.done{background:var(--fg)}
-
-/* ── ADM VIEW ── */
-.adm-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - var(--nav-h))}
-.adm-sidebar{
-  border-right:1px solid var(--wire);
-  padding:24px 0;
-  position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;
-}
-.adm-sidebar-section{
   font-family:'IBM Plex Mono',monospace;font-size:9px;
-  letter-spacing:.14em;color:var(--fg-dim);text-transform:uppercase;
-  padding:16px 20px 8px;
+  color:rgba(255,255,255,.12);letter-spacing:.1em;
+  pointer-events:none;z-index:5;
+  transition:opacity .4s;
 }
-.adm-nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 20px;
-  font-size:13px;color:var(--fg-muted);
-  transition:all .15s;
-  border-left:2px solid transparent;
-}
-.adm-nav-item:hover,.adm-nav-item.active{
-  background:var(--surface);color:var(--fg);
-  border-left-color:var(--fg);
-}
-.adm-nav-glyph{
-  font-family:'IBM Plex Mono',monospace;font-size:12px;
-  color:var(--fg-dim);width:16px;text-align:center;
-}
-.adm-badge{
-  margin-left:auto;
-  font-size:10px;font-family:'IBM Plex Mono',monospace;
-  background:var(--surface2);
-  padding:2px 6px;border-radius:2px;
-  color:var(--fg-muted);
-}
-.adm-content{padding:40px;overflow-y:auto}
-.adm-panel{display:none}
-.adm-panel.active{display:block}
-.adm-panel-title{font-size:20px;font-weight:400;margin-bottom:32px}
 
-/* ADM Cards */
-.adm-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px}
-.stat-card{
-  padding:24px;border:1px solid var(--wire);border-radius:4px;
-}
-.stat-value{font-size:28px;font-weight:300;margin-bottom:4px}
-.stat-label{font-size:12px;color:var(--fg-muted);font-family:'IBM Plex Mono',monospace}
-.stat-change{font-size:11px;color:var(--fg-dim);margin-top:8px}
-.stat-change.up{color:var(--ok)}
-.stat-change.down{color:var(--err)}
-
-.adm-table{width:100%;border-collapse:collapse}
-.adm-table th,.adm-table td{
-  text-align:left;padding:12px 16px;
-  border-bottom:1px solid var(--wire);
-  font-size:13px;
-}
-.adm-table th{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;
-  letter-spacing:.08em;color:var(--fg-dim);text-transform:uppercase;
-  background:var(--surface);
-}
-.adm-table tr:hover td{background:var(--surface)}
-.adm-status{
-  font-size:10px;font-family:'IBM Plex Mono',monospace;
-  padding:3px 8px;border-radius:2px;
-}
-.adm-status.pub{background:rgba(21,128,61,.12);color:var(--ok)}
-.adm-status.draft{background:var(--surface2);color:var(--fg-dim)}
-.adm-actions-row{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:24px;
-}
-.adm-search{
-  border:1px solid var(--wire);border-radius:3px;
-  padding:7px 12px;font-size:13px;background:var(--surface);
-  color:var(--fg);outline:none;width:240px;
-}
-.adm-search:focus{border-color:var(--fg-muted)}
-
-/* Analytics chart placeholder */
-.analytics-chart{
-  height:240px;
-  border:1px solid var(--wire);border-radius:4px;
-  background:var(--surface);margin-bottom:32px;
-  position:relative;overflow:hidden;
-}
-.chart-bars{
+/* painel de info lateral */
+#e-info{
   position:absolute;bottom:0;left:0;right:0;
-  display:flex;align-items:flex-end;gap:3px;
-  padding:0 24px 0;height:80%;
+  padding:28px 48px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  z-index:10;pointer-events:none;
+  background:linear-gradient(to top,rgba(7,7,10,.9) 0%,transparent 100%);
 }
-.chart-bar{
-  flex:1;background:var(--wire);border-radius:2px 2px 0 0;
-  transition:background .15s;min-height:4px;
-}
-.chart-bar:hover{background:var(--fg-dim)}
-.chart-bar.active{background:var(--fg-muted)}
-.analytics-events{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:16px;
-}
-.event-stat{
-  padding:20px;border:1px solid var(--wire);border-radius:4px;
-}
-.event-stat-name{font-size:11px;color:var(--fg-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:8px}
-.event-stat-value{font-size:24px;font-weight:300}
-.event-stat-sub{font-size:12px;color:var(--fg-dim);margin-top:4px}
+#e-info-left{opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s}
+#e-info-left.show{opacity:1;transform:translateY(0)}
+#e-info-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:8px}
+#e-info-title{font-size:clamp(24px,3vw,40px);font-weight:300;color:#fff;line-height:1.1;margin-bottom:6px}
+#e-info-client{font-size:13px;color:rgba(255,255,255,.4)}
+#e-info-right{text-align:right;opacity:0;transition:opacity .4s}
+#e-info-right.show{opacity:1}
+#e-info-scope{font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:2;color:rgba(255,255,255,.25)}
+#e-info-year{font-size:32px;font-weight:300;color:rgba(255,255,255,.06);font-family:'IBM Plex Mono',monospace;letter-spacing:-.02em;line-height:1;margin-bottom:8px}
 
-/* Form builder ADM */
-.adm-form-section{margin-bottom:40px}
-.adm-form-label{
-  font-size:11px;font-family:'IBM Plex Mono',monospace;
-  letter-spacing:.08em;color:var(--fg-dim);text-transform:uppercase;
-  margin-bottom:8px;display:block;
+/* crosshair cursor (canvas only) */
+.e-crosshair{
+  position:absolute;pointer-events:none;z-index:20;
+  transition:opacity .2s;
 }
-.adm-input{
-  width:100%;padding:9px 12px;
-  border:1px solid var(--wire);border-radius:3px;
-  background:var(--surface);color:var(--fg);font-size:13px;
-  outline:none;font-family:inherit;
-  transition:border-color .15s;
-}
-.adm-input:focus{border-color:var(--fg-muted)}
-.adm-textarea{height:120px;resize:vertical}
-.adm-select{
-  appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6B69' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 12px center;
-  padding-right:32px;
-}
-.adm-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.adm-block-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.adm-block-item{
-  display:flex;align-items:center;gap:12px;
-  padding:10px 14px;
-  border:1px solid var(--wire);border-radius:3px;background:var(--surface);
-}
-.adm-block-drag{cursor:grab;color:var(--fg-dim);font-size:14px}
-.adm-block-type{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;
-  color:var(--fg-dim);width:80px;
-}
-.adm-block-preview{font-size:12px;color:var(--fg-muted);flex:1}
-.adm-block-actions{display:flex;gap:4px;margin-left:auto}
-.adm-icon-btn{
-  padding:4px 8px;font-size:11px;font-family:'IBM Plex Mono',monospace;
-  color:var(--fg-dim);border:1px solid var(--wire);border-radius:2px;
-}
-.adm-icon-btn:hover{color:var(--fg);border-color:var(--fg-dim)}
-.adm-add-block{
-  border:1px dashed var(--wire-dash);border-radius:3px;
-  padding:12px;text-align:center;
-  font-size:12px;color:var(--fg-dim);font-family:'IBM Plex Mono',monospace;
-}
-.adm-lang-tabs{display:flex;gap:0;border:1px solid var(--wire);border-radius:3px;overflow:hidden;margin-bottom:20px;width:fit-content}
-.adm-lang-tab{
-  padding:6px 16px;font-size:12px;font-family:'IBM Plex Mono',monospace;
-  color:var(--fg-dim);border-right:1px solid var(--wire);
-}
-.adm-lang-tab:last-child{border-right:none}
-.adm-lang-tab.active{background:var(--fg);color:var(--bg)}
+.e-crosshair::before,.e-crosshair::after{content:'';position:absolute;background:rgba(255,255,255,.15)}
+.e-crosshair::before{width:20px;height:1px;top:0;left:-10px}
+.e-crosshair::after{width:1px;height:20px;top:-10px;left:0}
 
-/* Bilingual editor */
-.bilingual-editor{display:grid;grid-template-columns:1fr 1fr;gap:16px;border:1px solid var(--wire);border-radius:4px;overflow:hidden}
-.bilingual-pane{padding:20px}
-.bilingual-pane:first-child{border-right:1px solid var(--wire)}
-.bilingual-pane-lang{
-  font-family:'IBM Plex Mono',monospace;font-size:9px;
-  letter-spacing:.14em;color:var(--fg-dim);text-transform:uppercase;
-  margin-bottom:12px;
+/* pulso dos cards não ativos */
+@keyframes float{
+  0%,100%{transform:var(--base-t) translateY(0px)}
+  50%{transform:var(--base-t) translateY(-6px)}
 }
 
-/* ── RESPONSIVE ── */
+/* instrução inicial */
+#e-hint{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;z-index:15;pointer-events:none;
+  transition:opacity .6s;
+}
+#e-hint p{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:4px}
+#e-hint .e-pulse{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15);margin:16px auto 0;animation:epulse 2s ease-in-out infinite}
+@keyframes epulse{0%,100%{transform:scale(1);opacity:.15}50%{transform:scale(2.5);opacity:.05}}
+
 @media(max-width:768px){
-  .home-grid{grid-template-columns:1fr}
-  .home-card.featured{grid-column:span 1}
-  .sobre-intro{grid-template-columns:1fr;gap:40px}
-  .frentes-grid{grid-template-columns:repeat(2,1fr)}
-  .portfolio-grid,.portfolio-skel-grid{grid-template-columns:1fr}
-  .port-card.featured{grid-column:span 1}
-  .contato-layout{grid-template-columns:1fr}
-  .contato-info{border-right:none;border-bottom:1px solid var(--wire)}
-  .adm-layout{grid-template-columns:1fr}
-  .adm-sidebar{display:none}
-  .adm-stats{grid-template-columns:repeat(2,1fr)}
-  .block-image-split{grid-template-columns:1fr}
-  .block-gallery{grid-template-columns:repeat(2,1fr)}
-  .block-metric{flex-direction:column}
-  .credits-grid{grid-template-columns:1fr}
-  .gate-options{grid-template-columns:1fr}
-  .gate-option.jornada{border-right:1px solid var(--wire);border-bottom:none}
-  .bilingual-editor{grid-template-columns:1fr}
-  .bilingual-pane:first-child{border-right:none;border-bottom:1px solid var(--wire)}
+  .ed-grid{grid-template-columns:1fr}
+  .ed-item.wide,.ed-item.narrow,.ed-item.half{grid-column:span 1}
+  .film-slide{grid-template-columns:1fr;grid-template-rows:40vh 60vh}
+  .idx-item{grid-template-columns:32px 1fr 80px}.idx-cat{display:none}
+  #e-info{padding:20px 24px}
 }
-
-/* ── MISC ── */
-.divider{border:none;border-top:1px solid var(--wire);margin:0}
-.muted{color:var(--fg-muted)}
-.dim{color:var(--fg-dim)}
-.mono{font-family:'IBM Plex Mono',monospace}
 </style>
 </head>
 <body>
 
-<!-- Cursor -->
-<div id="cursor"></div>
+<div id="cur"></div>
 
-<!-- Offline Banner -->
-<div id="offline-banner">
-  Sem conexao com a internet. Alguns recursos podem nao estar disponiveis.
-</div>
-
-<!-- Toast system -->
-<div id="toast-system"></div>
-
-<!-- Progress bar (case pages) -->
-<div id="progress-bar"></div>
-
-<!-- Entry Gate -->
-<div id="entry-gate">
-  <div class="gate-eyebrow">OJO STUDIO</div>
-  <p class="gate-phrase"><em>Some things can't be explained.</em><br>Only experienced.</p>
-  <div class="gate-options">
-    <div class="gate-option jornada" onclick="startJornada()">
-      <div class="gate-option-label">Caminho 01</div>
-      <div class="gate-option-title">Jornada<br>Experiencial</div>
-      <div class="gate-option-desc">Uma experiencia imersiva antes de chegar ao portfolio.</div>
-      <span class="gate-option-glyph">○</span>
-    </div>
-    <div class="gate-option" onclick="enterEstudio()">
-      <div class="gate-option-label">Caminho 02</div>
-      <div class="gate-option-title">Entrar<br>no Estudio</div>
-      <div class="gate-option-desc">Acesso direto ao portfolio, sobre e contato.</div>
-      <span class="gate-option-glyph">→</span>
-    </div>
-  </div>
-  <div class="ann-note" style="margin-top:32px;max-width:500px">
-    Blueprint v1 §2: Dois caminhos — jornada experiencial (3D/imersivo com Vestígio) e rota institucional direta. Registro de analytics na escolha.
-  </div>
-</div>
-
-<!-- Nav -->
-<nav id="nav">
-  <div class="nav-logo">OJO</div>
-  <div class="nav-links">
-    <a class="nav-link" href="#" onclick="navigate('home')">Home</a>
-    <a class="nav-link" href="#" onclick="navigate('sobre')">Sobre</a>
-    <a class="nav-link" href="#" onclick="navigate('portfolio')">Portfolio</a>
-    <a class="nav-link" href="#" onclick="navigate('contato')">Contato</a>
-  </div>
-  <div class="nav-actions">
-    <button class="nav-btn" onclick="navigate('adm')">ADM</button>
-    <button class="nav-lang">
-      <span class="lang-active">PT</span> / <span>EN</span>
-    </button>
-    <button class="ann-toggle" onclick="toggleAnnotations()">Anotacoes</button>
+<nav style="z-index:220">
+  <div class="nav-logo" id="nav-logo">OJO</div>
+  <div class="nav-tabs">
+    <a class="nav-tab active" href="#">Portfolio</a>
+    <a class="nav-tab" href="#">Sobre</a>
+    <a class="nav-tab" href="#">Contato</a>
   </div>
 </nav>
 
-<!-- ───────── HOME ───────── -->
-<div id="view-home" class="view">
-  <div class="hero">
-    <div class="hero-eyebrow">Estudio de Design — Sao Paulo</div>
-    <h1 class="hero-title">Design que<br><span>cria presenca</span></h1>
-    <p class="hero-sub">Identidade visual, experiencias digitais e motion para marcas que querem ser lembradas.</p>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="#" onclick="navigate('portfolio')">Ver portfolio</a>
-      <a class="btn btn-ghost" href="#" onclick="navigate('contato')">Falar com a gente</a>
+<div class="style-switcher" id="switcher">
+  <button class="sw-btn active" onclick="showStyle('a',this)">A — Card Scroll</button>
+  <button class="sw-btn" onclick="showStyle('b',this)">B — Editorial Grid</button>
+  <button class="sw-btn" onclick="showStyle('c',this)">C — Index</button>
+  <button class="sw-btn" onclick="showStyle('d',this)">D — Filmstrip</button>
+  <button class="sw-btn" onclick="showStyle('e',this)">E — Deriva</button>
+</div>
+
+<div class="style-label" id="style-label">A — Card Scroll</div>
+
+<!-- ═══ A: CARD SCROLL ═══ -->
+<div id="style-a" class="active" style="padding-top:92px">
+  <div style="position:relative">
+    <div id="scene-a" style="position:sticky;top:92px;height:calc(100vh - 92px);display:flex;align-items:center;justify-content:center;overflow:hidden;width:100%">
+      <div class="case-counter"><span id="counter-num">01</span><span style="margin-top:4px;display:block">/ 06</span></div>
+      <div class="case-meta-side" id="meta-side">
+        <div id="meta-year" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;margin-bottom:8px">2024</div>
+        <div id="meta-scope" style="font-size:12px;color:var(--muted);line-height:1.8"></div>
+      </div>
+      <div id="cards-container" style="position:absolute;inset:0;overflow:hidden"></div>
+      <div class="card-info-panel" id="info-panel">
+        <div class="card-review-source" id="review-source">OJO</div>
+        <div class="card-review-text" id="review-text"></div>
+      </div>
+      <div class="progress-dots" id="prog-dots"></div>
     </div>
-    <div class="ann-note">Hero minimalista. Versao final: sequencia 3D (Cinema 4D / Fred) ocupa esta area antes do scroll.</div>
-  </div>
-  <div class="home-reel wire-ph">
-    Reel / Showreel — video 16:9 autoplay muted
-  </div>
-  <div class="home-work">
-    <div class="home-work-header">
-      <span class="home-work-title">Trabalhos recentes</span>
-      <a href="#" onclick="navigate('portfolio')" class="muted" style="font-size:12px">Ver todos →</a>
-    </div>
-    <div class="home-grid">
-      <div class="home-card featured" onclick="navigate('case','schott')">
-        <div class="home-card-img wire-ph">Capa — Schott Pharma / Pharmaversity</div>
-        <div class="home-card-cat">Branding · Editorial · Motion</div>
-        <div class="home-card-title">Pharmaversity</div>
-        <div class="home-card-client">SCHOTT Pharma — 2024</div>
-      </div>
-      <div class="home-card" onclick="navigate('case','plane')">
-        <div class="home-card-img wire-ph">Capa — Plane Aviation</div>
-        <div class="home-card-cat">Web · Identidade</div>
-        <div class="home-card-title">Plane Aviation Group</div>
-        <div class="home-card-client">Plane — 2024</div>
-      </div>
-      <div class="home-card" onclick="navigate('case','charlie')">
-        <div class="home-card-img wire-ph">Capa — Charlie Zero</div>
-        <div class="home-card-cat">Web</div>
-        <div class="home-card-title">Charlie Zero Aviation</div>
-        <div class="home-card-client">Charlie Zero — 2024</div>
-      </div>
-      <div class="home-card" onclick="navigate('case','medcontrol')">
-        <div class="home-card-img wire-ph">Capa — MedControl</div>
-        <div class="home-card-cat">Branding · Web</div>
-        <div class="home-card-title">MedControl</div>
-        <div class="home-card-client">MedControl — 2025</div>
-      </div>
-    </div>
-    <div class="ann-note">Grid heterogeneo: featured card (2 colunas) para caso principal. Reflows via JS no filtro do portfolio.</div>
+    <div style="height:calc((100vh - 92px) * 7);pointer-events:none"></div>
   </div>
 </div>
 
-<!-- ───────── SOBRE ───────── -->
-<div id="view-sobre" class="view">
-  <div class="page-header">
-    <div class="page-tag">Sobre o estudio</div>
-    <h1 class="page-title">Um estudio de design<br>com ponto de vista.</h1>
+<!-- ═══ B: EDITORIAL GRID ═══ -->
+<div id="style-b" style="padding-top:92px">
+  <div class="ed-header">
+    <div class="ed-title-row"><h1 class="ed-title">Portfolio</h1><span class="ed-count">06 projetos</span></div>
   </div>
-  <div class="sobre-intro">
-    <div class="sobre-text">
-      <p><strong>OJO Studio</strong> e um estudio de design independente com sede em Sao Paulo, especializado em identidade visual, experiencias digitais e motion.</p>
-      <p>Acreditamos que design e antes de tudo um ponto de vista. Cada projeto começa com uma pergunta: o que essa marca quer dizer, e como pode ser inconfundivel ao dizer?</p>
-      <p>Trabalhamos com empresas que estao em transformacao — startups em crescimento, marcas em repositionamento, produtos que precisam de uma linguagem visual propria.</p>
-      <div class="ann-note">Texto sobre: aguarda copia final de Pedro. Placeholder alinhado ao tom do Blueprint v1.</div>
-    </div>
-    <div class="sobre-visual wire-ph">Foto / Imagem do estudio ou do time</div>
-  </div>
-  <div class="sobre-frentes">
-    <p class="sobre-frentes-title">Frentes de atuacao</p>
-    <div class="frentes-grid">
-      <div class="frente-item">
-        <div class="frente-num">01</div>
-        <div class="frente-name">Identidade Visual</div>
-        <div class="frente-desc">Marca, sistema visual, brand book e guidelines para aplicacoes.</div>
-      </div>
-      <div class="frente-item">
-        <div class="frente-num">02</div>
-        <div class="frente-name">Design Digital</div>
-        <div class="frente-desc">Sites, apps, plataformas e experiencias interativas.</div>
-      </div>
-      <div class="frente-item">
-        <div class="frente-num">03</div>
-        <div class="frente-name">Motion Design</div>
-        <div class="frente-desc">Animacao, video, motion graphics e 3D.</div>
-      </div>
-      <div class="frente-item">
-        <div class="frente-num">04</div>
-        <div class="frente-name">Editorial</div>
-        <div class="frente-desc">Publicacoes, relatorios, apresentacoes e design de conteudo.</div>
-      </div>
-    </div>
+  <div class="ed-grid">
+    <div class="ed-item wide"><div class="ed-item-num">01</div><div class="ed-img">Pharmaversity</div><div><div class="ed-item-title">Pharmaversity</div><div class="ed-item-client">SCHOTT Pharma, 2024</div></div><div class="ed-item-cat">Branding · Editorial · Motion</div></div>
+    <div class="ed-item narrow tall"><div class="ed-item-num">02</div><div style="flex:1;background:var(--wire);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim)">Plane</div><div><div class="ed-item-title">Plane Aviation Group</div><div class="ed-item-client">PAG, 2024</div></div><div class="ed-item-cat">Web · Identidade</div></div>
+    <div class="ed-item half"><div class="ed-item-num">03</div><div class="ed-img" style="aspect-ratio:4/3">Charlie Zero</div><div><div class="ed-item-title">Charlie Zero</div><div class="ed-item-client">CZ, 2024</div></div><div class="ed-item-cat">Web</div></div>
+    <div class="ed-item half"><div class="ed-item-num">04</div><div class="ed-img" style="aspect-ratio:4/3">MedControl</div><div><div class="ed-item-title">MedControl</div><div class="ed-item-client">MC, 2025</div></div><div class="ed-item-cat">Branding · Web</div></div>
+    <div class="ed-item narrow"><div class="ed-item-num">05</div><div style="flex:1;background:var(--wire);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim)">Motion</div><div><div class="ed-item-title">Projeto Motion</div><div class="ed-item-client">[Cliente], 2024</div></div><div class="ed-item-cat">Motion</div></div>
+    <div class="ed-item" style="grid-column:span 8"><div class="ed-item-num">06</div><div class="ed-img">Interativo</div><div><div class="ed-item-title">Projeto Interativo</div><div class="ed-item-client">[Cliente], 2024</div></div><div class="ed-item-cat">Interativo</div></div>
   </div>
 </div>
 
-<!-- ───────── PORTFOLIO ───────── -->
-<div id="view-portfolio" class="view">
-  <div class="page-header">
-    <div class="page-tag">Portfolio</div>
-    <h1 class="page-title">Trabalhos</h1>
-  </div>
-
-  <!-- Skeleton (shown briefly on load) -->
-  <div id="portfolio-skeleton" style="display:none">
-    <div class="portfolio-filters" style="pointer-events:none;opacity:.4">
-      <div class="filter-btn active">Todos</div>
-      <div class="filter-btn">Branding</div>
-      <div class="filter-btn">Web</div>
-      <div class="filter-btn">Motion</div>
-      <div class="filter-btn">Interativo</div>
-    </div>
-    <div class="portfolio-skel-grid">
-      <div class="skel-card" style="grid-column:span 2">
-        <div class="skel-img skel" style="aspect-ratio:21/8"></div>
-        <div class="skel-body">
-          <div class="skel-line skel xs"></div>
-          <div class="skel-line skel"></div>
-          <div class="skel-line skel sm"></div>
-        </div>
-      </div>
-      <div class="skel-card">
-        <div class="skel-img skel"></div>
-        <div class="skel-body">
-          <div class="skel-line skel xs"></div>
-          <div class="skel-line skel"></div>
-          <div class="skel-line skel sm"></div>
-        </div>
-      </div>
-      <div class="skel-card">
-        <div class="skel-img skel"></div>
-        <div class="skel-body">
-          <div class="skel-line skel xs"></div>
-          <div class="skel-line skel"></div>
-          <div class="skel-line skel sm"></div>
-        </div>
-      </div>
-    </div>
-    <div class="ann-note" style="margin:16px 24px">Skeleton screen: exibido por ~600ms simulando carregamento do Firebase. Substitui flash de conteudo vazio.</div>
-  </div>
-
-  <!-- Real content -->
-  <div id="portfolio-content" style="display:none">
-    <div class="portfolio-filters" id="portfolio-filters">
-      <button class="filter-btn active" onclick="filterPortfolio('all',this)">Todos</button>
-      <button class="filter-btn" onclick="filterPortfolio('branding',this)">Branding</button>
-      <button class="filter-btn" onclick="filterPortfolio('web',this)">Web</button>
-      <button class="filter-btn" onclick="filterPortfolio('motion',this)">Motion</button>
-      <button class="filter-btn" onclick="filterPortfolio('interativo',this)">Interativo</button>
-    </div>
-    <div id="portfolio-empty" class="portfolio-empty">
-      <div class="portfolio-empty-glyph">[ ]</div>
-      <div class="portfolio-empty-title">Nenhum projeto nesta categoria</div>
-      <div class="portfolio-empty-sub">Ainda nao publicamos projetos de <span id="empty-cat-name"></span> por aqui.</div>
-      <button class="portfolio-empty-action" onclick="filterPortfolio('all',document.querySelector('.filter-btn'))">
-        Ver todos os projetos →
-      </button>
-    </div>
-    <div class="portfolio-grid" id="portfolio-grid">
-      <!-- cards injected by JS -->
-    </div>
-    <div class="ann-note" style="margin:16px 24px">Empty state: aparece quando filtro nao retorna resultados. Estado intencional com CTA para resetar o filtro.</div>
-  </div>
+<!-- ═══ C: INDEX ═══ -->
+<div id="style-c" style="padding-top:92px">
+  <div class="idx-header"><h1 class="idx-title">Trabalhos</h1><p class="idx-sub">06 projetos · 2024–2025</p></div>
+  <div class="idx-list" id="idx-list"></div>
 </div>
 
-<!-- ───────── CASE ───────── -->
-<div id="view-case" class="view">
-  <div class="case-header" id="case-header">
-    <div class="case-position mono dim" id="case-position">01 / 06</div>
-    <div class="case-meta-row" id="case-meta-row"></div>
-    <h1 class="case-title" id="case-title">—</h1>
-    <p class="case-summary" id="case-summary">—</p>
+<!-- ═══ D: FILMSTRIP ═══ -->
+<div id="style-d" style="padding-top:92px;height:100vh;overflow:hidden">
+  <div class="film-track" id="film-track"></div>
+  <div class="film-nav">
+    <button class="film-nav-btn" onclick="filmNav(-1)">←</button>
+    <button class="film-nav-btn" onclick="filmNav(1)">→</button>
   </div>
-  <div style="width:100%;aspect-ratio:21/8;border-top:1px solid var(--wire);border-bottom:1px solid var(--wire)">
-    <div class="wire-ph" id="case-cover" style="height:100%">Capa do case</div>
-  </div>
-
-  <!-- Block-based content area -->
-  <div class="case-blocks" id="case-blocks">
-    <!-- blocks injected per-case by JS -->
-  </div>
-
-  <div class="ann-note" style="max-width:1100px;margin:0 auto 32px;padding:0 24px">
-    Conteudo em blocos modulares: cada case tem seu proprio ritmo. Tipos disponiveis: texto, imagem-full, imagem-split, video, galeria, citacao, metricas, creditos.
-  </div>
-
-  <div class="case-nav-footer">
-    <div class="case-nav-prev" onclick="navigateCases(-1)">
-      <div class="case-nav-dir">← Anterior</div>
-      <div class="case-nav-name" id="case-prev-name">—</div>
-    </div>
-    <div class="case-nav-next" onclick="navigateCases(1)">
-      <div class="case-nav-dir">Proximo →</div>
-      <div class="case-nav-name" id="case-next-name">—</div>
-    </div>
-  </div>
+  <div class="film-counter"><span id="film-cur">01</span> / 06</div>
 </div>
 
-<!-- ───────── VESTÍGIO ───────── -->
-<div id="view-vestigio" class="view">
-  <div class="vestigio-scene">
-    <div class="vestigio-3d">
-      <div class="vestigio-ring"></div>
-      <div class="vestigio-ring"></div>
-      <div class="vestigio-ring"></div>
-      <div class="vestigio-core"></div>
+<!-- ═══ E: DERIVA ═══ -->
+<div id="style-e">
+  <div class="e-scanline"></div>
+  <div id="drift-field">
+    <div id="drift-layer"></div>
+  </div>
+  <div class="e-crosshair" id="crosshair"></div>
+  <!-- coordenadas decorativas -->
+  <div class="drift-coord" style="top:24px;left:32px" id="coord-tl">N 23°31'</div>
+  <div class="drift-coord" style="top:24px;right:32px" id="coord-tr">W 46°38'</div>
+  <div class="drift-coord" style="bottom:80px;left:32px" id="coord-bl">OJO STUDIO · DERIVA</div>
+  <!-- painel info -->
+  <div id="e-info">
+    <div id="e-info-left">
+      <div id="e-info-tag">Projeto</div>
+      <div id="e-info-title">—</div>
+      <div id="e-info-client"></div>
     </div>
-    <div class="ann-note" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);white-space:nowrap">
-      3D gerado por C4D (Fred) com base em parametros da sessao do usuario. Placeholder animado CSS.
+    <div id="e-info-right">
+      <div id="e-info-year">2024</div>
+      <div id="e-info-scope"></div>
     </div>
   </div>
-  <div class="vestigio-info">
-    <div class="vestigio-eyebrow">Seu Vestígio</div>
-    <h2 class="vestigio-title">Uma forma gerada pela sua presenca.</h2>
-    <p class="vestigio-desc">Esta forma tridimensional foi gerada em tempo real a partir dos movimentos, pausas e escolhas que voce fez durante a jornada. E unica. E sua.</p>
-    <div class="vestigio-meta">
-      <div class="vestigio-meta-item">
-        <div class="vestigio-meta-label">Sessao</div>
-        <div class="vestigio-meta-value" id="vestigio-id">VTG-0000</div>
-      </div>
-      <div class="vestigio-meta-item">
-        <div class="vestigio-meta-label">Duracao</div>
-        <div class="vestigio-meta-value" id="vestigio-dur">—</div>
-      </div>
-      <div class="vestigio-meta-item">
-        <div class="vestigio-meta-label">Interacoes</div>
-        <div class="vestigio-meta-value" id="vestigio-int">—</div>
-      </div>
-    </div>
-    <div class="vestigio-actions">
-      <button class="btn btn-primary" onclick="showToast('Download iniciado','','ok')">Baixar Vestígio</button>
-      <button class="btn btn-ghost" onclick="navigate('portfolio')">Ver portfolio</button>
-      <button class="btn btn-ghost" onclick="navigate('contato')">Entrar em contato</button>
-    </div>
+  <!-- hint inicial -->
+  <div id="e-hint">
+    <p>mova o cursor para explorar</p>
+    <div class="e-pulse"></div>
   </div>
-</div>
-
-<!-- ───────── CONTATO ───────── -->
-<div id="view-contato" class="view">
-  <div class="contato-layout">
-    <div class="contato-info">
-      <h1 class="contato-title">Vamos trabalhar juntos?</h1>
-      <p class="contato-text">Conte sobre seu projeto. Se preferir, pode ligar ou mandar um email direto.</p>
-      <div class="contato-detail">
-        <div class="contato-detail-item">
-          <span class="contato-detail-label">Email</span>
-          <span class="contato-detail-value">oi@ojostudio.com.br</span>
-        </div>
-        <div class="contato-detail-item">
-          <span class="contato-detail-label">WhatsApp</span>
-          <span class="contato-detail-value">+55 11 9 0000-0000</span>
-        </div>
-        <div class="contato-detail-item">
-          <span class="contato-detail-label">Instagram</span>
-          <span class="contato-detail-value">@ojostudio</span>
-        </div>
-        <div class="contato-detail-item">
-          <span class="contato-detail-label">Localizacao</span>
-          <span class="contato-detail-value">Sao Paulo, Brasil</span>
-        </div>
-      </div>
-    </div>
-    <div class="contato-form-wrap">
-      <p class="form-title">Formulario de contato</p>
-      <!-- Default form -->
-      <form id="form-contato" onsubmit="submitForm(event)" novalidate>
-        <div class="form-field" id="field-nome">
-          <label class="form-label">
-            <span>Nome</span>
-            <span class="field-dot" id="dot-nome"></span>
-          </label>
-          <input type="text" id="input-nome" placeholder="Seu nome" oninput="onFieldInput('nome')">
-          <div class="field-error-msg">Por favor, informe seu nome.</div>
-        </div>
-        <div class="form-field" id="field-email">
-          <label class="form-label">
-            <span>Email</span>
-            <span class="field-dot" id="dot-email"></span>
-          </label>
-          <input type="email" id="input-email" placeholder="seu@email.com" oninput="onFieldInput('email')">
-          <div class="field-error-msg">Email invalido ou em branco.</div>
-        </div>
-        <div class="form-field" id="field-tipo">
-          <label class="form-label">
-            <span>Tipo de projeto</span>
-            <span class="field-dot" id="dot-tipo"></span>
-          </label>
-          <select id="input-tipo" onchange="onFieldInput('tipo')" class="adm-select" style="background:transparent;border:none;border-bottom:1px solid var(--wire);border-radius:0;padding:10px 0">
-            <option value="">Selecione</option>
-            <option>Identidade Visual</option>
-            <option>Design Digital</option>
-            <option>Motion Design</option>
-            <option>Editorial</option>
-            <option>Outro</option>
-          </select>
-          <div class="field-error-msg">Selecione o tipo de projeto.</div>
-        </div>
-        <div class="form-field" id="field-msg">
-          <label class="form-label">
-            <span>Mensagem</span>
-            <span class="field-dot" id="dot-msg"></span>
-          </label>
-          <textarea id="input-msg" placeholder="Conte sobre seu projeto..." oninput="onFieldInput('msg')"></textarea>
-          <div class="field-error-msg">Por favor, escreva uma mensagem.</div>
-        </div>
-        <div class="form-footer">
-          <div class="form-dots" id="form-dots">
-            <div class="form-dot-indicator" id="prog-nome"></div>
-            <div class="form-dot-indicator" id="prog-email"></div>
-            <div class="form-dot-indicator" id="prog-tipo"></div>
-            <div class="form-dot-indicator" id="prog-msg"></div>
-          </div>
-          <button type="submit" class="btn btn-primary btn-sm">Enviar mensagem</button>
-        </div>
-      </form>
-      <!-- Success state -->
-      <div class="form-state" id="form-success">
-        <div class="form-state-icon">✓</div>
-        <div class="form-state-title">Mensagem enviada</div>
-        <div class="form-state-desc">Recebemos seu contato e vamos responder em ate 1 dia util.</div>
-        <button class="btn btn-ghost btn-sm" onclick="resetForm()">Enviar outra mensagem</button>
-      </div>
-      <!-- Error state -->
-      <div class="form-state error" id="form-error">
-        <div class="form-state-icon">!</div>
-        <div class="form-state-title">Falha no envio</div>
-        <div class="form-state-desc">Ocorreu um erro no servidor. Tente novamente ou mande direto para oi@ojostudio.com.br</div>
-        <button class="btn btn-ghost btn-sm" onclick="resetFormError()">Tentar novamente</button>
-      </div>
-      <!-- Timeout state -->
-      <div class="form-state timeout" id="form-timeout">
-        <div class="form-state-icon">⏱</div>
-        <div class="form-state-title">Tempo esgotado</div>
-        <div class="form-state-desc">A conexao demorou demais. Verifique sua internet e tente novamente.</div>
-        <button class="btn btn-ghost btn-sm" onclick="resetFormError()">Tentar novamente</button>
-      </div>
-      <div class="ann-note" style="margin-top:24px">
-        Estados do formulario: padrao (validacao em tempo real por campo), sucesso, erro de servidor, timeout. Cada campo tem mensagem de erro especifica.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ───────── ADM ───────── -->
-<div id="view-adm" class="view">
-  <div class="adm-layout">
-    <aside class="adm-sidebar">
-      <div class="adm-sidebar-section">Visao geral</div>
-      <a class="adm-nav-item active" href="#" onclick="admPanel('overview',this)">
-        <span class="adm-nav-glyph">#</span> Dashboard
-      </a>
-      <a class="adm-nav-item" href="#" onclick="admPanel('analytics',this)">
-        <span class="adm-nav-glyph">~</span> Analytics
-        <span class="adm-badge">AO VIVO</span>
-      </a>
-      <div class="adm-sidebar-section">Conteudo</div>
-      <a class="adm-nav-item" href="#" onclick="admPanel('cases',this)">
-        <span class="adm-nav-glyph">■</span> Cases
-        <span class="adm-badge">6</span>
-      </a>
-      <a class="adm-nav-item" href="#" onclick="admPanel('novo',this)">
-        <span class="adm-nav-glyph">+</span> Novo case
-      </a>
-      <a class="adm-nav-item" href="#" onclick="admPanel('paginas',this)">
-        <span class="adm-nav-glyph">□</span> Paginas
-      </a>
-      <div class="adm-sidebar-section">Configuracao</div>
-      <a class="adm-nav-item" href="#" onclick="admPanel('usuarios',this)">
-        <span class="adm-nav-glyph">◎</span> Usuarios
-        <span class="adm-badge">2</span>
-      </a>
-      <a class="adm-nav-item" href="#" onclick="admPanel('config',this)">
-        <span class="adm-nav-glyph">⊙</span> Configuracoes
-      </a>
-    </aside>
-    <div class="adm-content">
-
-      <!-- Overview -->
-      <div class="adm-panel active" id="panel-overview">
-        <div class="adm-panel-title">Dashboard</div>
-        <div class="adm-stats">
-          <div class="stat-card">
-            <div class="stat-value">6</div>
-            <div class="stat-label">Cases publicados</div>
-            <div class="stat-change">+1 este mes</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">1.2k</div>
-            <div class="stat-label">Visitas / 30d</div>
-            <div class="stat-change up">+18%</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">34</div>
-            <div class="stat-label">Contatos recebidos</div>
-            <div class="stat-change up">+5</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">3</div>
-            <div class="stat-label">Jornadas concluidas</div>
-            <div class="stat-change down">-2</div>
-          </div>
-        </div>
-        <div class="ann-note">Blueprint v1 §7: eventos minimos de analytics — entrada na jornada, rota institucional, conclusao, download, envio de contato.</div>
-        <p style="font-size:13px;color:var(--fg-muted);margin-bottom:16px">Ultimas atividades</p>
-        <table class="adm-table">
-          <thead><tr><th>Evento</th><th>Fonte</th><th>Quando</th></tr></thead>
-          <tbody>
-            <tr><td>Contato recebido</td><td>Formulario</td><td class="dim">ha 2h</td></tr>
-            <tr><td>Jornada concluida</td><td>Vestígio</td><td class="dim">ha 5h</td></tr>
-            <tr><td>Case visualizado</td><td>Schott Pharma</td><td class="dim">ha 8h</td></tr>
-            <tr><td>Rota institucional</td><td>Gate</td><td class="dim">ha 1d</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Analytics -->
-      <div class="adm-panel" id="panel-analytics">
-        <div class="adm-panel-title">Analytics</div>
-        <div class="analytics-chart">
-          <div class="chart-bars" id="chart-bars"></div>
-        </div>
-        <div class="analytics-events">
-          <div class="event-stat">
-            <div class="event-stat-name">entrada_jornada</div>
-            <div class="event-stat-value">48</div>
-            <div class="event-stat-sub">ultimos 30 dias</div>
-          </div>
-          <div class="event-stat">
-            <div class="event-stat-name">rota_institucional</div>
-            <div class="event-stat-value">71</div>
-            <div class="event-stat-sub">ultimos 30 dias</div>
-          </div>
-          <div class="event-stat">
-            <div class="event-stat-name">conclusao_jornada</div>
-            <div class="event-stat-value">3</div>
-            <div class="event-stat-sub">taxa 6.25%</div>
-          </div>
-          <div class="event-stat">
-            <div class="event-stat-name">envio_contato</div>
-            <div class="event-stat-value">34</div>
-            <div class="event-stat-sub">taxa 28.6%</div>
-          </div>
-          <div class="event-stat">
-            <div class="event-stat-name">download_vestigio</div>
-            <div class="event-stat-value">2</div>
-            <div class="event-stat-sub">ultimos 30 dias</div>
-          </div>
-          <div class="event-stat">
-            <div class="event-stat-name">visualizacao_case</div>
-            <div class="event-stat-value">312</div>
-            <div class="event-stat-sub">ultimos 30 dias</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Cases -->
-      <div class="adm-panel" id="panel-cases">
-        <div class="adm-actions-row">
-          <div class="adm-panel-title" style="margin-bottom:0">Cases</div>
-          <div style="display:flex;gap:8px">
-            <input class="adm-search" placeholder="Buscar case...">
-            <button class="btn btn-primary btn-sm" onclick="admPanel('novo',document.querySelector('.adm-nav-item:nth-child(5)'))">+ Novo</button>
-          </div>
-        </div>
-        <div style="height:20px"></div>
-        <table class="adm-table">
-          <thead><tr><th>Titulo</th><th>Cliente</th><th>Categoria</th><th>Ano</th><th>Status</th><th>Acoes</th></tr></thead>
-          <tbody id="cases-table-body"></tbody>
-        </table>
-      </div>
-
-      <!-- Novo case -->
-      <div class="adm-panel" id="panel-novo">
-        <div class="adm-panel-title">Novo case</div>
-        <div class="adm-lang-tabs">
-          <button class="adm-lang-tab active">PT</button>
-          <button class="adm-lang-tab">EN</button>
-        </div>
-        <div class="bilingual-editor" style="margin-bottom:32px">
-          <div class="bilingual-pane">
-            <div class="bilingual-pane-lang">Portugues</div>
-            <div class="adm-form-section">
-              <label class="adm-form-label">Titulo</label>
-              <input class="adm-input" placeholder="Titulo do projeto">
-            </div>
-            <div class="adm-form-section">
-              <label class="adm-form-label">Resumo</label>
-              <textarea class="adm-input adm-textarea" placeholder="Uma frase que descreve o projeto"></textarea>
-            </div>
-            <div class="adm-form-section">
-              <label class="adm-form-label">Conceito</label>
-              <textarea class="adm-input adm-textarea" placeholder="O conceito criativo por tras do projeto"></textarea>
-            </div>
-          </div>
-          <div class="bilingual-pane">
-            <div class="bilingual-pane-lang">English</div>
-            <div class="adm-form-section">
-              <label class="adm-form-label">Title</label>
-              <input class="adm-input" placeholder="Project title">
-            </div>
-            <div class="adm-form-section">
-              <label class="adm-form-label">Summary</label>
-              <textarea class="adm-input adm-textarea" placeholder="One sentence describing the project"></textarea>
-            </div>
-            <div class="adm-form-section">
-              <label class="adm-form-label">Concept</label>
-              <textarea class="adm-input adm-textarea" placeholder="The creative concept behind the project"></textarea>
-            </div>
-          </div>
-        </div>
-        <div class="adm-row" style="margin-bottom:24px">
-          <div class="adm-form-section">
-            <label class="adm-form-label">Cliente</label>
-            <input class="adm-input" placeholder="Nome do cliente">
-          </div>
-          <div class="adm-form-section">
-            <label class="adm-form-label">Ano</label>
-            <input class="adm-input" placeholder="2025" type="number">
-          </div>
-          <div class="adm-form-section">
-            <label class="adm-form-label">Categorias</label>
-            <input class="adm-input" placeholder="Branding, Web...">
-          </div>
-          <div class="adm-form-section">
-            <label class="adm-form-label">Ordem</label>
-            <input class="adm-input" type="number" placeholder="1">
-          </div>
-        </div>
-        <div class="adm-form-section" style="margin-bottom:24px">
-          <label class="adm-form-label">Capa</label>
-          <div class="wire-ph" style="height:120px;border-radius:3px">Arraste a imagem de capa ou clique para selecionar</div>
-        </div>
-        <div class="adm-form-section" style="margin-bottom:8px">
-          <label class="adm-form-label">Blocos de conteudo</label>
-          <div class="adm-block-list" id="adm-block-list">
-            <div class="adm-block-item">
-              <span class="adm-block-drag">⠿</span>
-              <span class="adm-block-type">texto</span>
-              <span class="adm-block-preview">Contexto e descricao do projeto...</span>
-              <div class="adm-block-actions">
-                <button class="adm-icon-btn">editar</button>
-                <button class="adm-icon-btn">×</button>
-              </div>
-            </div>
-            <div class="adm-block-item">
-              <span class="adm-block-drag">⠿</span>
-              <span class="adm-block-type">img-full</span>
-              <span class="adm-block-preview">Imagem principal — sem arquivo</span>
-              <div class="adm-block-actions">
-                <button class="adm-icon-btn">editar</button>
-                <button class="adm-icon-btn">×</button>
-              </div>
-            </div>
-          </div>
-          <div class="adm-add-block">+ adicionar bloco</div>
-        </div>
-        <div class="ann-note">Blocos: texto, img-full, img-split, video, galeria, citacao, metricas, creditos. Drag para reordenar.</div>
-        <div style="display:flex;gap:12px;margin-top:24px">
-          <button class="btn btn-primary" onclick="showToast('Case salvo como rascunho','','ok')">Salvar rascunho</button>
-          <button class="btn btn-ghost" onclick="showToast('Publicar requer revisao','','warn')">Publicar</button>
-        </div>
-      </div>
-
-      <!-- Paginas -->
-      <div class="adm-panel" id="panel-paginas">
-        <div class="adm-panel-title">Paginas</div>
-        <table class="adm-table">
-          <thead><tr><th>Pagina</th><th>Status</th><th>Ultima edicao</th></tr></thead>
-          <tbody>
-            <tr><td>Home</td><td><span class="adm-status pub">publicada</span></td><td class="dim">ha 3d</td></tr>
-            <tr><td>Sobre</td><td><span class="adm-status pub">publicada</span></td><td class="dim">ha 7d</td></tr>
-            <tr><td>Contato</td><td><span class="adm-status pub">publicada</span></td><td class="dim">ha 15d</td></tr>
-            <tr><td>Vestígio (jornada)</td><td><span class="adm-status draft">rascunho</span></td><td class="dim">ha 1d</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Usuarios -->
-      <div class="adm-panel" id="panel-usuarios">
-        <div class="adm-panel-title">Usuarios</div>
-        <table class="adm-table">
-          <thead><tr><th>Nome</th><th>Email</th><th>Nivel</th><th>Ultimo acesso</th></tr></thead>
-          <tbody>
-            <tr><td>Pedro</td><td class="dim">pedro@ojostudio.com.br</td><td><span class="adm-status pub">admin</span></td><td class="dim">agora</td></tr>
-            <tr><td>Fred</td><td class="dim">fred@ojostudio.com.br</td><td><span class="adm-status draft">editor</span></td><td class="dim">ha 2d</td></tr>
-          </tbody>
-        </table>
-        <div style="margin-top:20px">
-          <button class="btn btn-ghost btn-sm" onclick="showToast('Convite enviado por email','','ok')">+ Convidar usuario</button>
-        </div>
-      </div>
-
-      <!-- Config -->
-      <div class="adm-panel" id="panel-config">
-        <div class="adm-panel-title">Configuracoes</div>
-        <div class="adm-form-section" style="max-width:480px">
-          <label class="adm-form-label">Nome do estudio</label>
-          <input class="adm-input" value="OJO Studio">
-        </div>
-        <div class="adm-form-section" style="max-width:480px">
-          <label class="adm-form-label">Email de contato</label>
-          <input class="adm-input" value="oi@ojostudio.com.br">
-        </div>
-        <div class="adm-form-section" style="max-width:480px">
-          <label class="adm-form-label">Slug / URL</label>
-          <input class="adm-input" value="ojostudio.com.br">
-        </div>
-        <div class="adm-form-section" style="max-width:480px">
-          <label class="adm-form-label">Firebase Project ID</label>
-          <input class="adm-input" placeholder="ojo-studio-prod">
-        </div>
-        <div style="display:flex;gap:12px;margin-top:8px">
-          <button class="btn btn-primary btn-sm" onclick="showToast('Configuracoes salvas','','ok')">Salvar</button>
-        </div>
-        <div class="ann-note" style="margin-top:24px">
-          Configuracoes gerais do site. Firebase config e armazenado em variavel de ambiente (GitHub Actions), nao exposta aqui.
-        </div>
-      </div>
-
-    </div><!-- /adm-content -->
-  </div><!-- /adm-layout -->
 </div>
 
 <script>
-// ── DATA ──
-const caseKeys = ['schott','plane','charlie','medcontrol','motion1','interativo1'];
-const cases = {
-  schott:{
-    client:'SCHOTT Pharma',cat:'Branding · Editorial · Motion',year:'2024',
-    scope:'Identidade visual, editorial, motion',
-    title:'Pharmaversity',
-    desc:'Plataforma de educacao corporativa com identidade visual propria, editorial para publicacoes internas e motion para videos institucionais.',
-    concept:'A linguagem visual parte da precisao cientifica da SCHOTT — geometrias rigidas, tipografia tecnica e uma paleta que equilibra seriedade e acessibilidade.',
-    result:'+40% de engajamento nas trilhas de aprendizado apos o lancamento',
-    blocks:[
-      {type:'text',h:'Contexto',p:'SCHOTT Pharma precisava de uma marca interna para sua plataforma de treinamento global. O desafio era criar uma identidade que se sentisse parte do ecossistema SCHOTT, mas com autonomia visual suficiente para existir como produto proprio.'},
-      {type:'image-full',label:'Identidade visual — painel de aplicacoes'},
-      {type:'quote',text:'"A precisao que a SCHOTT aplica ao vidro, aplicamos ao design."'},
-      {type:'image-split',labelA:'Tipografia e paleta',labelB:'Iconografia tecnica'},
-      {type:'metric',items:[{v:'+40%',l:'Engajamento'},{v:'12',l:'Modulos criados'},{v:'3',l:'Idiomas'}]},
-      {type:'text',h:'Editorial',p:'Desenvolvemos templates para materiais impressos e digitais, incluindo apostilas, apresentacoes e newsletters. O sistema usa uma grade modular que funciona tanto em A4 quanto em telas 16:9.'},
-      {type:'gallery',count:4,label:'Aplicacoes editoriais'},
-      {type:'credits',items:[{r:'Direcao criativa',n:'Pedro'},{r:'Motion',n:'Fred'},{r:'Cliente',n:'SCHOTT Pharma'}]}
-    ]
-  },
-  plane:{
-    client:'Plane Aviation Group',cat:'Web · Identidade',year:'2024',
-    scope:'Identidade visual, website',
-    title:'Plane Aviation Group',
-    desc:'Website institucional e identidade visual para grupo de aviacao executiva.',
-    concept:'Design que transmite altitude — espacos generosos, tipografia refinada e fotografia aerea como elemento central.',
-    result:'Novo site lancado com aumento de 60% no tempo de sessao',
-    blocks:[
-      {type:'text',h:'Briefing',p:'O Plane Aviation Group precisava de um website que estivesse a altura das aeronaves que representa. A comunicacao anterior era generica e nao diferenciava a empresa no segmento premium.'},
-      {type:'image-full',label:'Homepage — hero section'},
-      {type:'image-split',labelA:'Identidade visual',labelB:'Sistema tipografico'},
-      {type:'metric',items:[{v:'+60%',l:'Tempo de sessao'},{v:'4.8s',l:'Tempo de carregamento'},{v:'2024',l:'Lancamento'}]},
-      {type:'credits',items:[{r:'Direcao criativa',n:'Pedro'},{r:'Desenvolvimento',n:'OJO Studio'},{r:'Cliente',n:'Plane Aviation Group'}]}
-    ]
-  },
-  charlie:{
-    client:'Charlie Zero Aviation',cat:'Web',year:'2024',
-    scope:'Website',title:'Charlie Zero Aviation',
-    desc:'Website para operadora de aviacao executiva focada em experiencia e sofisticacao.',
-    concept:'Ausencia de excesso: cada elemento na pagina existe por uma razao.',
-    result:'Conversao de leads aumentou 2x apos lancamento',
-    blocks:[
-      {type:'text',h:'O projeto',p:'Charlie Zero queria um site diferente dos concorrentes no segmento de charter. Menos informacao, mais impacto visual.'},
-      {type:'image-full',label:'Website — visao geral'},
-      {type:'metric',items:[{v:'2x',l:'Conversao de leads'},{v:'98',l:'Score Lighthouse'},{v:'100%',l:'Mobile first'}]},
-      {type:'credits',items:[{r:'Design e dev',n:'OJO Studio'},{r:'Cliente',n:'Charlie Zero'}]}
-    ]
-  },
-  medcontrol:{
-    client:'MedControl',cat:'Branding · Web',year:'2025',
-    scope:'Identidade visual, website, produto digital',
-    title:'MedControl',
-    desc:'Plataforma de gestao hospitalar com nova identidade visual e produto redesenhado.',
-    concept:'Clareza como valor — em saude, a informacao precisa ser imediata e sem ambiguidade.',
-    result:'Reducao de 30% no tempo de treinamento de novos usuarios',
-    blocks:[
-      {type:'text',h:'O desafio',p:'MedControl e um software de gestao para clinicas e hospitais. A interface antiga era confusa e a marca nao transmitia a seriedade do produto.'},
-      {type:'image-full',label:'Sistema de design — componentes'},
-      {type:'image-split',labelA:'Antes',labelB:'Depois'},
-      {type:'metric',items:[{v:'-30%',l:'Tempo de treinamento'},{v:'4.6/5',l:'NPS usuario'},{v:'2025',l:'Lancamento'}]},
-      {type:'credits',items:[{r:'Design de produto',n:'Pedro'},{r:'UX Research',n:'OJO Studio'},{r:'Cliente',n:'MedControl'}]}
-    ]
-  },
-  motion1:{
-    client:'[Cliente]',cat:'Motion',year:'2024',
-    scope:'Motion design, animacao',
-    title:'Projeto Motion',
-    desc:'Animacao e motion design para campanha de lancamento.',
-    concept:'Movimento como narrativa.',result:'—',
-    blocks:[
-      {type:'text',h:'Conceito',p:'Placeholder — case de motion em finalizacao.'},
-      {type:'video',label:'Animacao principal'},
-      {type:'credits',items:[{r:'Motion',n:'Fred'},{r:'Direcao criativa',n:'Pedro'}]}
-    ]
-  },
-  interativo1:{
-    client:'[Cliente]',cat:'Interativo',year:'2024',
-    scope:'Experiencia interativa',
-    title:'Projeto Interativo',
-    desc:'Instalacao interativa e experiencia digital.',
-    concept:'Tecnologia a servico da percepcao.',result:'—',
-    blocks:[
-      {type:'text',h:'Conceito',p:'Placeholder — case interativo em finalizacao.'},
-      {type:'image-full',label:'Instalacao — visao geral'},
-      {type:'credits',items:[{r:'Design',n:'OJO Studio'},{r:'Tecnologia',n:'[Parceiro]'}]}
-    ]
-  }
-};
+/* ── DATA ── */
+const cases = [
+  {title:'Pharmaversity',client:'SCHOTT Pharma',year:'2024',cat:'Branding · Editorial · Motion',scope:'Identidade visual\nEditorial\nMotion design',review:'"Precisão aplicada ao design."',bg:'bg-1'},
+  {title:'Plane Aviation Group',client:'PAG',year:'2024',cat:'Web · Identidade',scope:'Identidade visual\nWebsite',review:'"Design que transmite altitude."',bg:'bg-2'},
+  {title:'Charlie Zero Aviation',client:'Charlie Zero',year:'2024',cat:'Web',scope:'Website\nUX/UI',review:'"Menos informação, mais impacto."',bg:'bg-3'},
+  {title:'MedControl',client:'MedControl',year:'2025',cat:'Branding · Web',scope:'Identidade visual\nWebsite\nProduto digital',review:'"Clareza como valor de design."',bg:'bg-4'},
+  {title:'Projeto Motion',client:'[Cliente]',year:'2024',cat:'Motion Design',scope:'Animação\nMotion graphics',review:'"Movimento como narrativa."',bg:'bg-5'},
+  {title:'Projeto Interativo',client:'[Cliente]',year:'2024',cat:'Interativo',scope:'Instalação\nExperiência digital',review:'"Tecnologia a serviço da percepção."',bg:'bg-6'},
+];
 
-let currentCaseKey = null;
-let currentView = 'home';
-let sessionStart = Date.now();
-let interactionCount = 0;
-
-// ── CURSOR ──
-const cur = document.getElementById('cursor');
-document.addEventListener('mousemove', e => {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top  = e.clientY + 'px';
-  interactionCount++;
+/* ── CURSOR ── */
+const cur = document.getElementById('cur');
+let mx=0,my=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+  if(document.getElementById('style-e').classList.contains('active')) onMouseDeriva(e);
 });
-document.querySelectorAll('a,button,[onclick]').forEach(el => {
-  el.addEventListener('mouseenter', () => cur.classList.add('hover'));
-  el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
-});
+function setCursorHover(on){cur.classList.toggle('big',on)}
 
-// ── NAV HIDE ON SCROLL ──
-let lastY = 0;
-window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  const nav = document.getElementById('nav');
-  if (y > lastY && y > 80) nav.classList.add('hidden');
-  else nav.classList.remove('hidden');
-  lastY = y;
-  // progress bar
-  const bar = document.getElementById('progress-bar');
-  if (currentView === 'case') {
-    const doc = document.documentElement;
-    const pct = (doc.scrollTop / (doc.scrollHeight - doc.clientHeight)) * 100;
-    bar.style.width = pct + '%';
-  }
-}, {passive:true});
-
-// ── ANNOTATIONS ──
-function toggleAnnotations() {
-  document.body.classList.toggle('annotations');
-}
-
-// ── TOAST ──
-function showToast(msg, sub, type) {
-  const sys = document.getElementById('toast-system');
-  const t = document.createElement('div');
-  t.className = 'toast ' + (type || '');
-  t.innerHTML = `<span class="toast-dot"></span>${msg}${sub ? '<br><span style="font-size:10px;opacity:.6">'+sub+'</span>' : ''}<button class="toast-dismiss" onclick="this.parentElement.remove()">×</button>`;
-  sys.appendChild(t);
-  requestAnimationFrame(() => { requestAnimationFrame(() => t.classList.add('show')); });
-  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 4000);
-}
-
-// ── OFFLINE DETECTION ──
-function updateOnlineStatus() {
-  const banner = document.getElementById('offline-banner');
-  if (!navigator.onLine) {
-    banner.classList.add('show');
-    showToast('Sem conexao com a internet', 'Alguns recursos podem nao estar disponiveis', 'warn');
-  } else {
-    banner.classList.remove('show');
-  }
-}
-window.addEventListener('online', () => { updateOnlineStatus(); showToast('Conexao restaurada','',''); });
-window.addEventListener('offline', updateOnlineStatus);
-updateOnlineStatus();
-
-// ── NAVIGATE ──
-function navigate(view, key) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-  document.getElementById('progress-bar').style.width = '0%';
+/* ── SWITCHER ── */
+function showStyle(s,btn){
+  ['a','b','c','d','e'].forEach(x=>{
+    const el=document.getElementById('style-'+x);
+    el.classList.remove('active');
+    el.style.display='none';
+  });
+  document.querySelectorAll('.sw-btn').forEach(b=>b.classList.remove('active'));
   window.scrollTo(0,0);
-  currentView = view;
-
-  const el = document.getElementById('view-' + (view === 'vestigio' ? 'vestigio' : view));
-  if (el) el.classList.add('active');
-
-  const navMap = {home:0,sobre:1,portfolio:2,contato:3};
-  if (navMap[view] !== undefined) {
-    document.querySelectorAll('.nav-link')[navMap[view]]?.classList.add('active');
-  }
-
-  if (view === 'portfolio') loadPortfolio();
-  if (view === 'case' && key) loadCase(key);
-  if (view === 'vestigio') loadVestigio();
-  if (view === 'adm') generateChartBars();
+  const el=document.getElementById('style-'+s);
+  el.style.display='block';
+  el.classList.add('active');
+  btn&&btn.classList.add('active');
+  const labels={a:'A — Card Scroll',b:'B — Editorial Grid',c:'C — Index / Lista',d:'D — Filmstrip',e:'E — Deriva'};
+  document.getElementById('style-label').textContent=labels[s];
+  const isDark=s==='e';
+  document.getElementById('switcher').classList.toggle('dark',isDark);
+  document.getElementById('style-label').classList.toggle('dark',isDark);
+  document.getElementById('nav-logo').style.color=isDark?'#fff':'';
+  cur.classList.toggle('cosmos',isDark);
+  document.body.style.overflow=s==='e'?'hidden':'';
+  if(s==='a') initScrollA();
+  if(s==='c') initIndex();
+  if(s==='d') initFilm();
+  if(s==='e') initDeriva();
 }
 
-// ── ENTRY GATE ──
-function startJornada() {
-  document.getElementById('entry-gate').classList.add('hidden');
-  navigate('vestigio');
+/* ════════════════════
+   A — CARD SCROLL
+══════════════════════ */
+let scrollAInit=false;
+function initScrollA(){
+  if(scrollAInit)return;scrollAInit=true;
+  const container=document.getElementById('cards-container');
+  const CW=520,CH=CW*(4/3);
+  document.getElementById('prog-dots').innerHTML=cases.map((_,i)=>`<div class="prog-dot${i===0?' active':''}"></div>`).join('');
+  cases.forEach((c,i)=>{
+    const card=document.createElement('div');
+    card.className=`cd-card ${c.bg}`;
+    card.id=`card-${i}`;
+    card.innerHTML=`<div class="cd-card-img">${c.title.toUpperCase()}</div><div class="cd-card-overlay"></div><div class="cd-card-info"><div class="cd-card-cat">${c.cat}</div><div class="cd-card-title">${c.title}</div><div class="cd-card-client">${c.client}</div></div>`;
+    card.addEventListener('mouseenter',()=>setCursorHover(true));
+    card.addEventListener('mouseleave',()=>setCursorHover(false));
+    container.appendChild(card);
+  });
+  setCardsA(0);
+  window.addEventListener('scroll',onScrollA,{passive:true});
 }
-function enterEstudio() {
-  document.getElementById('entry-gate').classList.add('hidden');
-  navigate('home');
+function setCardsA(prog){
+  const n=cases.length;
+  const idx=Math.round(Math.min(Math.max(prog,0),n-1));
+  const ep=Math.min(Math.max(prog,0),n-1);
+  const CW=520,CH=CW*(4/3);
+  const cx=-CW/2,cy=-CH/2;
+  document.getElementById('counter-num').textContent=String(idx+1).padStart(2,'0');
+  const c=cases[idx];
+  document.getElementById('review-text').textContent=c.review;
+  document.getElementById('meta-year').textContent=c.year;
+  document.getElementById('meta-scope').innerHTML=c.scope.replace(/\n/g,'<br>');
+  document.getElementById('info-panel').classList.add('show');
+  document.getElementById('meta-side').classList.add('show');
+  document.querySelectorAll('.prog-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  cases.forEach((_,i)=>{
+    const card=document.getElementById(`card-${i}`);
+    if(!card)return;
+    const dist=i-ep,ad=Math.abs(dist);
+    const xOff=dist*600,yOff=0;
+    const rotY=dist*-4,scale=ad===0?1:Math.max(.7,1-ad*.12);
+    const opacity=ad>2.5?0:Math.max(.2,1-ad*.28);
+    card.style.cssText=`width:${CW}px;height:${CH}px;position:absolute;left:50%;top:50%;transform:translate(${cx+xOff}px,${cy+yOff}px) perspective(1600px) rotateY(${rotY}deg) scale(${scale});opacity:${opacity};transition:transform .5s cubic-bezier(.25,.46,.45,.94),opacity .35s;z-index:${10-Math.round(ad)};will-change:transform`;
+  });
 }
-
-// ── PORTFOLIO LOAD WITH SKELETON ──
-let portfolioLoaded = false;
-let currentFilter = 'all';
-function loadPortfolio() {
-  if (portfolioLoaded) return;
-  const skel = document.getElementById('portfolio-skeleton');
-  const content = document.getElementById('portfolio-content');
-  skel.style.display = 'block';
-  content.style.display = 'none';
-  setTimeout(() => {
-    skel.style.display = 'none';
-    content.style.display = 'block';
-    renderPortfolio('all');
-    portfolioLoaded = true;
-  }, 650);
-}
-
-function renderPortfolio(filter) {
-  const grid = document.getElementById('portfolio-grid');
-  const empty = document.getElementById('portfolio-empty');
-  const catName = document.getElementById('empty-cat-name');
-  const keys = filter === 'all'
-    ? caseKeys
-    : caseKeys.filter(k => cases[k].cat.toLowerCase().includes(filter));
-
-  if (keys.length === 0) {
-    grid.style.display = 'none';
-    empty.classList.add('show');
-    catName.textContent = filter;
-    return;
-  }
-  grid.style.display = 'grid';
-  empty.classList.remove('show');
-
-  grid.innerHTML = keys.map((k,i) => {
-    const c = cases[k];
-    const featured = i === 0 && filter === 'all' ? ' featured' : '';
-    return `<div class="port-card${featured}" onclick="navigate('case','${k}')">
-      <div class="port-thumb wire-ph">${c.title}</div>
-      <div class="port-info">
-        <div class="port-card-cat">${c.cat}</div>
-        <div class="port-card-title">${c.title}</div>
-        <div class="port-card-client">${c.client}</div>
-        <div class="port-card-scope">${c.scope}</div>
-      </div>
-    </div>`;
-  }).join('');
+function onScrollA(){
+  if(!document.getElementById('style-a').classList.contains('active'))return;
+  const sH=window.innerHeight-92;
+  setCardsA((window.scrollY-92)/sH);
 }
 
-function filterPortfolio(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderPortfolio(filter);
+/* ════════════════════
+   C — INDEX
+══════════════════════ */
+let idxInit=false;
+function initIndex(){
+  if(idxInit)return;idxInit=true;
+  document.getElementById('idx-list').innerHTML=cases.map((c,i)=>`
+    <div class="idx-item">
+      <span class="idx-num">${String(i+1).padStart(2,'0')}</span>
+      <span class="idx-name">${c.title}</span>
+      <span class="idx-cat">${c.cat}</span>
+      <span class="idx-year">${c.year}</span>
+      <div class="idx-item-hover-img">${c.title}</div>
+    </div>`).join('');
 }
 
-// ── CASE LOAD ──
-function buildBlock(b) {
-  switch(b.type) {
-    case 'text':
-      return `<div class="block block-text"><h2>${b.h||''}</h2><p>${b.p||''}</p></div>`;
-    case 'image-full':
-      return `<div class="block block-image-full"><div class="wire-ph">${b.label||'Imagem'}</div></div>`;
-    case 'image-split':
-      return `<div class="block block-image-split">
-        <div class="wire-ph">${b.labelA||'Imagem A'}</div>
-        <div class="wire-ph">${b.labelB||'Imagem B'}</div>
-      </div>`;
-    case 'video':
-      return `<div class="block block-video"><div class="wire-ph">${b.label||'Video'}</div></div>`;
-    case 'gallery':
-      const cols = (b.count||4);
-      return `<div class="block block-gallery">${Array(cols).fill(`<div class="wire-ph">${b.label||'Imagem'}</div>`).join('')}</div>`;
-    case 'quote':
-      return `<div class="block block-quote">${b.text||''}</div>`;
-    case 'metric':
-      return `<div class="block block-metric">${(b.items||[]).map(m=>`
-        <div class="metric-item">
-          <div class="metric-value">${m.v}</div>
-          <div class="metric-label">${m.l}</div>
-        </div>`).join('')}</div>`;
-    case 'credits':
-      return `<div class="block block-credits">
-        <div class="block-credits-title">Creditos</div>
-        <div class="credits-grid">${(b.items||[]).map(c=>`
-          <div>
-            <div class="credit-role">${c.r}</div>
-            <div class="credit-name">${c.n}</div>
-          </div>`).join('')}
+/* ════════════════════
+   D — FILMSTRIP
+══════════════════════ */
+let filmIdx=0,filmInit=false;
+function initFilm(){
+  if(filmInit)return;filmInit=true;
+  document.getElementById('film-track').innerHTML=cases.map((c,i)=>`
+    <div class="film-slide">
+      <div class="film-slide-visual ${c.bg}"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em">${c.title.toUpperCase()}</span></div>
+      <div class="film-slide-info">
+        <div class="film-slide-num">${String(i+1).padStart(2,'0')} / 06</div>
+        <div>
+          <div class="film-slide-cat">${c.cat}</div>
+          <div class="film-slide-title">${c.title}</div>
+          <div class="film-slide-desc">${c.review.replace(/"/g,'')}</div>
+          <div class="film-slide-btn">Ver projeto →</div>
         </div>
+      </div>
+    </div>`).join('');
+}
+function filmNav(dir){
+  filmIdx=Math.max(0,Math.min(cases.length-1,filmIdx+dir));
+  document.getElementById('film-track').style.transform=`translateX(${-filmIdx*100}vw)`;
+  document.getElementById('film-cur').textContent=String(filmIdx+1).padStart(2,'0');
+}
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('style-d').classList.contains('active')){
+    if(e.key==='ArrowRight')filmNav(1);
+    if(e.key==='ArrowLeft')filmNav(-1);
+  }
+});
+
+/* ════════════════════════════════════
+   E — DERIVA (campo gravitacional)
+   
+   Cada card flutua num campo escuro a
+   uma profundidade diferente (0–1).
+   O mouse cria parallax real: cards mais
+   perto (depth alto) quase não se movem,
+   cards distantes derivam mais.
+   
+   Hover revela info e traz o card a
+   primeiro plano com um halo sutil.
+══════════════════════════════════════ */
+let derivaInit=false;
+let derivaCards=[];
+let derivaRaf=null;
+let targetX=0,targetY=0,currentX=0,currentY=0;
+let hintGone=false;
+
+// posições base (% do viewport, a partir do centro)
+// [xPct, yPct, depth, rotZ]
+const DERIVA_LAYOUT=[
+  [  0,    0,   0.92,  0  ],  // 0 — hero, centro
+  [ 24,  -14,   0.62,  2  ],  // 1 — upper right
+  [-22,   16,   0.50, -1.5],  // 2 — lower left
+  [-14,  -22,   0.36,  3  ],  // 3 — upper left
+  [ 20,   18,   0.55, -2  ],  // 4 — lower right
+  [-30,   -2,   0.26,  1  ],  // 5 — far left
+];
+
+function initDeriva(){
+  if(derivaInit)return;derivaInit=true;
+  const layer=document.getElementById('drift-layer');
+  layer.innerHTML='';
+  derivaCards=[];
+
+  cases.forEach((c,i)=>{
+    const [xPct,yPct,depth,rotZ]=DERIVA_LAYOUT[i];
+    const maxW=420;
+    const w=Math.round(maxW*Math.max(0.3,depth));
+    const h=Math.round(w*(4/3));
+
+    const card=document.createElement('div');
+    card.className=`drift-card ${c.bg}`;
+    card.style.cssText=`
+      width:${w}px;height:${h}px;
+      left:calc(50% + ${xPct}% - ${w/2}px);
+      top:calc(50% + ${yPct}% - ${h/2}px);
+    `;
+    card.innerHTML=`
+      <div class="dc-inner">
+        <div class="dc-label" style="font-size:${Math.max(8,10*depth)}px">${c.title.toUpperCase()}</div>
+      </div>
+      <div class="dc-overlay"></div>
+      <div class="dc-meta">
+        <div class="dc-meta-cat">${c.cat}</div>
+        <div class="dc-meta-title">${c.title}</div>
       </div>`;
-    default: return '';
-  }
-}
 
-function loadCase(key) {
-  currentCaseKey = key;
-  const c = cases[key];
-  if (!c) return;
-  const idx = caseKeys.indexOf(key);
+    // float animation offset
+    const floatDelay=i*0.7;
+    const floatDur=5+i*0.8;
+    card.style.animation=`float ${floatDur}s ${floatDelay}s ease-in-out infinite`;
 
-  document.getElementById('case-title').textContent = c.title;
-  document.getElementById('case-summary').textContent = c.desc;
-  document.getElementById('case-position').textContent =
-    String(idx+1).padStart(2,'0') + ' / ' + String(caseKeys.length).padStart(2,'0');
+    card.addEventListener('mouseenter',()=>onDerivaHover(i,true));
+    card.addEventListener('mouseleave',()=>onDerivaHover(i,false));
 
-  const meta = document.getElementById('case-meta-row');
-  meta.innerHTML = [
-    {l:'Cliente',v:c.client},
-    {l:'Categoria',v:c.cat},
-    {l:'Ano',v:c.year},
-    {l:'Escopo',v:c.scope},
-  ].map(m=>`<div class="case-meta-item">
-    <span class="case-meta-label">${m.l}</span>
-    <span class="case-meta-value">${m.v}</span>
-  </div>`).join('');
-
-  // Blocks
-  const blocks = document.getElementById('case-blocks');
-  blocks.innerHTML = (c.blocks||[]).map(buildBlock).join('');
-
-  // Prev / next
-  const prev = caseKeys[(idx - 1 + caseKeys.length) % caseKeys.length];
-  const next = caseKeys[(idx + 1) % caseKeys.length];
-  document.getElementById('case-prev-name').textContent = cases[prev].title;
-  document.getElementById('case-next-name').textContent = cases[next].title;
-}
-
-function navigateCases(dir) {
-  const idx = caseKeys.indexOf(currentCaseKey);
-  const next = caseKeys[(idx + dir + caseKeys.length) % caseKeys.length];
-  navigate('case', next);
-}
-
-// ── VESTÍGIO ──
-function loadVestigio() {
-  const id = 'VTG-' + Math.random().toString(36).slice(2,6).toUpperCase();
-  const dur = Math.round((Date.now() - sessionStart) / 1000);
-  const mins = Math.floor(dur/60);
-  const secs = dur % 60;
-  document.getElementById('vestigio-id').textContent = id;
-  document.getElementById('vestigio-dur').textContent = (mins > 0 ? mins + 'min ' : '') + secs + 's';
-  document.getElementById('vestigio-int').textContent = interactionCount;
-}
-
-// ── FORM ──
-const fieldIds = ['nome','email','tipo','msg'];
-function onFieldInput(field) {
-  const el = document.getElementById('input-' + field);
-  const dot = document.getElementById('dot-' + field);
-  const prog = document.getElementById('prog-' + field);
-  const filled = el.value.trim().length > 0;
-  dot?.classList.toggle('filled', filled);
-  prog?.classList.toggle('done', filled);
-  // Clear error on typing
-  document.getElementById('field-' + field)?.classList.remove('has-error');
-}
-
-function validateForm() {
-  let ok = true;
-  const nome = document.getElementById('input-nome');
-  const email = document.getElementById('input-email');
-  const tipo = document.getElementById('input-tipo');
-  const msg = document.getElementById('input-msg');
-  if (!nome.value.trim()) { document.getElementById('field-nome').classList.add('has-error'); ok=false; }
-  if (!email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) { document.getElementById('field-email').classList.add('has-error'); ok=false; }
-  if (!tipo.value) { document.getElementById('field-tipo').classList.add('has-error'); ok=false; }
-  if (!msg.value.trim()) { document.getElementById('field-msg').classList.add('has-error'); ok=false; }
-  return ok;
-}
-
-function showFormState(state) {
-  document.getElementById('form-contato').style.display = 'none';
-  ['success','error','timeout'].forEach(s => {
-    document.getElementById('form-' + s).classList.remove('show');
+    layer.appendChild(card);
+    derivaCards.push({el:card,xPct,yPct,depth,rotZ,w,h});
   });
-  document.getElementById('form-' + state).classList.add('show');
-}
 
-function resetForm() {
-  document.getElementById('form-contato').style.display = 'flex';
-  document.getElementById('form-contato').reset();
-  fieldIds.forEach(f => {
-    document.getElementById('dot-' + f)?.classList.remove('filled');
-    document.getElementById('prog-' + f)?.classList.remove('done');
-    document.getElementById('field-' + f)?.classList.remove('has-error');
-  });
-  ['success','error','timeout'].forEach(s => document.getElementById('form-' + s).classList.remove('show'));
-}
-function resetFormError() { resetForm(); }
-
-function submitForm(e) {
-  e.preventDefault();
-  if (!validateForm()) return;
-  // Demo: randomly show success/error/timeout
-  const r = Math.random();
-  if (r < 0.7) showFormState('success');
-  else if (r < 0.85) showFormState('error');
-  else showFormState('timeout');
-}
-
-// ── ADM ──
-function admPanel(id, el) {
-  document.querySelectorAll('.adm-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.adm-nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('panel-' + id)?.classList.add('active');
-  el?.classList.add('active');
-  if (id === 'analytics') generateChartBars();
-  if (id === 'cases') populateCasesTable();
-  return false;
-}
-
-function generateChartBars() {
-  const bars = document.getElementById('chart-bars');
-  if (!bars) return;
-  const h = [30,45,25,60,80,55,70,40,90,65,50,75,85,60,45];
-  bars.innerHTML = h.map((v,i) => `<div class="chart-bar${i===h.length-1?' active':''}" style="height:${v}%" title="${v} visitas"></div>`).join('');
-}
-
-function populateCasesTable() {
-  const tbody = document.getElementById('cases-table-body');
-  if (!tbody) return;
-  tbody.innerHTML = caseKeys.map(k => {
-    const c = cases[k];
-    const pub = !k.includes('1');
-    return `<tr>
-      <td>${c.title}</td>
-      <td class="dim">${c.client}</td>
-      <td class="dim">${c.cat}</td>
-      <td class="dim">${c.year}</td>
-      <td><span class="adm-status ${pub?'pub':'draft'}">${pub?'publicado':'rascunho'}</span></td>
-      <td><button class="adm-icon-btn" onclick="admPanel('novo',null)">editar</button></td>
-    </tr>`;
+  // injeta keyframes de float por card com base-transform variado
+  const sheet=document.createElement('style');
+  sheet.textContent=derivaCards.map((_,i)=>{
+    const [xPct,yPct,depth,rotZ]=DERIVA_LAYOUT[i];
+    const w=derivaCards[i].w,h=derivaCards[i].h;
+    const baseT=`translateZ(0) rotate(${rotZ}deg)`;
+    return `
+      .drift-card:nth-child(${i+1}){--base-t:${baseT}}
+      @keyframes float-${i}{
+        0%,100%{transform:${baseT} translateY(0px)}
+        50%{transform:${baseT} translateY(${-5-i*1.5}px)}
+      }`;
   }).join('');
+  document.head.appendChild(sheet);
+  // apply individual float animations
+  derivaCards.forEach((dc,i)=>{
+    const floatDelay=i*0.7,floatDur=5+i*0.8;
+    dc.el.style.animation=`float-${i} ${floatDur}s ${floatDelay}s ease-in-out infinite`;
+  });
+
+  startDerivaLoop();
 }
 
-// ── INIT ──
-// Start with gate visible, nav hidden
-document.getElementById('nav').style.display = 'none';
-setTimeout(() => {
-  document.getElementById('nav').style.display = 'flex';
-}, 0);
-
-// Show home initially (gate covers it)
-navigate('home');
-
-// If returning visitor, skip gate (localStorage)
-try {
-  if (localStorage.getItem('ojo_visited')) {
-    document.getElementById('entry-gate').classList.add('hidden');
+function onDerivaHover(idx,enter){
+  setCursorHover(false);
+  const dc=derivaCards[idx];
+  const infoL=document.getElementById('e-info-left');
+  const infoR=document.getElementById('e-info-right');
+  if(enter){
+    const c=cases[idx];
+    derivaCards.forEach((d,i)=>{
+      d.el.classList.toggle('is-focus',i===idx);
+    });
+    document.getElementById('e-info-title').textContent=c.title;
+    document.getElementById('e-info-client').textContent=c.client;
+    document.getElementById('e-info-year').textContent=c.year;
+    document.getElementById('e-info-scope').innerHTML=c.scope.replace(/\n/g,'<br>');
+    document.getElementById('e-info-tag').textContent=c.cat;
+    infoL.classList.add('show');infoR.classList.add('show');
+    if(!hintGone){document.getElementById('e-hint').style.opacity='0';hintGone=true;}
+  } else {
+    derivaCards.forEach(d=>d.el.classList.remove('is-focus'));
+    infoL.classList.remove('show');infoR.classList.remove('show');
   }
-} catch(e) {}
+}
 
-// Demo: Firebase degradation toast after 3s
-setTimeout(() => {
-  if (!navigator.onLine) return;
-  // Simulate occasional Firebase warning
-  // showToast('Firebase: resposta lenta', 'Conteudo pode estar desatualizado', 'warn');
-}, 3000);
+function onMouseDeriva(e){
+  const el=document.getElementById('style-e');
+  const rect=el.getBoundingClientRect();
+  // normalize -1 to 1 from center
+  targetX=(e.clientX-rect.left-rect.width/2)/rect.width;
+  targetY=(e.clientY-rect.top-rect.height/2)/rect.height;
+  // crosshair
+  const ch=document.getElementById('crosshair');
+  ch.style.left=e.clientX+'px';ch.style.top=e.clientY+'px';
+}
+
+function startDerivaLoop(){
+  if(derivaRaf)cancelAnimationFrame(derivaRaf);
+  function loop(){
+    if(!document.getElementById('style-e').classList.contains('active')){derivaRaf=null;return;}
+    // smooth follow
+    currentX+=(targetX-currentX)*0.04;
+    currentY+=(targetY-currentY)*0.04;
+    // apply parallax per card
+    derivaCards.forEach(dc=>{
+      const factor=(1-dc.depth)*180; // far cards move more
+      const tx=currentX*factor;
+      const ty=currentY*factor;
+      // pause float animation and use transform directly
+      dc.el.style.transform=`translateX(${tx}px) translateY(${ty}px) rotate(${dc.rotZ}deg)`;
+    });
+    derivaRaf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+/* ── INIT ── */
+['b','c','d','e'].forEach(s=>{ document.getElementById('style-'+s).style.display='none'; });
+initScrollA();
+initIndex();
+initFilm();
 </script>
 </body>
 </html>
