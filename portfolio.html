@@ -18,11 +18,11 @@
 <body>
 
   <nav class="nav" id="nav">
-    <a class="nav__logo" href="/">OJO</a>
+    <a class="nav__logo" href="./">OJO</a>
     <div class="nav__links">
-      <a class="nav__link nav__link--active" href="/portfolio.html">Portfolio</a>
-      <a class="nav__link" href="/sobre.html">Sobre</a>
-      <a class="nav__link" href="/contato.html">Contato</a>
+      <a class="nav__link nav__link--active" href="portfolio.html">Portfolio</a>
+      <a class="nav__link" href="sobre.html">Sobre</a>
+      <a class="nav__link" href="contato.html">Contato</a>
     </div>
     <div class="nav__lang" id="nav-lang">
       <button class="nav__lang-btn nav__lang-btn--active" onclick="setLang('pt')">PT</button>
@@ -78,7 +78,7 @@
       <div class="footer__copy">© 2024 OJO Studio. Todos os direitos reservados.</div>
       <div class="footer__links">
         <a class="footer__link" href="https://instagram.com/ojostudio" target="_blank" rel="noopener">Instagram</a>
-        <a class="footer__link" href="/contato.html">Contato</a>
+        <a class="footer__link" href="contato.html">Contato</a>
       </div>
     </footer>
   </div>
@@ -165,7 +165,7 @@
 
       emptyState.hidden = true
       grid.innerHTML = projects.map(p => `
-        <a class="project-card" href="/portfolio/${p.slug}.html">
+        <a class="project-card" href="portfolio/${p.slug}.html">
           ${p.cover_image
             ? `<img class="project-card__image" src="${p.cover_image}" alt="${p.title}" loading="lazy">`
             : `<div class="project-card__image-placeholder">${p.title}</div>`}

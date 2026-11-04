@@ -19,12 +19,12 @@
   <!-- SIDEBAR -->
   <aside class="admin-sidebar" id="sidebar">
     <div class="admin-sidebar__header">
-      <a class="admin-sidebar__logo" href="/admin/index.html">OJO</a>
+      <a class="admin-sidebar__logo" href="index.html">OJO</a>
       <span class="admin-sidebar__label">Admin</span>
     </div>
 
     <nav class="admin-nav">
-      <a class="admin-nav__item admin-nav__item--active" href="/admin/index.html">
+      <a class="admin-nav__item admin-nav__item--active" href="index.html">
         <svg class="admin-nav__icon" viewBox="0 0 20 20" fill="none">
           <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
           <rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
@@ -33,7 +33,7 @@
         </svg>
         Dashboard
       </a>
-      <a class="admin-nav__item" href="/admin/portfolio.html">
+      <a class="admin-nav__item" href="portfolio.html">
         <svg class="admin-nav__icon" viewBox="0 0 20 20" fill="none">
           <rect x="2" y="3" width="16" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
           <path d="M7 17h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -41,7 +41,7 @@
         </svg>
         Portfolio
       </a>
-      <a class="admin-nav__item" href="/admin/mensagens.html">
+      <a class="admin-nav__item" href="mensagens.html">
         <svg class="admin-nav__icon" viewBox="0 0 20 20" fill="none">
           <path d="M3 4h14a1 1 0 011 1v8a1 1 0 01-1 1H5l-3 3V5a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
         </svg>
@@ -51,7 +51,7 @@
     </nav>
 
     <div class="admin-sidebar__footer">
-      <a class="admin-nav__item" href="/" target="_blank">
+      <a class="admin-nav__item" href="../" target="_blank">
         <svg class="admin-nav__icon" viewBox="0 0 20 20" fill="none">
           <path d="M10 3H4a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           <path d="M13 3h4m0 0v4m0-4L9 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -108,13 +108,13 @@
       <div class="admin-section">
         <h2 class="admin-section__title">Ações rápidas</h2>
         <div class="admin-quick-actions">
-          <a class="btn btn--primary" href="/admin/portfolio.html?action=new">
+          <a class="btn btn--primary" href="portfolio.html?action=new">
             + Novo projeto
           </a>
-          <a class="btn btn--secondary" href="/admin/portfolio.html">
+          <a class="btn btn--secondary" href="portfolio.html">
             Gerenciar portfolio
           </a>
-          <a class="btn btn--secondary" href="/admin/mensagens.html">
+          <a class="btn btn--secondary" href="mensagens.html">
             Ver mensagens
           </a>
         </div>
@@ -124,7 +124,7 @@
       <div class="admin-section">
         <div class="admin-section__header">
           <h2 class="admin-section__title">Projetos recentes</h2>
-          <a class="btn btn--ghost btn--sm" href="/admin/portfolio.html">Ver todos</a>
+          <a class="btn btn--ghost btn--sm" href="portfolio.html">Ver todos</a>
         </div>
         <table class="admin-table" id="recent-table">
           <thead>
@@ -252,7 +252,7 @@
       document.getElementById('recent-tbody').innerHTML = recent.length
         ? recent.map(p => `
             <tr>
-              <td><a href="/admin/portfolio.html?edit=${p.id}" style="color: var(--color-fg)">${p.title}</a></td>
+              <td><a href="portfolio.html?edit=${p.id}" style="color: var(--color-fg)">${p.title}</a></td>
               <td style="color: var(--color-muted)">${p.client ?? '—'}</td>
               <td>
                 <span class="badge ${p.published ? 'badge--success' : 'badge--warning'}">
