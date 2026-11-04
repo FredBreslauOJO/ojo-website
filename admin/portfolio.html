@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — OJO Admin</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="admin-sidebar__header">
+      <a class="admin-sidebar__logo" href="/admin/index.html">OJO</a>
+      <span class="admin-sidebar__label">Admin</span>
+    </div>
+    <nav class="admin-nav">
+      <a class="admin-nav__item" href="/admin/index.html">
+        <svg class="admin-nav__icon" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Dashboard
+      </a>
+      <a class="admin-nav__item admin-nav__item--active" href="/admin/portfolio.html">
+        <svg class="admin-nav__icon" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="3" width="16" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M7 17h6M10 14v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Portfolio
+      </a>
+      <a class="admin-nav__item" href="/admin/mensagens.html">
+        <svg class="admin-nav__icon" viewBox="0 0 20 20" fill="none">
+          <path d="M3 4h14a1 1 0 011 1v8a1 1 0 01-1 1H5l-3 3V5a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        Mensagens
+      </a>
+    </nav>
+    <div class="admin-sidebar__footer">
+      <a class="admin-nav__item" href="/" target="_blank">
+        <svg class="admin-nav__icon" viewBox="0 0 20 20" fill="none">
+          <path d="M10 3H4a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M13 3h4m0 0v4m0-4L9 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Ver site
+      </a>
+      <button class="admin-nav__item" id="logout-btn">
+        <svg class="admin-nav__icon" viewBox="0 0 20 20" fill="none">
+          <path d="M7 17H4a1 1 0 01-1-1V4a1 1 0 011-1h3M13 14l3-4-3-4M16 10H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="admin-topbar__menu-btn" id="sidebar-toggle" aria-label="Menu">
+        <svg viewBox="0 0 20 20" fill="none" width="18" height="18">
+          <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <h1 class="admin-topbar__title">Portfolio</h1>
+      <button class="btn btn--primary btn--sm" id="btn-new">+ Novo projeto</button>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- LISTAGEM -->
+      <div id="view-list">
+        <div class="admin-table-actions">
+          <p class="admin-table-hint">Arraste as linhas para reordenar. A ordem aqui é a ordem no site.</p>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width: 32px"></th>
+              <th>Projeto</th>
+              <th>Cliente</th>
+              <th>Categorias</th>
+              <th>Status</th>
+              <th>Destaque</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="projects-tbody">
+            <tr><td colspan="7" style="text-align:center; padding: var(--space-8); color: var(--color-muted)">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- FORMULÁRIO (novo / editar) -->
+      <div id="view-form" hidden>
+        <div class="admin-form-header">
+          <button class="btn btn--ghost btn--sm" id="btn-back">← Voltar</button>
+          <h2 class="admin-form-title" id="form-title">Novo projeto</h2>
+        </div>
+
+        <form id="project-form" novalidate>
+          <input type="hidden" id="project-id">
+
+          <div class="admin-form-grid">
+
+            <!-- Coluna esquerda -->
+            <div class="admin-form-col">
+
+              <fieldset class="admin-fieldset">
+                <legend class="admin-fieldset__legend">Informações básicas</legend>
+
+                <div class="form-group">
+                  <label class="form-label" for="f-title">Título *</label>
+                  <input class="form-input" type="text" id="f-title" required>
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label class="form-label" for="f-client">Cliente</label>
+                    <input class="form-input" type="text" id="f-client">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="f-year">Ano</label>
+                    <input class="form-input" type="number" id="f-year" min="2000" max="2100">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="f-slug">Slug (URL)</label>
+                  <input class="form-input" type="text" id="f-slug" placeholder="gerado automaticamente">
+                  <small class="form-hint">Ex: nome-do-projeto</small>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="f-category">Categorias</label>
+                  <div class="tag-input-wrap" id="tag-input-wrap">
+                    <input class="tag-input" type="text" id="f-category-input" placeholder="Adicionar categoria e pressionar Enter">
+                  </div>
+                  <input type="hidden" id="f-category">
+                </div>
+
+              </fieldset>
+
+              <fieldset class="admin-fieldset">
+                <legend class="admin-fieldset__legend">Descrição (PT)</legend>
+                <div class="form-group">
+                  <label class="form-label" for="f-excerpt-pt">Resumo curto</label>
+                  <input class="form-input" type="text" id="f-excerpt-pt" placeholder="Uma linha sobre o projeto">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="f-desc-pt">Descrição completa</label>
+                  <textarea class="form-textarea" id="f-desc-pt" rows="4"></textarea>
+                </div>
+              </fieldset>
+
+              <fieldset class="admin-fieldset">
+                <legend class="admin-fieldset__legend">Descrição (EN)</legend>
+                <div class="form-group">
+                  <label class="form-label" for="f-excerpt-en">Resumo curto</label>
+                  <input class="form-input" type="text" id="f-excerpt-en" placeholder="One line about the project">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="f-desc-en">Descrição completa</label>
+                  <textarea class="form-textarea" id="f-desc-en" rows="4"></textarea>
+                </div>
+              </fieldset>
+
+            </div>
+
+            <!-- Coluna direita -->
+            <div class="admin-form-col">
+
+              <fieldset class="admin-fieldset">
+                <legend class="admin-fieldset__legend">Imagem de capa</legend>
+                <div class="upload-zone" id="cover-zone">
+                  <div class="upload-zone__preview" id="cover-preview" hidden>
+                    <img id="cover-img" alt="Capa">
+                    <button type="button" class="btn btn--ghost btn--sm upload-zone__remove" id="cover-remove">Remover</button>
+                  </div>
+                  <div class="upload-zone__prompt" id="cover-prompt">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <span>Clique ou arraste para enviar</span>
+                    <small>JPG, PNG, WebP — máx 5MB</small>
+                  </div>
+                  <input type="file" id="cover-file" accept="image/*" class="upload-zone__input">
+                </div>
+                <input type="hidden" id="f-cover-image">
+              </fieldset>
+
+              <fieldset class="admin-fieldset">
+                <legend class="admin-fieldset__legend">Visibilidade</legend>
+
+                <label class="toggle-label">
+                  <input type="checkbox" id="f-published" class="toggle-input">
+                  <span class="toggle-track"></span>
+                  <span>Publicado</span>
+                </label>
+
+                <label class="toggle-label" style="margin-top: var(--space-3)">
+                  <input type="checkbox" id="f-featured" class="toggle-input">
+                  <span class="toggle-track"></span>
+                  <span>Destaque na home</span>
+                </label>
+              </fieldset>
+
+            </div>
+
+          </div>
+
+          <!-- RODAPÉ DO FORM -->
+          <div class="admin-form-footer">
+            <button type="button" class="btn btn--ghost" id="btn-cancel">Cancelar</button>
+            <div class="admin-form-footer__right">
+              <button type="button" class="btn btn--danger btn--sm" id="btn-delete" hidden>Excluir projeto</button>
+              <button type="submit" class="btn btn--primary" id="btn-save">Salvar projeto</button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <style>
+    .admin-table-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .admin-table-hint {
+      font-size: var(--text-sm);
+      color: var(--color-muted);
+    }
+
+    .admin-form-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+
+    .admin-form-title {
+      font-size: var(--text-xl);
+      font-weight: 500;
+    }
+
+    .admin-form-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: var(--space-8);
+    }
+
+    .admin-form-col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .admin-fieldset {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-5);
+    }
+
+    .admin-fieldset__legend {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      letter-spacing: 0.06em;
+      padding: 0 var(--space-2);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-top: var(--space-4);
+    }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .form-hint {
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      cursor: pointer;
+      font-size: var(--text-sm);
+    }
+
+    .toggle-input { display: none; }
+
+    .toggle-track {
+      width: 36px;
+      height: 20px;
+      background: var(--color-border);
+      border-radius: 10px;
+      position: relative;
+      transition: background var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform var(--transition-fast);
+    }
+
+    .toggle-input:checked + .toggle-track {
+      background: var(--color-fg);
+    }
+
+    .toggle-input:checked + .toggle-track::after {
+      transform: translateX(16px);
+    }
+
+    .admin-form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space-8);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .admin-form-footer__right {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+    }
+
+    /* Drag handle */
+    .drag-handle {
+      cursor: grab;
+      color: var(--color-border);
+      padding: var(--space-1);
+    }
+
+    .drag-handle:active { cursor: grabbing; }
+
+    .sortable-ghost { opacity: 0.3; }
+
+    @media (max-width: 1024px) {
+      .admin-form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <script type="module">
+    import { requireAuth, signOut } from '../assets/js/modules/auth.js'
+    import {
+      getProjects, createProject, updateProject, deleteProject,
+      reorderProjects, uploadImage, slugify
+    } from '../assets/js/modules/portfolio.js'
+    import { showToast, confirm, setButtonLoading, initTheme } from '../assets/js/modules/ui.js'
+
+    initTheme()
+    await requireAuth('/admin/login.html')
+
+    // Sidebar
+    document.getElementById('sidebar-toggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('admin-sidebar--open')
+    })
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await signOut()
+      window.location.href = '/admin/login.html'
+    })
+
+    // ── VIEWS ──────────────────────────────────────────────────────────────
+
+    function showView(name) {
+      document.getElementById('view-list').hidden = name !== 'list'
+      document.getElementById('view-form').hidden = name !== 'form'
+    }
+
+    // ── ESTADO ─────────────────────────────────────────────────────────────
+
+    let projects = []
+    let editingId = null
+    let tags = []
+
+    // ── CARREGA LISTA ──────────────────────────────────────────────────────
+
+    async function loadProjects() {
+      try {
+        projects = await getProjects({ publishedOnly: false })
+        renderTable()
+      } catch (err) {
+        showToast('Erro ao carregar projetos', 'error')
+        console.error(err)
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('projects-tbody')
+
+      if (!projects.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:var(--space-8);color:var(--color-muted)">Nenhum projeto.</td></tr>`
+        return
+      }
+
+      tbody.innerHTML = projects.map(p => `
+        <tr data-id="${p.id}" draggable="true">
+          <td class="drag-handle" title="Arrastar">⠿</td>
+          <td>
+            <strong>${p.title}</strong>
+            ${p.slug ? `<br><small style="color:var(--color-muted);font-family:var(--font-mono)">${p.slug}</small>` : ''}
+          </td>
+          <td style="color:var(--color-muted)">${p.client ?? '—'}</td>
+          <td>${Array.isArray(p.category) ? p.category.map(c => `<span class="badge">${c}</span>`).join(' ') : '—'}</td>
+          <td>
+            <span class="badge ${p.published ? 'badge--success' : 'badge--warning'}">
+              ${p.published ? 'Publicado' : 'Rascunho'}
+            </span>
+          </td>
+          <td style="text-align:center">${p.featured ? '★' : '—'}</td>
+          <td>
+            <button class="btn btn--ghost btn--sm" data-edit="${p.id}">Editar</button>
+          </td>
+        </tr>
+      `).join('')
+
+      // Botões de edição
+      tbody.querySelectorAll('[data-edit]').forEach(btn => {
+        btn.addEventListener('click', () => openEdit(btn.dataset.edit))
+      })
+
+      // Drag & drop
+      initDrag()
+    }
+
+    // ── DRAG & DROP ────────────────────────────────────────────────────────
+
+    function initDrag() {
+      const tbody = document.getElementById('projects-tbody')
+      let dragRow = null
+
+      tbody.addEventListener('dragstart', e => {
+        dragRow = e.target.closest('tr')
+        dragRow?.classList.add('sortable-ghost')
+      })
+
+      tbody.addEventListener('dragover', e => {
+        e.preventDefault()
+        const over = e.target.closest('tr')
+        if (over && over !== dragRow) {
+          const rect = over.getBoundingClientRect()
+          const mid  = rect.top + rect.height / 2
+          over.parentNode.insertBefore(dragRow, e.clientY < mid ? over : over.nextSibling)
+        }
+      })
+
+      tbody.addEventListener('dragend', async () => {
+        dragRow?.classList.remove('sortable-ghost')
+        dragRow = null
+
+        const newOrder = [...tbody.querySelectorAll('tr[data-id]')].map(r => r.dataset.id)
+        try {
+          await reorderProjects(newOrder)
+          showToast('Ordem salva', 'success')
+        } catch {
+          showToast('Erro ao salvar ordem', 'error')
+          loadProjects()
+        }
+      })
+    }
+
+    // ── FORMULÁRIO ─────────────────────────────────────────────────────────
+
+    function openNew() {
+      editingId = null
+      tags = []
+      document.getElementById('project-id').value = ''
+      document.getElementById('form-title').textContent = 'Novo projeto'
+      document.getElementById('project-form').reset()
+      document.getElementById('f-cover-image').value = ''
+      document.getElementById('cover-preview').hidden = true
+      document.getElementById('cover-prompt').hidden  = false
+      document.getElementById('btn-delete').hidden = true
+      renderTags()
+      showView('form')
+
+      // Verifica ?action=new na URL
+    }
+
+    function openEdit(id) {
+      const p = projects.find(x => x.id === id)
+      if (!p) return
+
+      editingId = id
+      document.getElementById('project-id').value = id
+      document.getElementById('form-title').textContent = 'Editar projeto'
+      document.getElementById('btn-delete').hidden = false
+
+      document.getElementById('f-title').value   = p.title ?? ''
+      document.getElementById('f-client').value  = p.client ?? ''
+      document.getElementById('f-year').value    = p.year ?? ''
+      document.getElementById('f-slug').value    = p.slug ?? ''
+      document.getElementById('f-published').checked = !!p.published
+      document.getElementById('f-featured').checked  = !!p.featured
+
+      // Locale PT
+      document.getElementById('f-excerpt-pt').value = p.locale_pt?.excerpt ?? ''
+      document.getElementById('f-desc-pt').value    = p.locale_pt?.description ?? ''
+
+      // Locale EN
+      document.getElementById('f-excerpt-en').value = p.locale_en?.excerpt ?? ''
+      document.getElementById('f-desc-en').value    = p.locale_en?.description ?? ''
+
+      // Tags
+      tags = Array.isArray(p.category) ? [...p.category] : (p.category ? [p.category] : [])
+      renderTags()
+
+      // Capa
+      if (p.cover_image) {
+        document.getElementById('f-cover-image').value = p.cover_image
+        document.getElementById('cover-img').src = p.cover_image
+        document.getElementById('cover-preview').hidden = false
+        document.getElementById('cover-prompt').hidden  = true
+      } else {
+        document.getElementById('f-cover-image').value = ''
+        document.getElementById('cover-preview').hidden = true
+        document.getElementById('cover-prompt').hidden  = false
+      }
+
+      showView('form')
+    }
+
+    // ── TAGS ───────────────────────────────────────────────────────────────
+
+    function renderTags() {
+      const wrap = document.getElementById('tag-input-wrap')
+      const input = document.getElementById('f-category-input')
+
+      wrap.querySelectorAll('.tag-chip').forEach(t => t.remove())
+
+      tags.forEach(tag => {
+        const chip = document.createElement('span')
+        chip.className = 'tag-chip'
+        chip.innerHTML = `${tag}<button type="button" data-tag="${tag}">×</button>`
+        chip.querySelector('button').addEventListener('click', () => {
+          tags = tags.filter(t => t !== tag)
+          renderTags()
+        })
+        wrap.insertBefore(chip, input)
+      })
+
+      document.getElementById('f-category').value = JSON.stringify(tags)
+    }
+
+    document.getElementById('f-category-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault()
+        const val = e.target.value.trim()
+        if (val && !tags.includes(val)) {
+          tags.push(val)
+          renderTags()
+        }
+        e.target.value = ''
+      }
+    })
+
+    // ── UPLOAD DE CAPA ─────────────────────────────────────────────────────
+
+    const coverZone  = document.getElementById('cover-zone')
+    const coverFile  = document.getElementById('cover-file')
+    const coverImg   = document.getElementById('cover-img')
+    const coverPrev  = document.getElementById('cover-preview')
+    const coverProm  = document.getElementById('cover-prompt')
+    const coverHidden = document.getElementById('f-cover-image')
+
+    coverZone.addEventListener('click', e => {
+      if (!e.target.closest('.upload-zone__remove')) coverFile.click()
+    })
+
+    coverZone.addEventListener('dragover', e => { e.preventDefault(); coverZone.classList.add('upload-zone--drag') })
+    coverZone.addEventListener('dragleave', ()  => coverZone.classList.remove('upload-zone--drag'))
+    coverZone.addEventListener('drop', e => {
+      e.preventDefault()
+      coverZone.classList.remove('upload-zone--drag')
+      const file = e.dataTransfer.files[0]
+      if (file) handleCoverFile(file)
+    })
+
+    coverFile.addEventListener('change', () => {
+      if (coverFile.files[0]) handleCoverFile(coverFile.files[0])
+    })
+
+    document.getElementById('cover-remove').addEventListener('click', () => {
+      coverHidden.value = ''
+      coverPrev.hidden = true
+      coverProm.hidden = false
+      coverFile.value  = ''
+    })
+
+    async function handleCoverFile(file) {
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Imagem maior que 5MB', 'error')
+        return
+      }
+      coverZone.classList.add('upload-zone--loading')
+      try {
+        const url = await uploadImage(file, 'covers')
+        coverHidden.value = url
+        coverImg.src = url
+        coverPrev.hidden = false
+        coverProm.hidden = true
+      } catch {
+        showToast('Erro ao enviar imagem', 'error')
+      } finally {
+        coverZone.classList.remove('upload-zone--loading')
+      }
+    }
+
+    // ── SALVAR ─────────────────────────────────────────────────────────────
+
+    document.getElementById('project-form').addEventListener('submit', async e => {
+      e.preventDefault()
+
+      const saveBtn = document.getElementById('btn-save')
+      setButtonLoading(saveBtn, true)
+
+      const payload = {
+        title:       document.getElementById('f-title').value.trim(),
+        client:      document.getElementById('f-client').value.trim() || null,
+        year:        parseInt(document.getElementById('f-year').value) || null,
+        slug:        document.getElementById('f-slug').value.trim() || null,
+        category:    tags,
+        cover_image: document.getElementById('f-cover-image').value || null,
+        published:   document.getElementById('f-published').checked,
+        featured:    document.getElementById('f-featured').checked,
+        locale_pt: {
+          excerpt:     document.getElementById('f-excerpt-pt').value.trim() || null,
+          description: document.getElementById('f-desc-pt').value.trim() || null,
+        },
+        locale_en: {
+          excerpt:     document.getElementById('f-excerpt-en').value.trim() || null,
+          description: document.getElementById('f-desc-en').value.trim() || null,
+        },
+      }
+
+      try {
+        if (editingId) {
+          await updateProject(editingId, payload)
+          showToast('Projeto atualizado', 'success')
+        } else {
+          await createProject(payload)
+          showToast('Projeto criado', 'success')
+        }
+        await loadProjects()
+        showView('list')
+      } catch (err) {
+        showToast('Erro ao salvar: ' + (err.message ?? 'tente novamente'), 'error')
+        setButtonLoading(saveBtn, false)
+      }
+    })
+
+    // ── EXCLUIR ────────────────────────────────────────────────────────────
+
+    document.getElementById('btn-delete').addEventListener('click', async () => {
+      const ok = await confirm({
+        title: 'Excluir projeto?',
+        message: 'Essa ação não pode ser desfeita. O projeto será removido permanentemente.',
+        confirmLabel: 'Excluir',
+        danger: true,
+      })
+
+      if (!ok) return
+
+      try {
+        await deleteProject(editingId)
+        showToast('Projeto excluído', 'success')
+        await loadProjects()
+        showView('list')
+      } catch {
+        showToast('Erro ao excluir', 'error')
+      }
+    })
+
+    // ── GERAÇÃO AUTOMÁTICA DE SLUG ─────────────────────────────────────────
+
+    document.getElementById('f-title').addEventListener('blur', () => {
+      if (!editingId && !document.getElementById('f-slug').value) {
+        const title = document.getElementById('f-title').value.trim()
+        document.getElementById('f-slug').value = slugify(title)
+      }
+    })
+
+    // ── NAVEGAÇÃO ──────────────────────────────────────────────────────────
+
+    document.getElementById('btn-new').addEventListener('click', openNew)
+    document.getElementById('btn-back').addEventListener('click', () => {
+      loadProjects()
+      showView('list')
+    })
+    document.getElementById('btn-cancel').addEventListener('click', () => {
+      loadProjects()
+      showView('list')
+    })
+
+    // Abre ?action=new ou ?edit=<id> automaticamente
+    const params = new URLSearchParams(location.search)
+    if (params.get('action') === 'new') openNew()
+
+    // ── INIT ───────────────────────────────────────────────────────────────
+
+    await loadProjects()
+
+    if (params.get('edit')) {
+      await loadProjects()
+      openEdit(params.get('edit'))
+    }
+  </script>
+
+</body>
+</html>

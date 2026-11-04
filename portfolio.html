@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — OJO Studio</title>
+  <meta name="description" content="Trabalhos do OJO Studio: identidade, experiência e narrativa visual.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <a class="nav__logo" href="/">OJO</a>
+    <div class="nav__links">
+      <a class="nav__link nav__link--active" href="/portfolio.html">Portfolio</a>
+      <a class="nav__link" href="/sobre.html">Sobre</a>
+      <a class="nav__link" href="/contato.html">Contato</a>
+    </div>
+    <div class="nav__lang" id="nav-lang">
+      <button class="nav__lang-btn nav__lang-btn--active" onclick="setLang('pt')">PT</button>
+      <button class="nav__lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="nav__toggle" id="nav-toggle" aria-label="Menu">
+      <span class="nav__toggle-line"></span>
+      <span class="nav__toggle-line"></span>
+    </button>
+  </nav>
+
+  <div class="page-wrap">
+    <main class="main">
+
+      <!-- HEADER -->
+      <section class="section">
+        <div class="container">
+          <div class="portfolio-header">
+            <h1 class="hero__title">Portfolio</h1>
+
+            <!-- FILTROS -->
+            <div class="portfolio-filters" id="filters">
+              <button class="portfolio-filter portfolio-filter--active" data-category="all">Todos</button>
+              <!-- Categorias adicionadas dinamicamente via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GRID DE PROJETOS -->
+      <section class="section" style="padding-top: 0">
+        <div class="container">
+          <div class="portfolio-grid portfolio-grid--3col" id="projects-grid">
+            <!-- Skeletons de carregamento -->
+            <div class="project-card project-card--skeleton"></div>
+            <div class="project-card project-card--skeleton"></div>
+            <div class="project-card project-card--skeleton"></div>
+          </div>
+
+          <!-- Estado vazio -->
+          <div class="empty-state" id="empty-state" hidden>
+            <div class="empty-state__icon">◯</div>
+            <p class="empty-state__title">Nenhum projeto encontrado</p>
+            <p class="empty-state__description">Tente outro filtro ou volte em breve.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer container">
+      <div class="footer__logo">OJO Studio</div>
+      <div class="footer__copy">© 2024 OJO Studio. Todos os direitos reservados.</div>
+      <div class="footer__links">
+        <a class="footer__link" href="https://instagram.com/ojostudio" target="_blank" rel="noopener">Instagram</a>
+        <a class="footer__link" href="/contato.html">Contato</a>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <style>
+    .portfolio-header {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+
+    .portfolio-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .portfolio-filter {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      letter-spacing: 0.06em;
+      padding: var(--space-2) var(--space-4);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      background: transparent;
+      color: var(--color-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .portfolio-filter:hover,
+    .portfolio-filter--active {
+      background: var(--color-fg);
+      color: var(--color-bg);
+      border-color: var(--color-fg);
+    }
+
+    /* Skeleton loader */
+    .project-card--skeleton {
+      aspect-ratio: 4/3;
+      background: var(--color-bg-2);
+      border-radius: var(--radius-sm);
+      animation: skeleton-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes skeleton-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
+
+  <script type="module">
+    import { getProjects } from './assets/js/modules/portfolio.js'
+    import { initScrollNav, initTheme, setLang as _setLang, getLang } from './assets/js/modules/ui.js'
+
+    initTheme()
+    initScrollNav()
+
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('nav').classList.toggle('nav--open')
+    })
+
+    window.setLang = _setLang
+    const lang = getLang()
+    document.documentElement.lang = lang
+    document.querySelectorAll('.nav__lang-btn').forEach((btn, i) => {
+      btn.classList.toggle('nav__lang-btn--active', (i === 0 && lang === 'pt') || (i === 1 && lang === 'en'))
+    })
+
+    let allProjects = []
+    let activeCategory = 'all'
+
+    function renderProjects(projects) {
+      const grid = document.getElementById('projects-grid')
+      const emptyState = document.getElementById('empty-state')
+
+      if (projects.length === 0) {
+        grid.innerHTML = ''
+        emptyState.hidden = false
+        return
+      }
+
+      emptyState.hidden = true
+      grid.innerHTML = projects.map(p => `
+        <a class="project-card" href="/portfolio/${p.slug}.html">
+          ${p.cover_image
+            ? `<img class="project-card__image" src="${p.cover_image}" alt="${p.title}" loading="lazy">`
+            : `<div class="project-card__image-placeholder">${p.title}</div>`}
+          <div class="project-card__body">
+            <div class="project-card__cat">
+              ${Array.isArray(p.category) ? p.category.join(' · ') : p.category ?? ''}
+            </div>
+            <div class="project-card__title">${p.title}</div>
+            <div class="project-card__client">${p.client ?? ''} ${p.year ? `· ${p.year}` : ''}</div>
+          </div>
+        </a>
+      `).join('')
+    }
+
+    function filterProjects(category) {
+      activeCategory = category
+
+      // Atualiza botões
+      document.querySelectorAll('.portfolio-filter').forEach(btn => {
+        btn.classList.toggle('portfolio-filter--active', btn.dataset.category === category)
+      })
+
+      const filtered = category === 'all'
+        ? allProjects
+        : allProjects.filter(p => {
+            const cats = Array.isArray(p.category) ? p.category : [p.category]
+            return cats.some(c => c?.toLowerCase() === category.toLowerCase())
+          })
+
+      renderProjects(filtered)
+    }
+
+    // Carrega projetos
+    try {
+      allProjects = await getProjects({ publishedOnly: true, locale: lang })
+
+      // Extrai categorias únicas para os filtros
+      const categories = [...new Set(
+        allProjects.flatMap(p => Array.isArray(p.category) ? p.category : [p.category])
+          .filter(Boolean)
+      )]
+
+      const filtersEl = document.getElementById('filters')
+      categories.forEach(cat => {
+        const btn = document.createElement('button')
+        btn.className = 'portfolio-filter'
+        btn.dataset.category = cat
+        btn.textContent = cat
+        btn.addEventListener('click', () => filterProjects(cat))
+        filtersEl.appendChild(btn)
+      })
+
+      // Delegação de evento no botão "Todos"
+      filtersEl.querySelector('[data-category="all"]').addEventListener('click', () => filterProjects('all'))
+
+      renderProjects(allProjects)
+
+    } catch (err) {
+      console.error('Erro ao carregar projetos:', err)
+      document.getElementById('projects-grid').innerHTML = ''
+      document.getElementById('empty-state').hidden = false
+    }
+  </script>
+
+</body>
+</html>

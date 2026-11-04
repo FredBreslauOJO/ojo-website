@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contato — OJO Studio</title>
+  <meta name="description" content="Entre em contato com o OJO Studio.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <a class="nav__logo" href="/">OJO</a>
+    <div class="nav__links">
+      <a class="nav__link" href="/portfolio.html">Portfolio</a>
+      <a class="nav__link" href="/sobre.html">Sobre</a>
+      <a class="nav__link nav__link--active" href="/contato.html">Contato</a>
+    </div>
+    <div class="nav__lang" id="nav-lang">
+      <button class="nav__lang-btn nav__lang-btn--active" onclick="setLang('pt')">PT</button>
+      <button class="nav__lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="nav__toggle" id="nav-toggle" aria-label="Menu">
+      <span class="nav__toggle-line"></span>
+      <span class="nav__toggle-line"></span>
+    </button>
+  </nav>
+
+  <div class="page-wrap">
+    <main class="main">
+
+      <section class="section section--lg">
+        <div class="container contato-grid">
+
+          <!-- Coluna esquerda: info -->
+          <div class="contato-info">
+            <p class="hero__eyebrow">Contato</p>
+            <h1 class="hero__title">Vamos criar algo juntos.</h1>
+            <p class="contato-desc">
+              Conte sobre o seu projeto ou marca. Respondemos em até 48 horas.
+            </p>
+
+            <div class="contato-links">
+              <div class="contato-link-item">
+                <span class="contato-link-label">E-mail</span>
+                <a class="contato-link" href="mailto:oi@ojostudio.co">oi@ojostudio.co</a>
+              </div>
+              <div class="contato-link-item">
+                <span class="contato-link-label">Instagram</span>
+                <a class="contato-link" href="https://instagram.com/ojostudio" target="_blank" rel="noopener">@ojostudio</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coluna direita: formulário -->
+          <div class="contato-form-wrap">
+            <form class="contato-form" id="contact-form" novalidate>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="nome">Nome</label>
+                  <input class="form-input" type="text" id="nome" name="nome" placeholder="Seu nome" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="empresa">Empresa</label>
+                  <input class="form-input" type="text" id="empresa" name="empresa" placeholder="Sua empresa">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="email">E-mail</label>
+                <input class="form-input" type="email" id="email" name="email" placeholder="seu@email.com" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tipo">Tipo de projeto</label>
+                <select class="form-select" id="tipo" name="tipo">
+                  <option value="">Selecione...</option>
+                  <option value="identidade">Identidade visual</option>
+                  <option value="branding">Branding completo</option>
+                  <option value="digital">Experiência digital</option>
+                  <option value="motion">Motion &amp; animação</option>
+                  <option value="outro">Outro</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="mensagem">Mensagem</label>
+                <textarea class="form-textarea" id="mensagem" name="mensagem" rows="5"
+                  placeholder="Conte sobre o projeto, o momento da marca, o que você quer comunicar..." required></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button class="btn btn--primary btn--lg" type="submit" id="submit-btn">
+                  Enviar mensagem
+                </button>
+              </div>
+
+              <!-- Mensagem de sucesso -->
+              <div class="form-success" id="form-success" hidden>
+                <span class="form-success__icon">✓</span>
+                <p>Mensagem enviada. Falaremos em breve.</p>
+              </div>
+
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer container">
+      <div class="footer__logo">OJO Studio</div>
+      <div class="footer__copy">© 2024 OJO Studio. Todos os direitos reservados.</div>
+      <div class="footer__links">
+        <a class="footer__link" href="https://instagram.com/ojostudio" target="_blank" rel="noopener">Instagram</a>
+        <a class="footer__link" href="/contato.html">Contato</a>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <style>
+    .contato-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: var(--space-20);
+      align-items: start;
+      padding-top: var(--space-16);
+    }
+
+    .contato-desc {
+      font-size: var(--text-lg);
+      color: var(--color-muted);
+      margin-top: var(--space-6);
+      line-height: 1.65;
+    }
+
+    .contato-links {
+      margin-top: var(--space-12);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .contato-link-item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .contato-link-label {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .contato-link {
+      font-size: var(--text-base);
+      color: var(--color-fg);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .contato-link:hover {
+      color: var(--color-muted);
+    }
+
+    .contato-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .form-actions {
+      margin-top: var(--space-2);
+    }
+
+    .form-success {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background: var(--color-bg-2);
+      border-radius: var(--radius-sm);
+      margin-top: var(--space-4);
+    }
+
+    .form-success__icon {
+      font-size: var(--text-lg);
+      color: var(--color-fg);
+    }
+
+    @media (max-width: 1024px) {
+      .contato-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-12);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <script type="module">
+    import { initScrollNav, initTheme, setLang as _setLang, getLang, showToast, setButtonLoading } from './assets/js/modules/ui.js'
+    import supabase from './assets/js/config/supabase.js'
+
+    initTheme()
+    initScrollNav()
+
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('nav').classList.toggle('nav--open')
+    })
+
+    window.setLang = _setLang
+    const lang = getLang()
+    document.documentElement.lang = lang
+    document.querySelectorAll('.nav__lang-btn').forEach((btn, i) => {
+      btn.classList.toggle('nav__lang-btn--active', (i === 0 && lang === 'pt') || (i === 1 && lang === 'en'))
+    })
+
+    // Formulário de contato
+    const form = document.getElementById('contact-form')
+    const submitBtn = document.getElementById('submit-btn')
+    const successMsg = document.getElementById('form-success')
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+
+      if (!form.checkValidity()) {
+        form.reportValidity()
+        return
+      }
+
+      setButtonLoading(submitBtn, true)
+
+      try {
+        const { error } = await supabase
+          .from('contact_messages')
+          .insert([{
+            name:    form.nome.value.trim(),
+            company: form.empresa.value.trim() || null,
+            email:   form.email.value.trim(),
+            type:    form.tipo.value || null,
+            message: form.mensagem.value.trim(),
+          }])
+
+        if (error) throw error
+
+        form.reset()
+        form.style.display = 'none'
+        successMsg.hidden = false
+
+      } catch (err) {
+        console.error('Erro ao enviar:', err)
+        showToast('Erro ao enviar. Tente pelo e-mail.', 'error')
+        setButtonLoading(submitBtn, false)
+      }
+    })
+  </script>
+
+</body>
+</html>

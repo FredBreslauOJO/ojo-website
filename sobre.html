@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre — OJO Studio</title>
+  <meta name="description" content="OJO Studio é um estúdio de identidade e narrativa visual.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <a class="nav__logo" href="/">OJO</a>
+    <div class="nav__links">
+      <a class="nav__link" href="/portfolio.html">Portfolio</a>
+      <a class="nav__link nav__link--active" href="/sobre.html">Sobre</a>
+      <a class="nav__link" href="/contato.html">Contato</a>
+    </div>
+    <div class="nav__lang" id="nav-lang">
+      <button class="nav__lang-btn nav__lang-btn--active" onclick="setLang('pt')">PT</button>
+      <button class="nav__lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="nav__toggle" id="nav-toggle" aria-label="Menu">
+      <span class="nav__toggle-line"></span>
+      <span class="nav__toggle-line"></span>
+    </button>
+  </nav>
+
+  <div class="page-wrap">
+    <main class="main">
+
+      <!-- HERO -->
+      <section class="section section--lg">
+        <div class="container--text">
+          <p class="hero__eyebrow">Sobre</p>
+          <h1 class="hero__title">Storyfeeling.</h1>
+          <p class="sobre-lead">
+            OJO é um estúdio de identidade e narrativa visual. Trabalhamos na fronteira
+            entre estratégia de marca, design e experiência, criando histórias que tocam
+            antes de serem entendidas.
+          </p>
+        </div>
+      </section>
+
+      <!-- MANIFESTO -->
+      <section class="section" style="background: var(--color-bg-2)">
+        <div class="container--text">
+          <h2 class="section__title">O que acreditamos</h2>
+          <div class="sobre-manifesto">
+            <p>
+              Uma marca não existe no briefing, nem nos arquivos finais. Ela existe no
+              momento em que alguém a sente pela primeira vez, antes de conseguir explicar
+              por que.
+            </p>
+            <p>
+              É esse instante que nos interessa: o encontro entre a marca e a pessoa.
+              A sensação antes da palavra.
+            </p>
+            <p>
+              Por isso chamamos o que fazemos de <em>storyfeeling</em>: a arte de construir
+              histórias que se sentem antes de serem lidas.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROCESSO -->
+      <section class="section section--lg">
+        <div class="container">
+          <h2 class="section__title">Como trabalhamos</h2>
+          <div class="sobre-processo">
+            <div class="sobre-processo__item">
+              <span class="sobre-processo__num">01</span>
+              <h3 class="sobre-processo__titulo">Encontro</h3>
+              <p class="sobre-processo__desc">
+                Escutamos antes de propor. Entendemos o mundo da marca, suas contradições e
+                ambições, e nos aprofundamos nas pessoas que ela quer tocar.
+              </p>
+            </div>
+            <div class="sobre-processo__item">
+              <span class="sobre-processo__num">02</span>
+              <h3 class="sobre-processo__titulo">Reconhecimento</h3>
+              <p class="sobre-processo__desc">
+                Mapeamos o que a marca já é, o que ela quer ser, e o que ela nunca poderia
+                ser. Esse triângulo é onde a identidade real vive.
+              </p>
+            </div>
+            <div class="sobre-processo__item">
+              <span class="sobre-processo__num">03</span>
+              <h3 class="sobre-processo__titulo">Construção</h3>
+              <p class="sobre-processo__desc">
+                Design, linguagem, motion, experiência. Traduzimos a essência da marca em
+                cada ponto de contato, com coerência e com personalidade.
+              </p>
+            </div>
+            <div class="sobre-processo__item">
+              <span class="sobre-processo__num">04</span>
+              <h3 class="sobre-processo__titulo">Vestígio</h3>
+              <p class="sobre-processo__desc">
+                Entregamos sistemas vivos: identidades que podem respirar, crescer e se
+                adaptar sem perder o que as torna únicas.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section" style="background: var(--color-fg); color: var(--color-bg)">
+        <div class="container--text" style="text-align: center">
+          <h2 style="font-family: var(--font-display); font-size: var(--text-4xl); margin-bottom: var(--space-6)">
+            Vamos trabalhar juntos?
+          </h2>
+          <a class="btn btn--primary" href="/contato.html"
+             style="background: var(--color-bg); color: var(--color-fg)">
+            Falar com a gente
+          </a>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer container">
+      <div class="footer__logo">OJO Studio</div>
+      <div class="footer__copy">© 2024 OJO Studio. Todos os direitos reservados.</div>
+      <div class="footer__links">
+        <a class="footer__link" href="https://instagram.com/ojostudio" target="_blank" rel="noopener">Instagram</a>
+        <a class="footer__link" href="/contato.html">Contato</a>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module">
+    import { initScrollNav, initTheme, setLang as _setLang, getLang } from './assets/js/modules/ui.js'
+
+    initTheme()
+    initScrollNav()
+
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('nav').classList.toggle('nav--open')
+    })
+
+    window.setLang = _setLang
+    const lang = getLang()
+    document.documentElement.lang = lang
+    document.querySelectorAll('.nav__lang-btn').forEach((btn, i) => {
+      btn.classList.toggle('nav__lang-btn--active', (i === 0 && lang === 'pt') || (i === 1 && lang === 'en'))
+    })
+  </script>
+
+  <style>
+    /* Estilos específicos da página Sobre */
+    .sobre-lead {
+      font-size: var(--text-xl);
+      line-height: 1.65;
+      color: var(--color-muted);
+      margin-top: var(--space-6);
+      max-width: 60ch;
+    }
+
+    .sobre-manifesto {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .sobre-manifesto p {
+      font-size: var(--text-lg);
+      line-height: 1.75;
+      color: var(--color-muted);
+    }
+
+    .sobre-manifesto em {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--color-fg);
+    }
+
+    .sobre-processo {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-12) var(--space-16);
+      margin-top: var(--space-10);
+    }
+
+    .sobre-processo__num {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: var(--space-3);
+    }
+
+    .sobre-processo__titulo {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 400;
+      margin-bottom: var(--space-3);
+    }
+
+    .sobre-processo__desc {
+      font-size: var(--text-base);
+      line-height: 1.7;
+      color: var(--color-muted);
+    }
+
+    @media (max-width: 768px) {
+      .sobre-processo {
+        grid-template-columns: 1fr;
+        gap: var(--space-10);
+      }
+    }
+  </style>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso Admin — OJO Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/css/tokens.css">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+
+  <div class="admin-login">
+    <div class="admin-login__card">
+      <div class="admin-login__logo">OJO</div>
+      <h1 class="admin-login__title">Painel Admin</h1>
+      <p class="admin-login__sub">Acesso restrito</p>
+
+      <form class="admin-login__form" id="login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="email">E-mail</label>
+          <input class="form-input" type="email" id="email" placeholder="seu@email.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Senha</label>
+          <input class="form-input" type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <div class="form-error" id="form-error" hidden></div>
+
+        <button class="btn btn--primary btn--lg" type="submit" id="submit-btn" style="width: 100%; margin-top: var(--space-2)">
+          Entrar
+        </button>
+
+        <div class="admin-login__forgot">
+          <button type="button" class="btn btn--ghost btn--sm" id="forgot-btn">Esqueci a senha</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <style>
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .form-error {
+      background: color-mix(in srgb, red 10%, transparent);
+      color: #c0392b;
+      border-radius: var(--radius-sm);
+      padding: var(--space-3) var(--space-4);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-4);
+    }
+
+    .admin-login__forgot {
+      text-align: center;
+      margin-top: var(--space-4);
+    }
+  </style>
+
+  <script type="module">
+    import { signIn, redirectIfAuthenticated, resetPasswordByEmail } from '../assets/js/modules/auth.js'
+    import { showToast, setButtonLoading, initTheme } from '../assets/js/modules/ui.js'
+
+    initTheme()
+
+    // Redireciona se já estiver autenticado
+    await redirectIfAuthenticated('/admin/index.html')
+
+    const form     = document.getElementById('login-form')
+    const submitBtn = document.getElementById('submit-btn')
+    const errorEl  = document.getElementById('form-error')
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      errorEl.hidden = true
+
+      const email    = document.getElementById('email').value.trim()
+      const password = document.getElementById('password').value
+
+      if (!email || !password) return
+
+      setButtonLoading(submitBtn, true)
+
+      try {
+        await signIn(email, password)
+        window.location.href = '/admin/index.html'
+      } catch (err) {
+        errorEl.textContent = 'E-mail ou senha incorretos.'
+        errorEl.hidden = false
+        setButtonLoading(submitBtn, false)
+      }
+    })
+
+    document.getElementById('forgot-btn').addEventListener('click', async () => {
+      const email = document.getElementById('email').value.trim()
+      if (!email) {
+        showToast('Insira seu e-mail primeiro.', 'error')
+        return
+      }
+      try {
+        await resetPasswordByEmail(email)
+        showToast('Link de redefinição enviado para ' + email, 'success')
+      } catch {
+        showToast('Erro ao enviar o e-mail.', 'error')
+      }
+    })
+  </script>
+
+</body>
+</html>
