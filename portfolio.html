@@ -27,7 +27,7 @@ canvas#gl{position:absolute;inset:0;width:100%;height:100%;display:block}
 .scroll-cue{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none;z-index:5;color:rgba(255,255,255,.35);font-size:9px;letter-spacing:.14em;font-weight:500;transition:opacity .4s}
 .scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(255,255,255,.4),transparent);animation:line 2.4s ease-in-out infinite}
 @keyframes line{0%{transform:scaleY(0);transform-origin:top}49%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
-#water-section{position:relative;overflow:hidden;background:#ddeaf5}
+#water-section{position:relative;overflow:hidden;background:#dce9f4}
 canvas#ripple{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 #cards-stage{position:absolute;inset:0;z-index:2;pointer-events:none}
 .water-label{position:absolute;top:28px;left:40px;z-index:10;pointer-events:none}
@@ -142,162 +142,48 @@ const heroEl=document.getElementById('hero'),nv=document.getElementById('nav'),c
 window.addEventListener('scroll',()=>{const y=window.scrollY,wh=window.innerHeight,p=Math.min(y/wh,1);heroEl.style.opacity=Math.max(0,1-p*1.6);heroEl.style.transform=`scale(${1+p*.05})`;cue.style.opacity=p>.08?'0':'';if(y>wh*.5)nv.classList.add('on-water');else nv.classList.remove('on-water');},{passive:true});
 
 /* ============================================================
-   WATER  —  CPU height-field + WebGL2 lighting shader
-   Texture format: RGBA/UNSIGNED_BYTE (universally compatible)
-   Height packed into red channel: 0-255 maps to -1..+1
+   WATER  —  pure Canvas 2D  (never conflicts with hero WebGL)
+   Height-field simulation with Phong lighting + caustics
    ============================================================ */
 (function(){
   const SEC=document.getElementById('water-section');
   const wCv=document.getElementById('ripple');
+  const ctx=wCv.getContext('2d');
+  if(!ctx){return;} /* shouldn't happen */
 
-  /* Try WebGL2 first, fall back to 2D canvas */
-  let mode='2d';
-  let wgl=null;
-  try{
-    wgl=wCv.getContext('webgl2',{antialias:false,alpha:false,premultipliedAlpha:false,powerPreference:'default'});
-    if(wgl)mode='webgl2';
-  }catch(e){}
-
-  /* ---- WebGL shader (only used in webgl2 mode) ---- */
-  const WVS=`#version 300 es
-  void main(){
-    vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);
-    gl_Position=vec4(p*2.-1.,0.,1.);
-  }`;
-
-  /* Height encoded as RGBA UNSIGNED_BYTE.
-     r channel = (h * 0.5 + 0.5) * 255  =>  unpack: h = r/127.5 - 1.0
-     We use bilinear NEAREST here and LINEAR in texture params for smooth normal. */
-  const WFS=`#version 300 es
-  precision highp float;
-  uniform sampler2D uH;
-  uniform vec2 uSimRes;
-  uniform vec2 uScreenRes;
-  uniform float uTime;
-  out vec4 fragColor;
-
-  /* ---- fast hash noise ---- */
-  float h2(vec2 p){p=fract(p*vec2(127.1,311.7));p+=dot(p,p+45.32);return fract(p.x*p.y);}
-  float fbm(vec2 p){
-    float v=0.;float a=.5;
-    for(int i=0;i<3;i++){v+=a*(h2(floor(p))+h2(floor(p)+vec2(1,0))*.5+h2(floor(p)+vec2(0,1))*.5+h2(floor(p)+vec2(1,1))*.25);p*=2.1;a*=.5;}
-    return v;
-  }
-
-  float sampleH(vec2 uv){
-    return texture(uH,uv).r/127.5-1.0;
-  }
-
-  void main(){
-    vec2 uv=gl_FragCoord.xy/uScreenRes;
-    vec2 dt=1./uSimRes;
-
-    /* Sample height field */
-    float h =sampleH(uv);
-    float hL=sampleH(uv-vec2(dt.x,0.));
-    float hR=sampleH(uv+vec2(dt.x,0.));
-    float hT=sampleH(uv+vec2(0.,dt.y));
-    float hB=sampleH(uv-vec2(0.,dt.y));
-
-    /* Normal from gradient */
-    float ns=5.0;
-    vec3 N=normalize(vec3((hL-hR)*ns, 1.0, (hT-hB)*ns));
-
-    /* Add micro-detail noise (tiny waves always present) */
-    float mt=uTime*.14;
-    vec2 mUV=uv*55.+vec2(mt,mt*.73);
-    float micro=(fbm(mUV)-.5)*.018;
-    N=normalize(N+vec3(micro,0.,micro*.6));
-    N=normalize(N);
-
-    /* Sun from upper-left, slightly forward */
-    vec3 L=normalize(vec3(-0.5,2.5,0.3));
-    vec3 V=vec3(0.,1.,0.);  /* viewer straight down */
-    vec3 H2=normalize(L+V);
-
-    /* Diffuse */
-    float diff=max(dot(N,L),0.)*0.22;
-
-    /* Specular — Blinn-Phong, tight */
-    float spec=pow(max(dot(N,H2),0.),180.)*1.1;
-
-    /* Caustics via Laplacian */
-    float lap=(hL+hR+hT+hB)-4.*h;
-    float caustic=clamp(lap*8.,0.,1.);
-
-    /* Fresnel tint at grazing */
-    float fresnel=pow(1.-abs(dot(N,V)),3.)*.14;
-
-    /* Base palette — pale blue-grey water */
-    vec3 shallow=vec3(.894,.933,.965);   /* #e4eef6 */
-    vec3 deep   =vec3(.770,.848,.920);   /* #c4d8eb */
-
-    vec3 col=mix(shallow,deep,clamp(.4-h*.6+fresnel,0.,1.));
-
-    /* Lighting accumulation */
-    col+=diff*vec3(.80,.90,1.0);
-    col+=spec*vec3(1.0,0.99,0.97);
-    col+=caustic*.11*vec3(.88,.95,1.0);
-
-    /* Vignette for depth */
-    float vig=pow(length(uv-.5)*1.6,2.)*.18;
-    col*=1.-vig;
-
-    col=clamp(col,0.,1.);
-    fragColor=vec4(col,1.);
-  }`;
-
-  let wProg=null, uH_L,uSR_L,uSC_L,uT_L;
-  if(mode==='webgl2'){
-    try{
-      function mkSh(type,src){const s=wgl.createShader(type);wgl.shaderSource(s,src);wgl.compileShader(s);if(!wgl.getShaderParameter(s,wgl.COMPILE_STATUS)){console.warn(wgl.getShaderInfoLog(s));throw 0;}return s;}
-      wProg=wgl.createProgram();
-      wgl.attachShader(wProg,mkSh(wgl.VERTEX_SHADER,WVS));
-      wgl.attachShader(wProg,mkSh(wgl.FRAGMENT_SHADER,WFS));
-      wgl.linkProgram(wProg);
-      if(!wgl.getProgramParameter(wProg,wgl.LINK_STATUS)){console.warn(wgl.getProgramInfoLog(wProg));throw 0;}
-      wgl.bindVertexArray(wgl.createVertexArray());
-      uH_L =wgl.getUniformLocation(wProg,'uH');
-      uSR_L=wgl.getUniformLocation(wProg,'uSimRes');
-      uSC_L=wgl.getUniformLocation(wProg,'uScreenRes');
-      uT_L =wgl.getUniformLocation(wProg,'uTime');
-    }catch(e){mode='2d';wgl=null;}
-  }
-
-  /* Height texture (RGBA UNSIGNED_BYTE — universally supported) */
-  let hTex=null;
-  if(mode==='webgl2'){
-    hTex=wgl.createTexture();
-    wgl.bindTexture(wgl.TEXTURE_2D,hTex);
-    wgl.texParameteri(wgl.TEXTURE_2D,wgl.TEXTURE_MIN_FILTER,wgl.LINEAR);
-    wgl.texParameteri(wgl.TEXTURE_2D,wgl.TEXTURE_MAG_FILTER,wgl.LINEAR);
-    wgl.texParameteri(wgl.TEXTURE_2D,wgl.TEXTURE_WRAP_S,wgl.CLAMP_TO_EDGE);
-    wgl.texParameteri(wgl.TEXTURE_2D,wgl.TEXTURE_WRAP_T,wgl.CLAMP_TO_EDGE);
-  }
-
-  /* 2D canvas fallback */
-  let ctx2d=null;
-  if(mode==='2d'){ctx2d=wCv.getContext('2d');}
-
-  /* ---- Simulation ---- */
+  /* Simulation grid: 1/SC of canvas pixels */
   const SC=5;
-  let w=0,h=0,rw=0,rh=0,cur,prev,hBytes;
+  let W=0,H=0,rw=0,rh=0;
+  let cur,prev;
+
+  /* Cached off-screen canvas for the simulation render */
+  let offCv,offCtx,imgD;
+
+  /* Sun direction (normalized, top-left) */
+  const LX=-0.42, LY=2.6, LZ=0.28;
+  const LL=Math.sqrt(LX*LX+LY*LY+LZ*LZ);
+  const lx=LX/LL, ly=LY/LL, lz=LZ/LL;
+  /* Half-vector for Blinn-Phong (viewer = straight up = 0,1,0) */
+  const hx=lx*.5, hy=(ly+1)*.5, hz=lz*.5;
+  const hl=Math.sqrt(hx*hx+hy*hy+hz*hz);
+  const HX=hx/hl, HY=hy/hl, HZ=hz/hl;
 
   function init(){
-    w=SEC.clientWidth; h=SEC.clientHeight;
-    wCv.width=w; wCv.height=h;
-    if(mode==='webgl2') wgl.viewport(0,0,w,h);
-    rw=Math.max(4,Math.ceil(w/SC));
-    rh=Math.max(4,Math.ceil(h/SC));
+    W=SEC.clientWidth; H=SEC.clientHeight;
+    wCv.width=W; wCv.height=H;
+    rw=Math.max(4,Math.ceil(W/SC));
+    rh=Math.max(4,Math.ceil(H/SC));
     cur =new Float32Array(rw*rh);
     prev=new Float32Array(rw*rh);
-    hBytes=new Uint8Array(rw*rh*4);
-    for(let i=0;i<rw*rh;i++) hBytes[i*4+3]=255; // alpha=255
-
-    if(mode==='webgl2'){
-      wgl.bindTexture(wgl.TEXTURE_2D,hTex);
-      wgl.texImage2D(wgl.TEXTURE_2D,0,wgl.RGBA,rw,rh,0,wgl.RGBA,wgl.UNSIGNED_BYTE,hBytes);
-    }
+    offCv=document.createElement('canvas');
+    offCv.width=rw; offCv.height=rh;
+    offCtx=offCv.getContext('2d');
+    imgD=offCtx.createImageData(rw,rh);
+    /* Pre-fill alpha */
+    for(let i=3;i<rw*rh*4;i+=4) imgD.data[i]=255;
+    /* Paint base color immediately so canvas isn't blank */
+    ctx.fillStyle='#dce9f4';
+    ctx.fillRect(0,0,W,H);
   }
 
   function drop(x,y,r,str){
@@ -306,114 +192,110 @@ window.addEventListener('scroll',()=>{const y=window.scrollY,wh=window.innerHeig
     for(let dy=-rr;dy<=rr;dy++) for(let dx=-rr;dx<=rr;dx++){
       if(dx*dx+dy*dy>rr*rr) continue;
       const nx=rx+dx, ny=ry+dy;
-      if(nx<0||nx>=rw||ny<0||ny>=rh) continue;
-      cur[ny*rw+nx]=str;
+      if(nx>=0&&nx<rw&&ny>=0&&ny<rh) cur[ny*rw+nx]=str;
     }
   }
   window._waterDrop=function(x,y,r,str){drop(x,y,r,str);};
 
   function step(){
     const damp=.985;
-    for(let y2=1;y2<rh-1;y2++) for(let x2=1;x2<rw-1;x2++){
-      const i=y2*rw+x2;
-      prev[i]=(cur[i-1]+cur[i+1]+cur[i-rw]+cur[i+rw])*.5-prev[i];
-      prev[i]*=damp;
+    for(let y2=1;y2<rh-1;y2++){
+      const row=y2*rw;
+      for(let x2=1;x2<rw-1;x2++){
+        const i=row+x2;
+        prev[i]=(cur[i-1]+cur[i+1]+cur[i-rw]+cur[i+rw])*.5-prev[i];
+        prev[i]*=damp;
+      }
     }
     const tmp=cur; cur=prev; prev=tmp;
   }
 
-  /* Pack float [-1,1] → uint8 [0,255] into red channel */
-  function packBytes(){
-    for(let i=0;i<rw*rh;i++){
-      hBytes[i*4]=Math.round((cur[i]*.5+.5)*255);
-      /* g,b,a already set */
-    }
-  }
-
-  /* 2D canvas fallback render (original lighting path) */
-  function render2d(){
-    let imgD=ctx2d.createImageData(rw,rh);
+  function render(){
     const d=imgD.data;
-    for(let i=0,pi=0;i<rw*rh;i++,pi+=4){
-      const hv=cur[i];
-      const hL=i%rw>0?cur[i-1]:hv;
-      const hR=i%rw<rw-1?cur[i+1]:hv;
-      const hT=i>=rw?cur[i-rw]:hv;
-      const hB=i<rw*(rh-1)?cur[i+rw]:hv;
-      const lx=(hR-hL)*.5, ly=(hB-hT)*.5;
-      /* diffuse from upper-left */
-      const diff=(lx*-.65+ly*-.35)*0.09;
-      /* specular: dot(N, halfvec) ^ 60 */
-      const nx=-lx*4,ny=1,nz=-ly*4;
-      const nl=Math.sqrt(nx*nx+ny*ny+nz*nz);
-      const lDir=[-0.4,2.0,0.3];
-      const lln=Math.sqrt(lDir[0]*lDir[0]+lDir[1]*lDir[1]+lDir[2]*lDir[2]);
-      const hx=(lDir[0]/lln+nx/nl)*.5, hy=(lDir[1]/lln+ny/nl)*.5, hz=(lDir[2]/lln+nz/nl)*.5;
-      const hl=Math.sqrt(hx*hx+hy*hy+hz*hz);
-      const spec=Math.pow(Math.max(0,(nx/nl*hx/hl+ny/nl*hy/hl+nz/nl*hz/hl)),80)*0.7;
-      const lap=(i%rw>0?cur[i-1]:0)+(i%rw<rw-1?cur[i+1]:0)+(i>=rw?cur[i-rw]:0)+(i<rw*(rh-1)?cur[i+rw]:0)-4*hv;
-      const caustic=Math.max(0,lap*7)*0.08;
-      d[pi  ]=Math.min(255,Math.max(0,228+diff*55+spec*255+caustic*255));
-      d[pi+1]=Math.min(255,Math.max(0,238+diff*44+spec*245+caustic*240));
-      d[pi+2]=Math.min(255,Math.max(0,247+diff*30+spec*230+caustic*230));
-      d[pi+3]=255;
+    const nS=5.5; /* normal scale */
+    const SPEC_POW=90, SPEC_STR=0.85, DIFF_STR=0.20, CAUS_STR=0.10;
+    /* Base water color: rgb(220, 233, 244) = #dce9f4 */
+    const BR=220, BG=233, BB=244;
+    /* Deeper tint: rgb(185,210,235) */
+    const DR=185, DG=210, DB=235;
+
+    for(let j=1;j<rh-1;j++){
+      const row=j*rw;
+      for(let i2=1;i2<rw-1;i2++){
+        const idx=row+i2;
+        const h=cur[idx];
+        const hL=cur[idx-1], hR=cur[idx+1];
+        const hT=cur[idx-rw], hB=cur[idx+rw];
+
+        /* Surface normal (not normalized, but fast) */
+        const nx=(hL-hR)*nS;
+        const ny=1.0;
+        const nz=(hT-hB)*nS;
+        const nl=Math.sqrt(nx*nx+ny*ny+nz*nz);
+        const nnx=nx/nl, nny=ny/nl, nnz=nz/nl;
+
+        /* Diffuse dot(N,L) */
+        const diff=Math.max(0, nnx*lx+nny*ly+nnz*lz);
+
+        /* Specular Blinn-Phong dot(N,H)^p */
+        const ndoth=Math.max(0, nnx*HX+nny*HY+nnz*HZ);
+        const spec=Math.pow(ndoth,SPEC_POW);
+
+        /* Caustics: Laplacian (wave convergence = bright) */
+        const lap=(hL+hR+hT+hB)-4*h;
+        const caus=Math.max(0,lap*8)*CAUS_STR;
+
+        /* Depth tint from wave trough */
+        const t=Math.max(0,Math.min(1, 0.35-h*0.6));
+
+        const r2=Math.round(BR+(DR-BR)*t + diff*DIFF_STR*18 + spec*SPEC_STR*230 + caus*210);
+        const g2=Math.round(BG+(DG-BG)*t + diff*DIFF_STR*14 + spec*SPEC_STR*220 + caus*220);
+        const b2=Math.round(BB+(DB-BB)*t + diff*DIFF_STR*8  + spec*SPEC_STR*200 + caus*230);
+
+        const pi=(idx)*4;
+        d[pi  ]=r2<0?0:r2>255?255:r2;
+        d[pi+1]=g2<0?0:g2>255?255:g2;
+        d[pi+2]=b2<0?0:b2>255?255:b2;
+      }
     }
-    const off=document.createElement('canvas');off.width=rw;off.height=rh;
-    const ox=off.getContext('2d');ox.putImageData(imgD,0,0);
-    ctx2d.imageSmoothingEnabled=true;ctx2d.imageSmoothingQuality='low';
-    ctx2d.drawImage(off,0,0,w,h);
+
+    offCtx.putImageData(imgD,0,0);
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+    ctx.drawImage(offCv,0,0,W,H);
   }
 
-  /* Mouse / touch */
-  let lastDropT=0;
+  /* Interaction */
+  let lastT=0;
   SEC.addEventListener('mousemove',e=>{
-    const now=performance.now();if(now-lastDropT<16)return;lastDropT=now;
+    const now=performance.now();if(now-lastT<16)return;lastT=now;
     const r=SEC.getBoundingClientRect();
     drop(e.clientX-r.left,e.clientY-r.top,12,180);
   },{passive:true});
   SEC.addEventListener('touchmove',e=>{
     const r=SEC.getBoundingClientRect();
-    for(const t of e.touches) drop(t.clientX-r.left,t.clientY-r.top,16,220);
+    for(const t of e.touches) drop(t.clientX-r.left,t.clientY-r.top,15,210);
   },{passive:true});
   SEC.addEventListener('click',e=>{
     const r=SEC.getBoundingClientRect();
     drop(e.clientX-r.left,e.clientY-r.top,28,255);
   },{passive:true});
 
-  /* Idle drops */
-  function idleDrop(){if(w&&h)drop(Math.random()*w,Math.random()*h,8,30);setTimeout(idleDrop,900+Math.random()*1600);}
-  setTimeout(idleDrop,1000);
+  /* Idle ambient drops */
+  function idle(){if(W&&H)drop(Math.random()*W,Math.random()*H,7,28);setTimeout(idle,900+Math.random()*1600);}
+  setTimeout(idle,1200);
 
   let rsz;window.addEventListener('resize',()=>{clearTimeout(rsz);rsz=setTimeout(init,150);});
 
-  const t0w=performance.now();
-  function waterLoop(){
-    step();
-    if(mode==='webgl2'){
-      packBytes();
-      wgl.bindTexture(wgl.TEXTURE_2D,hTex);
-      wgl.texSubImage2D(wgl.TEXTURE_2D,0,0,0,rw,rh,wgl.RGBA,wgl.UNSIGNED_BYTE,hBytes);
-      wgl.useProgram(wProg);
-      wgl.activeTexture(wgl.TEXTURE0);
-      wgl.bindTexture(wgl.TEXTURE_2D,hTex);
-      wgl.uniform1i(uH_L,0);
-      wgl.uniform2f(uSR_L,rw,rh);
-      wgl.uniform2f(uSC_L,w,h);
-      wgl.uniform1f(uT_L,(performance.now()-t0w)/1000);
-      wgl.drawArrays(wgl.TRIANGLES,0,3);
-    } else {
-      render2d();
-    }
-    requestAnimationFrame(waterLoop);
-  }
-
-  init();waterLoop();
+  function loop(){step();render();requestAnimationFrame(loop);}
+  init();loop();
 })();
 
 /* ============================================================
-   CARDS — no pixel distortion, clean float + sway
+   CARDS  —  scattered float + mouse push, NO pixel distortion
    ============================================================ */
 (function(){
+  /* [xFrac, yFrac, rotateDeg, widthPx] */
   const LAYOUT=[
     [.038,.08,-8.4,182],[.228,.03,3.1,208],[.455,.01,-3.8,194],[.692,.05,7.0,198],
     [.025,.40,5.2,188],[.192,.36,-6.0,202],[.418,.33,2.6,212],[.635,.38,-5.3,190],
@@ -426,19 +308,19 @@ window.addEventListener('scroll',()=>{const y=window.scrollY,wh=window.innerHeig
 
   const SEC=document.getElementById('water-section');
   const STAGE=document.getElementById('cards-stage');
-  const isMobile=window.matchMedia('(max-width:680px)').matches;
+  const isMob=window.matchMedia('(max-width:680px)').matches;
   const nodes=[],st=[];
   let mouseX=0,mouseY=0;
 
   SEC.addEventListener('mousemove',e=>{const r=SEC.getBoundingClientRect();mouseX=e.clientX-r.left;mouseY=e.clientY-r.top;},{passive:true});
 
-  function setSectionHeight(){
-    if(isMobile)return;
+  function setSH(){
+    if(isMob)return;
     SEC.style.height=window.innerHeight+'px';
     nodes.forEach((_,i)=>place(i));
   }
   function place(i){
-    if(!nodes[i]||isMobile)return;
+    if(!nodes[i]||isMob)return;
     const L=LAYOUT[i%13],W=SEC.clientWidth,H=SEC.clientHeight;
     const bx=L[0]*W,by=L[1]*H;
     if(st[i]){st[i].baseX=bx;st[i].baseY=by;}
@@ -448,7 +330,7 @@ window.addEventListener('scroll',()=>{const y=window.scrollY,wh=window.innerHeig
   function mkCard(proj,i){
     const L=LAYOUT[i%13];
     const wrap=document.createElement('div');wrap.className='wcard';
-    if(!isMobile)wrap.style.width=L[3]+'px';
+    if(!isMob)wrap.style.width=L[3]+'px';
     const inner=document.createElement('div');inner.className='wcard-inner';
     if(proj&&proj.cover_image){
       const img=document.createElement('img');img.className='wcard-img';
@@ -464,7 +346,7 @@ window.addEventListener('scroll',()=>{const y=window.scrollY,wh=window.innerHeig
     inner.appendChild(foot);wrap.appendChild(inner);
     if(proj&&proj.slug)wrap.addEventListener('click',()=>{location.href='portfolio/'+proj.slug+'.html';});
     wrap.addEventListener('click',()=>{
-      if(window._waterDrop){const r=SEC.getBoundingClientRect();const c=wrap.getBoundingClientRect();window._waterDrop(c.left-r.left+c.width/2,c.top-r.top+c.height/2,32,240);}
+      if(window._waterDrop){const r=SEC.getBoundingClientRect();const c=wrap.getBoundingClientRect();window._waterDrop(c.left-r.left+c.width/2,c.top-r.top+c.height/2,30,240);}
     });
     return wrap;
   }
@@ -475,21 +357,21 @@ window.addEventListener('scroll',()=>{const y=window.scrollY,wh=window.innerHeig
       const el=mkCard(proj,i);STAGE.appendChild(el);nodes.push(el);
       const L=LAYOUT[i%13],W=SEC.clientWidth,H=SEC.clientHeight;
       st.push({baseX:L[0]*W,baseY:L[1]*H,baseR:L[2],bobPh:BOB_PH[i%13],bobAY:BOB_AY[i%13],bobAR:BOB_AR[i%13],pushX:0,pushY:0,velX:0,velY:0});
-      if(!isMobile){el.style.left=(L[0]*W)+'px';el.style.top=(L[1]*H)+'px';}
+      if(!isMob){el.style.left=(L[0]*W)+'px';el.style.top=(L[1]*H)+'px';}
     });
   }
 
   const t0c=performance.now();
-  function animCards(now){
-    if(!isMobile){
+  function anim(now){
+    if(!isMob){
       const t=(now-t0c)*.001;
       nodes.forEach((el,i)=>{
         const s=st[i];if(!s)return;
         const L=LAYOUT[i%13],sz=L[3];
-        const cx=s.baseX+sz/2,cy=s.baseY+sz/2;
-        const dx=mouseX-cx,dy=mouseY-cy,dist=Math.sqrt(dx*dx+dy*dy),pushR=160;
+        const cx=s.baseX+sz*.5,cy=s.baseY+sz*.5;
+        const dx=mouseX-cx,dy=mouseY-cy,dist=Math.sqrt(dx*dx+dy*dy),pR=160;
         let tx2=0,ty2=0;
-        if(dist<pushR&&dist>.5){const f=(pushR-dist)/pushR,ang=Math.atan2(dy,dx);tx2=-Math.cos(ang)*f*11;ty2=-Math.sin(ang)*f*9;}
+        if(dist<pR&&dist>.5){const f=(pR-dist)/pR,ang=Math.atan2(dy,dx);tx2=-Math.cos(ang)*f*11;ty2=-Math.sin(ang)*f*9;}
         s.velX+=(tx2-s.pushX)*.13;s.velY+=(ty2-s.pushY)*.13;
         s.pushX+=s.velX*.55;s.pushY+=s.velY*.55;s.velX*=.80;s.velY*=.80;
         const bobY=Math.sin(t*.37+s.bobPh)*s.bobAY;
@@ -497,13 +379,12 @@ window.addEventListener('scroll',()=>{const y=window.scrollY,wh=window.innerHeig
         el.style.transform=`translate(${s.pushX}px,${s.pushY+bobY}px) rotate(${s.baseR+bobR}deg)`;
       });
     }
-    requestAnimationFrame(animCards);
+    requestAnimationFrame(anim);
   }
-  requestAnimationFrame(animCards);
+  requestAnimationFrame(anim);
 
   addCards(Array.from({length:13},()=>({})));
-  setSectionHeight();
-  window.addEventListener('resize',setSectionHeight);
+  setSH();window.addEventListener('resize',setSH);
   document.getElementById('pf-count').textContent='13 projects';
 
   import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm')
@@ -511,7 +392,7 @@ window.addEventListener('scroll',()=>{const y=window.scrollY,wh=window.innerHeig
       const sb=createClient('https://znlglyeaceenywgkfhid.supabase.co','sb_publishable_QO1RQqlZpVjriLlLzl55iA_jbFO5XSN');
       return sb.from('projects').select('slug,title,client,category,year,cover_image').eq('published',true).order('order_index');
     })
-    .then(({data,error})=>{if(error)throw error;if(data&&data.length){addCards(data);setSectionHeight();document.getElementById('pf-count').textContent=data.length+' projects';}})
+    .then(({data,error})=>{if(error)throw error;if(data&&data.length){addCards(data);setSH();document.getElementById('pf-count').textContent=data.length+' projects';}})
     .catch(e=>console.warn('Supabase:',e));
 })();
 </script>
