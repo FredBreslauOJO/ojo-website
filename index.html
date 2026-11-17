@@ -6,12 +6,10 @@
   <title>OJO Studio</title>
   <meta name="description" content="OJO Studio — storyfeeling.">
 
-  <!-- Fontes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gloock&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- CSS -->
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/components.css">
@@ -19,7 +17,6 @@
 </head>
 <body>
 
-  <!-- NAV -->
   <nav class="nav" id="nav">
     <a class="nav__logo" href="./">OJO</a>
     <div class="nav__links" id="nav-links">
@@ -37,50 +34,78 @@
     </button>
   </nav>
 
-  <!-- HOME: placeholder para experiência 3D do Fred -->
   <div class="page-wrap">
     <main class="main">
-      <div class="container">
-        <section class="hero">
-          <p class="hero__eyebrow">OJO Studio</p>
-          <h1 class="hero__title">Storyfeeling.</h1>
-          <p class="hero__subtitle">
-            Identidades, experiências e histórias para marcas que querem ser sentidas.
-          </p>
-        </section>
-      </div>
 
-      <!-- Prévia do portfolio -->
-      <section class="section" style="background: var(--color-bg-2)">
-        <div class="container">
-          <div class="section__header">
-            <h2 class="section__title">Trabalhos recentes</h2>
-            <a class="btn btn--ghost btn--sm" href="portfolio.html">Ver todos</a>
-          </div>
-          <div class="portfolio-grid" id="home-projects">
-            <!-- Preenchido via JS -->
-            <div class="project-card">
-              <div class="project-card__image-placeholder">Carregando...</div>
-            </div>
-            <div class="project-card">
-              <div class="project-card__image-placeholder">Carregando...</div>
-            </div>
-          </div>
+      <!-- HERO — vídeo do manequim -->
+      <section class="hero-video">
+        <video class="hero-video__bg" autoplay loop muted playsinline>
+          <source src="assets/mannequin-loop.webm" type="video/webm">
+          <source src="assets/mannequin-loop.mp4"  type="video/mp4">
+        </video>
+        <div class="hero-video__overlay"></div>
+        <div class="hero-video__content">
+          <p class="hero-video__eyebrow">OJO Studio</p>
+          <h1 class="hero-video__title">Storyfeeling.</h1>
+          <a class="hero-video__cta" href="portfolio.html">Ver portfolio</a>
+        </div>
+        <div class="hero-video__scroll-cue">
+          <span>scroll</span>
+          <div class="hero-video__scroll-line"></div>
         </div>
       </section>
+
+      <!-- SELECTED WORK -->
+      <section class="home-work" id="work">
+        <div class="home-work__bar">
+          <span class="home-work__label">Selected work</span>
+          <a class="home-work__all" href="portfolio.html">Ver todos <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="home-work__grid" id="home-projects">
+          <!-- placeholders enquanto carrega -->
+          <article class="work-card work-card--ph">
+            <div class="work-card__img-wrap"><div class="work-card__ph"></div></div>
+            <div class="work-card__meta">
+              <div class="work-card__ph-line" style="width:40%"></div>
+              <div class="work-card__ph-line" style="width:65%;height:20px;margin-top:6px"></div>
+            </div>
+          </article>
+          <article class="work-card work-card--ph work-card--offset">
+            <div class="work-card__img-wrap"><div class="work-card__ph"></div></div>
+            <div class="work-card__meta">
+              <div class="work-card__ph-line" style="width:35%"></div>
+              <div class="work-card__ph-line" style="width:55%;height:20px;margin-top:6px"></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SOBRE STRIP -->
+      <section class="home-about">
+        <div class="home-about__inner">
+          <p class="home-about__text">
+            Criamos identidades, experiências e histórias para marcas que querem ser sentidas.
+          </p>
+          <a class="home-about__link" href="sobre.html">Sobre a OJO <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
     </main>
 
-    <footer class="footer container">
-      <div class="footer__logo">OJO Studio</div>
-      <div class="footer__copy">© 2024 OJO Studio. Todos os direitos reservados.</div>
-      <div class="footer__links">
-        <a class="footer__link" href="https://instagram.com/ojostudio" target="_blank" rel="noopener">Instagram</a>
-        <a class="footer__link" href="contato.html">Contato</a>
+    <footer class="footer-home">
+      <div class="footer-home__inner">
+        <div class="footer-home__logo">OJO</div>
+        <nav class="footer-home__nav">
+          <a href="portfolio.html">Portfolio</a>
+          <a href="sobre.html">Sobre</a>
+          <a href="contato.html">Contato</a>
+          <a href="https://instagram.com/ojostudio" target="_blank" rel="noopener">Instagram</a>
+        </nav>
+        <p class="footer-home__copy">© 2024 OJO Studio</p>
       </div>
     </footer>
   </div>
 
-  <!-- Toast container -->
   <div class="toast-container" id="toast-container"></div>
 
   <script type="module">
@@ -90,44 +115,41 @@
     initTheme()
     initScrollNav()
 
-    // Mobile nav toggle
     document.getElementById('nav-toggle').addEventListener('click', () => {
       document.getElementById('nav').classList.toggle('nav--open')
     })
 
-    // Lang
     window.setLang = _setLang
     const lang = getLang()
     document.documentElement.lang = lang
     document.querySelectorAll('.nav__lang-btn').forEach((btn, i) => {
-      btn.classList.toggle('nav__lang-btn--active', (i === 0 && lang === 'pt') || (i === 1 && lang === 'en'))
+      btn.classList.toggle('nav__lang-btn--active', (i===0&&lang==='pt')||(i===1&&lang==='en'))
     })
 
     // Carrega projetos em destaque
     try {
       const projects = await getFeaturedProjects(2, lang)
       const grid = document.getElementById('home-projects')
+      if (!projects.length) return
 
-      if (projects.length === 0) {
-        grid.innerHTML = '<p class="empty-state__description" style="grid-column:span 2">Nenhum projeto publicado.</p>'
-        return
-      }
-
-      grid.innerHTML = projects.map(p => `
-        <a class="project-card" href="portfolio/${p.slug}.html">
-          ${p.cover_image
-            ? `<img class="project-card__image" src="${p.cover_image}" alt="${p.title}" loading="lazy">`
-            : `<div class="project-card__image-placeholder">${p.title}</div>`}
-          <div class="project-card__body">
-            <div class="project-card__cat">${Array.isArray(p.category) ? p.category.join(' · ') : p.category ?? ''}</div>
-            <div class="project-card__title">${p.title}</div>
-            <div class="project-card__client">${p.client ?? ''}</div>
+      grid.innerHTML = projects.map((p, i) => `
+        <article class="work-card${i===1?' work-card--offset':''}">
+          <a class="work-card__img-wrap" href="portfolio/${p.slug}.html">
+            ${p.cover_image
+              ? `<img class="work-card__img" src="${p.cover_image}" alt="${p.title}" loading="lazy">`
+              : `<div class="work-card__img-fallback">${p.title}</div>`}
+            <div class="work-card__hover">
+              <span class="work-card__view">Ver projeto</span>
+            </div>
+          </a>
+          <div class="work-card__meta">
+            <span class="work-card__cat">${Array.isArray(p.category)?p.category[0]:p.category??''}</span>
+            <a class="work-card__title" href="portfolio/${p.slug}.html">${p.title}</a>
+            <span class="work-card__client">${p.client??''}</span>
           </div>
-        </a>
+        </article>
       `).join('')
-    } catch (err) {
-      console.error('Erro ao carregar projetos:', err)
-    }
+    } catch(e) { console.error(e) }
   </script>
 
 </body>
