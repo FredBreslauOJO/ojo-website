@@ -109,7 +109,7 @@
   <div class="toast-container" id="toast-container"></div>
 
   <script type="module">
-    import { getFeaturedProjects } from './assets/js/modules/portfolio.js'
+    import { getFeaturedProjects, getProjects } from './assets/js/modules/portfolio.js'
     import { initScrollNav, initTheme, setLang as _setLang, getLang } from './assets/js/modules/ui.js'
 
     initTheme()
@@ -126,9 +126,13 @@
       btn.classList.toggle('nav__lang-btn--active', (i===0&&lang==='pt')||(i===1&&lang==='en'))
     })
 
-    // Carrega projetos em destaque
+    // Carrega projetos em destaque (fallback para qualquer publicado)
     try {
-      const projects = await getFeaturedProjects(2, lang)
+      let projects = await getFeaturedProjects(2, lang)
+      if (!projects.length) {
+        const all = await getProjects({ publishedOnly: true, locale: lang })
+        projects = all.slice(0, 2)
+      }
       const grid = document.getElementById('home-projects')
       if (!projects.length) return
 
