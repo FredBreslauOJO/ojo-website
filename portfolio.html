@@ -11,399 +11,193 @@
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg: #0B0A09;
       --fg: #F0EEE9;
       --muted: rgba(240,238,233,0.4);
-      --dim: rgba(240,238,233,0.15);
+      --dim: rgba(240,238,233,0.12);
       --pad: clamp(1.5rem, 4vw, 4rem);
     }
+    html, body { background: var(--bg); color: var(--fg); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; overflow-x: hidden; }
 
-    html, body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* ─── NAV ─── */
+    /* NAV */
     .nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 var(--pad);
-      height: 60px;
-      mix-blend-mode: difference;
-      pointer-events: none;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 var(--pad); height: 60px;
+      mix-blend-mode: difference; pointer-events: none;
     }
     .nav a { pointer-events: all; }
-    .nav__logo {
-      font-size: 0.875rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      color: var(--fg);
-      text-decoration: none;
-    }
+    .nav__logo { font-size: .875rem; font-weight: 500; letter-spacing: .08em; color: var(--fg); text-decoration: none; }
     .nav__links { display: flex; gap: 2.5rem; }
-    .nav__link {
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      color: var(--fg);
-      text-decoration: none;
-      text-transform: uppercase;
-      opacity: 0.6;
-      transition: opacity 200ms;
-    }
+    .nav__link { font-size: .75rem; letter-spacing: .06em; color: var(--fg); text-decoration: none; text-transform: uppercase; opacity: .6; transition: opacity 200ms; }
     .nav__link:hover, .nav__link--active { opacity: 1; }
     @media (max-width: 600px) { .nav__links { display: none; } }
 
-    /* ════════════════════════════════════
-       SECTION 1 — KNOCKOUT HERO
-    ════════════════════════════════════ */
-    /* Wrapper height = 2.5× viewport so we have scrollable space while sticky */
-    .ko-scroll { height: 280vh; }
+    /* ════════════════════════════
+       KNOCKOUT SECTION
+       Total scroll = 180vh
+       (100vh visible + 80vh animation)
+    ════════════════════════════ */
+    .ko-scroll { height: 180vh; }
 
     .ko-stage {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: sticky; top: 0; height: 100vh;
+      overflow: hidden; display: flex;
+      align-items: center; justify-content: center;
     }
 
-    /* Full-bleed background image layer (behind text) */
+    /* Full-bleed image that STARTS hidden, reveals as scroll progresses */
     .ko-bg {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      transition: opacity 800ms ease;
-      opacity: 0; /* starts invisible, page bg shows */
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0;
+      /* no transition — driven by JS */
     }
 
-    /* Dark overlay over bg image (lightens as scroll progresses) */
-    .ko-overlay {
-      position: absolute;
-      inset: 0;
-      background: var(--bg);
-      transition: opacity 50ms linear;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* The knockout text */
+    /* Knockout text — image shows THROUGH letters from the start */
     .ko-text {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding: 0 var(--pad);
-      /* background-clip reveals the bg-image THROUGH the letterforms */
-      background-size: cover;
+      position: relative; z-index: 2;
+      text-align: center; padding: 0 var(--pad);
+      /* background-clip reveals the image inside the letterforms */
+      background-size: 100vw auto;
       background-position: center;
-      background-attachment: fixed;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
-      /* fallback color if bg-image not set */
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      /* fallback color when no image */
       background-color: var(--fg);
+      will-change: opacity;
     }
-
     .ko-text h1 {
       font-family: "Gloock", Georgia, serif;
-      font-size: clamp(5rem, 20vw, 22rem);
-      font-weight: 400;
-      line-height: 0.88;
-      letter-spacing: -0.03em;
-      text-wrap: balance;
+      font-size: clamp(5.5rem, 20vw, 22rem);
+      font-weight: 400; line-height: .88; letter-spacing: -.03em;
     }
 
-    /* Scroll cue at bottom of ko section */
-    .ko-scroll-cue {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      opacity: 0.4;
-      animation: cue-bob 2s ease-in-out infinite;
-    }
-    .ko-scroll-cue span {
-      font-size: 0.6rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+    /* Scroll cue */
+    .ko-cue {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; flex-direction: column; align-items: center; gap: .5rem;
       color: var(--fg);
     }
-    .ko-scroll-cue svg { color: var(--fg); }
-    @keyframes cue-bob {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(6px); }
+    .ko-cue span { font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; opacity: .4; }
+    .ko-cue__arrow {
+      width: 1px; background: rgba(240,238,233,.3);
+      animation: drop 1.6s ease-in-out infinite;
+    }
+    @keyframes drop {
+      0%,100% { height: 20px; opacity: .3; }
+      50% { height: 36px; opacity: .7; }
     }
 
-    /* Project info that reveals at end of knockout scroll */
+    /* Project info that reveals at end of KO scroll */
     .ko-reveal {
-      position: absolute;
-      inset: 0;
-      z-index: 3;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: clamp(2rem, 5vw, 5rem) var(--pad);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 400ms;
+      position: absolute; inset: 0; z-index: 3;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: clamp(2rem,5vw,5rem) var(--pad);
+      opacity: 0; pointer-events: none;
     }
-    .ko-reveal__eyebrow {
-      font-size: 0.6875rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-    .ko-reveal__title {
-      font-family: "Gloock", Georgia, serif;
-      font-size: clamp(2.5rem, 7vw, 7rem);
-      font-weight: 400;
-      line-height: 1;
-      letter-spacing: -0.02em;
-      max-width: 14ch;
-    }
-    .ko-reveal__sub {
-      margin-top: 1.5rem;
-      font-size: 0.875rem;
-      color: var(--muted);
-      display: flex;
-      gap: 1.5rem;
-    }
+    .ko-reveal__eye { font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+    .ko-reveal__title { font-family: "Gloock", Georgia, serif; font-size: clamp(2.5rem,7vw,7rem); font-weight: 400; line-height: 1; letter-spacing: -.02em; max-width: 14ch; }
+    .ko-reveal__sub { margin-top: 1rem; font-size: .75rem; color: var(--muted); display: flex; gap: 1.5rem; }
     .ko-reveal__link {
-      position: absolute;
-      bottom: clamp(2rem, 5vw, 5rem);
-      right: var(--pad);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--fg);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(240,238,233,0.3);
-      padding-bottom: 2px;
+      position: absolute; bottom: clamp(2rem,5vw,5rem); right: var(--pad);
+      font-size: .75rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--fg); text-decoration: none;
+      border-bottom: 1px solid rgba(240,238,233,.3); padding-bottom: 2px;
       transition: border-color 200ms;
     }
     .ko-reveal__link:hover { border-color: var(--fg); }
 
-    /* ════════════════════════════════════
-       SECTION 2 — PROJECT REEL
-    ════════════════════════════════════ */
-    /* Height calculated by JS after project count is known */
-    .reel-scroll { }
-
+    /* ════════════════════════════
+       REEL SECTION
+       height set by JS = max(400vh, N * 70vh + 100vh)
+    ════════════════════════════ */
     .reel-stage {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow: hidden;
+      position: sticky; top: 0; height: 100vh; overflow: hidden;
     }
 
-    /* Background layers — one per project, stack with opacity */
-    .reel-bgs {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-    }
+    /* BG layers */
+    .reel-bgs { position: absolute; inset: 0; z-index: 0; }
     .reel-bg {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-      transition: opacity 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0; transition: opacity 650ms cubic-bezier(.25,.46,.45,.94);
     }
-    .reel-bg.is-active { opacity: 1; }
+    .reel-bg.on { opacity: 1; }
 
     .reel-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
+      position: absolute; inset: 0; z-index: 1;
       background:
-        linear-gradient(to right, rgba(11,10,9,0.85) 30%, rgba(11,10,9,0.3) 100%),
-        linear-gradient(to top, rgba(11,10,9,0.5) 0%, transparent 50%);
+        linear-gradient(to right, rgba(11,10,9,.88) 28%, rgba(11,10,9,.25) 100%),
+        linear-gradient(to top, rgba(11,10,9,.55) 0%, transparent 50%);
     }
 
-    /* Content layout */
-    .reel-content {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      padding: 0 var(--pad);
-      gap: 2rem;
+    /* Content grid */
+    .reel-body {
+      position: absolute; inset: 0; z-index: 2;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; padding: 0 var(--pad); gap: 2rem;
     }
 
-    /* Left col: meta */
-    .reel-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 3rem;
+    /* Left */
+    .reel-left { display: flex; flex-direction: column; gap: 2.5rem; }
+    .reel-left__label { font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .reel-left__num { font-family: "IBM Plex Mono", monospace; font-size: .6875rem; color: var(--muted); letter-spacing: .06em; }
+    .reel-left__title { font-family: "Gloock", Georgia, serif; font-size: clamp(1.5rem,3vw,3.2rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; max-width: 14ch; }
+    .reel-left__sub { font-size: .75rem; color: var(--muted); display: flex; flex-direction: column; gap: .3rem; margin-top: -1.5rem; }
+    .reel-left__link {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .75rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--fg); text-decoration: none;
+      border-bottom: 1px solid rgba(240,238,233,.25); padding-bottom: 2px;
+      width: fit-content; transition: border-color 200ms;
     }
-    .reel-meta__label {
-      font-size: 0.6875rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .reel-meta__count {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 0.6875rem;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-    }
-    .reel-meta__title {
-      font-family: "Gloock", Georgia, serif;
-      font-size: clamp(1.5rem, 3vw, 3rem);
-      font-weight: 400;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      max-width: 14ch;
-    }
-    .reel-meta__sub {
-      font-size: 0.75rem;
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      margin-top: -1.5rem;
-    }
-    .reel-meta__link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--fg);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(240,238,233,0.25);
-      padding-bottom: 2px;
-      width: fit-content;
-      transition: border-color 200ms;
-    }
-    .reel-meta__link:hover { border-color: var(--fg); }
+    .reel-left__link:hover { border-color: var(--fg); }
 
-    /* Right col: name reel */
-    .reel-names-wrap {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      height: 100vh;
+    /* Right — name reel */
+    .reel-right {
+      height: 100vh; display: flex; flex-direction: column; justify-content: center;
       overflow: hidden;
-      mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent, black 22%, black 78%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 22%, black 78%, transparent);
     }
-
-    .reel-names {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1em;
-      transition: transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    .reel-list {
+      display: flex; flex-direction: column;
+      transition: transform 350ms cubic-bezier(.25,.46,.45,.94);
       will-change: transform;
     }
-
-    .reel-name {
-      font-family: "Gloock", Georgia, serif;
-      font-weight: 400;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      cursor: pointer;
-      transition: font-size 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  color 300ms,
-                  opacity 300ms;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .reel-item {
+      font-family: "Gloock", Georgia, serif; font-weight: 400;
+      line-height: 1.1; letter-spacing: -.025em;
+      cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      transition: font-size 350ms cubic-bezier(.25,.46,.45,.94), opacity 300ms, color 300ms;
+      padding: .05em 0;
     }
-
-    /* Sizes by distance from active */
-    .reel-name[data-dist="0"] {
-      font-size: clamp(2.2rem, 5vw, 5.5rem);
-      color: var(--fg);
-      opacity: 1;
-    }
-    .reel-name[data-dist="1"] {
-      font-size: clamp(1.4rem, 3vw, 3.2rem);
-      color: var(--fg);
-      opacity: 0.5;
-    }
-    .reel-name[data-dist="2"] {
-      font-size: clamp(1rem, 2vw, 2.2rem);
-      color: var(--fg);
-      opacity: 0.25;
-    }
-    .reel-name[data-dist="3"],
-    .reel-name[data-dist="far"] {
-      font-size: clamp(0.75rem, 1.4vw, 1.5rem);
-      color: var(--fg);
-      opacity: 0.1;
-    }
-
-    /* ─── Loading placeholder ─── */
-    .pf-loading {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    /* ─── Footer ─── */
-    .pf-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 2rem var(--pad);
-      border-top: 1px solid var(--dim);
-    }
-    .pf-footer__logo {
-      font-size: 0.875rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-    .pf-footer__copy {
-      font-size: 0.6875rem;
-      color: rgba(240,238,233,0.2);
-      letter-spacing: 0.04em;
-    }
+    /* Sizes controlled by JS via data-d */
+    .reel-item[data-d="0"] { font-size: clamp(2.2rem,5vw,5.5rem); opacity: 1; color: var(--fg); }
+    .reel-item[data-d="1"] { font-size: clamp(1.4rem,2.8vw,3rem);  opacity: .45; color: var(--fg); }
+    .reel-item[data-d="2"] { font-size: clamp(1rem,2vw,2rem);       opacity: .22; color: var(--fg); }
+    .reel-item[data-d="3"] { font-size: clamp(.8rem,1.5vw,1.5rem);  opacity: .1;  color: var(--fg); }
+    .reel-item[data-d="x"] { font-size: clamp(.7rem,1.2vw,1.2rem);  opacity: .05; color: var(--fg); }
 
     /* Mobile */
     @media (max-width: 700px) {
-      .reel-content {
-        grid-template-columns: 1fr;
-        align-items: flex-end;
-        padding-bottom: 4rem;
-      }
-      .reel-meta { display: none; }
-      .reel-names-wrap { height: 60vh; }
+      .reel-body { grid-template-columns: 1fr; align-items: flex-end; padding-bottom: 5rem; }
+      .reel-left { display: none; }
+      .reel-right { height: 60vh; }
     }
 
+    /* Footer */
+    .pf-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 2rem var(--pad); border-top: 1px solid var(--dim);
+    }
+    .pf-footer__logo { font-size: .875rem; font-weight: 500; letter-spacing: .08em; color: var(--muted); }
+    .pf-footer__copy { font-size: .6875rem; color: rgba(240,238,233,.18); letter-spacing: .04em; }
+
     @media (prefers-reduced-motion: reduce) {
-      .reel-names, .reel-bg, .ko-overlay { transition: none; }
+      .ko-text, .ko-bg, .reel-bg, .reel-list, .reel-item { transition: none !important; animation: none !important; }
     }
   </style>
 </head>
@@ -418,9 +212,7 @@
     </div>
   </nav>
 
-  <div id="pf-root">
-    <div class="pf-loading">Carregando projetos...</div>
-  </div>
+  <div id="pf-root"></div>
 
   <footer class="pf-footer">
     <span class="pf-footer__logo">OJO</span>
@@ -430,264 +222,222 @@
   <script type="module">
     import { getProjects } from './assets/js/modules/portfolio.js'
 
-    const lang   = localStorage.getItem('ojo-lang') || 'pt'
-    const root   = document.getElementById('pf-root')
+    const lang = localStorage.getItem('ojo-lang') || 'pt'
 
-    // ── Fallback demo projects (when Supabase is unavailable or empty) ──
+    // Demo fallback with gradient placeholders (no external image deps)
     const DEMO = [
-      { slug: 'bmw', title: 'BMW', client: 'BMW Group', category: 'Branding', year: 2024,
-        cover_image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1600&q=80' },
-      { slug: 'ojo-rebrand', title: 'OJO Rebrand', client: 'OJO Studio', category: 'Identidade', year: 2024,
-        cover_image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&q=80' },
-      { slug: 'campanha-01', title: 'Campanha de Lançamento', client: 'Cliente', category: 'Motion', year: 2023,
-        cover_image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1600&q=80' },
-      { slug: 'editorial', title: 'Editorial Visual', client: 'Magazine', category: 'Editorial', year: 2023,
-        cover_image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80' },
+      { slug: 'bmw', title: 'BMW',         client: 'BMW Group',   category: 'Branding',    year: 2024, cover_image: '' },
+      { slug: 'ojo', title: 'OJO Rebrand', client: 'OJO Studio',  category: 'Identidade',  year: 2024, cover_image: '' },
+      { slug: 'cp1', title: 'Lançamento',  client: 'Cliente',     category: 'Motion',      year: 2023, cover_image: '' },
+      { slug: 'cp2', title: 'Editorial',   client: 'Magazine',    category: 'Editorial',   year: 2023, cover_image: '' },
     ]
 
-    // ── Fetch ──
+    // Demo gradient backgrounds (when no cover image)
+    const GRADS = [
+      'linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #0d1a3a 100%)',
+      'linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 50%, #0d2a1a 100%)',
+      'linear-gradient(135deg, #2a0a0a 0%, #4a1a0a 50%, #1a0a0a 100%)',
+      'linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 50%, #0a1a3a 100%)',
+    ]
+
     let projects = []
-    try {
-      projects = await getProjects({ publishedOnly: true, locale: lang })
-    } catch(e) { console.warn('Supabase unavailable, usando demo', e) }
+    try { projects = await getProjects({ publishedOnly: true, locale: lang }) }
+    catch(e) { console.warn('Using demo data:', e) }
     if (!projects.length) projects = DEMO
 
-    // ── Build page ──
     build(projects)
 
+    // ─────────────────────────────────────
     function build(ps) {
+      const root = document.getElementById('pf-root')
       const first = ps[0]
 
+      // Determine bg style for a project
+      function bgStyle(p, i) {
+        return p.cover_image ? `background-image:url('${p.cover_image}')` : `background:${GRADS[i % GRADS.length]}`
+      }
+
       root.innerHTML = `
-        <!-- SECTION 1: KNOCKOUT HERO -->
+        <!-- SECTION 1: KNOCKOUT HERO (180vh total) -->
         <div class="ko-scroll" id="ko-scroll">
           <div class="ko-stage" id="ko-stage">
 
-            <!-- Background (image that leaks through text, then fills screen) -->
-            <div class="ko-bg" id="ko-bg"
-              style="background-image: url('${first.cover_image || ''}')"></div>
+            <div class="ko-bg" id="ko-bg" style="${bgStyle(first,0)}"></div>
 
-            <!-- Dark overlay — fade controlled by JS -->
-            <div class="ko-overlay" id="ko-overlay"></div>
-
-            <!-- KNOCKOUT TEXT -->
             <div class="ko-text" id="ko-text"
-              style="background-image: url('${first.cover_image || ''}')">
+              style="${first.cover_image ? `background-image:url('${first.cover_image}')` : `background:${GRADS[0]};background-size:100vw 100vh`}">
               <h1>Port<br>folio</h1>
             </div>
 
-            <!-- Scroll cue -->
-            <div class="ko-scroll-cue" id="ko-cue">
+            <div class="ko-cue" id="ko-cue">
               <span>scroll</span>
-              <svg width="14" height="20" viewBox="0 0 14 20" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M7 0v18M1 12l6 6 6-6"/>
-              </svg>
+              <div class="ko-cue__arrow"></div>
             </div>
 
-            <!-- Project reveal (fades in at end of ko section) -->
             <div class="ko-reveal" id="ko-reveal">
-              <div class="ko-reveal__eyebrow">01 / ${String(ps.length).padStart(2,'0')}</div>
+              <div class="ko-reveal__eye">01 / ${String(ps.length).padStart(2,'0')}</div>
               <h2 class="ko-reveal__title">${first.title}</h2>
               <div class="ko-reveal__sub">
-                ${first.client ? `<span>${first.client}</span>` : ''}
-                ${first.category ? `<span>${Array.isArray(first.category) ? first.category[0] : first.category}</span>` : ''}
-                ${first.year ? `<span>${first.year}</span>` : ''}
+                ${first.client?`<span>${first.client}</span>`:''}
+                ${first.category?`<span>${Array.isArray(first.category)?first.category[0]:first.category}</span>`:''}
+                ${first.year?`<span>${first.year}</span>`:''}
               </div>
-              <a class="ko-reveal__link" href="portfolio/${first.slug}.html">
-                Ver projeto <span>↗</span>
-              </a>
+              <a class="ko-reveal__link" href="portfolio/${first.slug}.html">Ver projeto ↗</a>
             </div>
 
           </div>
         </div>
 
         <!-- SECTION 2: PROJECT REEL -->
-        <div class="reel-scroll" id="reel-scroll">
+        <div id="reel-scroll">
           <div class="reel-stage" id="reel-stage">
 
-            <!-- Background layers -->
             <div class="reel-bgs" id="reel-bgs">
-              ${ps.map((p, i) => `
-                <div class="reel-bg ${i===0?'is-active':''}"
-                  style="background-image: url('${p.cover_image || ''}')">
-                </div>
-              `).join('')}
+              ${ps.map((p,i)=>`<div class="reel-bg${i===0?' on':''}" style="${bgStyle(p,i)}"></div>`).join('')}
             </div>
             <div class="reel-overlay"></div>
 
-            <div class="reel-content">
-
-              <!-- Left: meta -->
-              <div class="reel-meta">
+            <div class="reel-body">
+              <div class="reel-left">
                 <div>
-                  <div class="reel-meta__label">Projetos selecionados</div>
-                  <div class="reel-meta__count" id="reel-count">01 / ${String(ps.length).padStart(2,'0')}</div>
+                  <div class="reel-left__label">Projetos</div>
+                  <div class="reel-left__num" id="rl-num">01 / ${String(ps.length).padStart(2,'0')}</div>
                 </div>
                 <div>
-                  <div class="reel-meta__title" id="reel-title">${ps[0].title}</div>
-                  <div class="reel-meta__sub" id="reel-sub">
-                    ${ps[0].client ? `<span>${ps[0].client}</span>` : ''}
-                    ${ps[0].category ? `<span>${Array.isArray(ps[0].category)?ps[0].category[0]:ps[0].category}</span>` : ''}
+                  <div class="reel-left__title" id="rl-title">${first.title}</div>
+                  <div class="reel-left__sub" id="rl-sub">
+                    ${first.client?`<span>${first.client}</span>`:''}
+                    ${first.category?`<span>${Array.isArray(first.category)?first.category[0]:first.category}</span>`:''}
                   </div>
                 </div>
-                <a class="reel-meta__link" id="reel-link" href="portfolio/${ps[0].slug}.html">
-                  Ver projeto ↗
-                </a>
+                <a class="reel-left__link" id="rl-link" href="portfolio/${first.slug}.html">Ver projeto ↗</a>
               </div>
 
-              <!-- Right: name reel -->
-              <div class="reel-names-wrap">
-                <div class="reel-names" id="reel-names">
-                  ${ps.map((p, i) => `
-                    <div class="reel-name"
-                      data-index="${i}"
-                      data-dist="${Math.abs(0 - i) <= 3 ? Math.abs(0-i) : 'far'}"
-                      data-slug="${p.slug}">
-                      ${p.title}
-                    </div>
-                  `).join('')}
+              <div class="reel-right">
+                <div class="reel-list" id="reel-list">
+                  ${ps.map((p,i)=>`<div class="reel-item" data-i="${i}" data-d="${Math.min(i,3)<3?i:'x'}" data-slug="${p.slug}">${p.title}</div>`).join('')}
                 </div>
               </div>
-
             </div>
+
           </div>
         </div>
       `
 
-      // Set reel section height: N * 100vh + 100vh buffer
-      const reelScroll = document.getElementById('reel-scroll')
-      reelScroll.style.height = `${ps.length * 100 + 100}vh`
+      // Set reel height: each project gets 70vh of scroll, plus 100vh for the sticky "entrance"
+      const reelEl = document.getElementById('reel-scroll')
+      reelEl.style.height = `${Math.max(400, ps.length * 70 + 100)}vh`
 
       initScroll(ps)
     }
 
-    // ══════════════════════════════════════
-    // SCROLL DRIVER
-    // ══════════════════════════════════════
+    // ─────────────────────────────────────
     function initScroll(ps) {
-      const koScroll   = document.getElementById('ko-scroll')
-      const koOverlay  = document.getElementById('ko-overlay')
-      const koText     = document.getElementById('ko-text')
+      const koScrollEl = document.getElementById('ko-scroll')
       const koBg       = document.getElementById('ko-bg')
+      const koText     = document.getElementById('ko-text')
       const koReveal   = document.getElementById('ko-reveal')
       const koCue      = document.getElementById('ko-cue')
-      const reelScroll = document.getElementById('reel-scroll')
-      const reelBgs    = document.getElementById('reel-bgs').children
-      const reelNames  = document.getElementById('reel-names')
-      const nameItems  = [...reelNames.querySelectorAll('.reel-name')]
-      const reelCount  = document.getElementById('reel-count')
-      const reelTitle  = document.getElementById('reel-title')
-      const reelSub    = document.getElementById('reel-sub')
-      const reelLink   = document.getElementById('reel-link')
 
-      let activeReel = 0
+      const reelEl    = document.getElementById('reel-scroll')
+      const reelBgs   = [...document.getElementById('reel-bgs').children]
+      const reelList  = document.getElementById('reel-list')
+      const reelItems = [...reelList.querySelectorAll('.reel-item')]
+      const rlNum     = document.getElementById('rl-num')
+      const rlTitle   = document.getElementById('rl-title')
+      const rlSub     = document.getElementById('rl-sub')
+      const rlLink    = document.getElementById('rl-link')
 
-      function clamp(v, min, max) { return Math.max(min, Math.min(max, v)) }
-      function lerp(a, b, t) { return a + (b - a) * t }
+      let curActive = 0
 
-      // Measure reel item heights for centering
-      function getItemHeight() {
-        const active = nameItems.find(n => n.dataset.dist === '0')
-        return active ? active.offsetHeight : 80
-      }
+      function clamp(v,a,b){ return Math.max(a,Math.min(b,v)) }
+      // Map t from [a,b] to [0,1], clamped
+      function norm(t,a,b){ return clamp((t-a)/(b-a),0,1) }
 
       function tick() {
         const wy = window.scrollY
         const vh = window.innerHeight
 
-        // ── KO SECTION ──
-        const koH = koScroll.offsetHeight // 280vh
-        const koProgress = clamp(wy / (koH - vh), 0, 1)
+        // ─── KO section ───
+        // koScrollEl.offsetHeight = 180vh = 180% * vh
+        // scrollable range: 0 → 80vh (last 80vh of the 180vh section)
+        const koH    = koScrollEl.offsetHeight   // ≈ 180vh
+        const koEnd  = koH - vh                  // ≈ 80vh of scroll range
+        const koRaw  = clamp(wy, 0, koEnd)
+        const koProg = koRaw / koEnd              // 0 → 1
 
-        // Phase 1 (0 → 0.4): Overlay fades from full dark → 0 (image in text reveals)
-        // Phase 2 (0.4 → 0.7): Image escapes text — bg-layer fades in, text fades out
-        // Phase 3 (0.7 → 1.0): Full project reveal
+        // Phase A (0→0.5): overlay fades out, image reveals through text
+        // Phase B (0.5→0.8): full bg image fades in, text fades out
+        // Phase C (0.8→1.0): project info fades in
+        const phA = norm(koProg, 0,   0.5)
+        const phB = norm(koProg, 0.5, 0.8)
+        const phC = norm(koProg, 0.8, 1.0)
 
-        if (koProgress < 0.4) {
-          // Dark overlay fades out slowly: start fully dark, go transparent
-          const p = koProgress / 0.4
-          koOverlay.style.opacity = String(1 - p * 0.95) // 1 → 0.05
-          koText.style.opacity = '1'
-          koBg.style.opacity = '0'
-          koReveal.style.opacity = '0'
-          koReveal.style.pointerEvents = 'none'
-          koCue.style.opacity = String(clamp(1 - p * 3, 0, 1))
-        } else if (koProgress < 0.7) {
-          const p = (koProgress - 0.4) / 0.3
-          koOverlay.style.opacity = '0.05'
-          // Text fades out as full bg image fades in
-          koText.style.opacity = String(1 - p)
-          koBg.style.opacity = String(p)
-          koReveal.style.opacity = '0'
-          koReveal.style.pointerEvents = 'none'
-          koCue.style.opacity = '0'
-        } else {
-          const p = (koProgress - 0.7) / 0.3
-          koOverlay.style.opacity = '0.05'
-          koText.style.opacity = '0'
-          koBg.style.opacity = '1'
-          koReveal.style.opacity = String(p)
-          koReveal.style.pointerEvents = p > 0.5 ? 'all' : 'none'
-          koCue.style.opacity = '0'
-        }
+        // Text: fully visible → fades out during phB
+        koText.style.opacity = String(1 - phB)
+        // Full bg image: appears during phB
+        koBg.style.opacity   = String(phB)
+        // Scroll cue: visible at start, fades quickly
+        koCue.style.opacity  = String(clamp(1 - koProg * 4, 0, 1))
+        // Reveal: fades in during phC
+        koReveal.style.opacity        = String(phC)
+        koReveal.style.pointerEvents  = phC > 0.5 ? 'all' : 'none'
 
-        // Parallax on ko-bg image
-        const koBgEl = document.getElementById('ko-bg')
-        const koShift = koProgress * 30
-        koBgEl.style.transform = `translateY(${koShift}px) scale(1.08)`
+        // Subtle parallax on ko-bg
+        koBg.style.transform = `scale(1.06) translateY(${koProg * 20}px)`
 
-        // ── REEL SECTION ──
-        const reelTop = reelScroll.getBoundingClientRect().top + wy
-        const reelScrollable = reelScroll.offsetHeight - vh
-        const reelScrolled = wy - reelTop
-        const reelProgress = clamp(reelScrolled / reelScrollable, 0, 1)
+        // ─── Reel section ───
+        const reelTop      = reelEl.offsetTop
+        const reelH        = reelEl.offsetHeight
+        const reelScrolled = clamp(wy - reelTop, 0, reelH - vh)
+        const reelProg     = reelScrolled / (reelH - vh)   // 0 → 1
 
-        const rawIdx = reelProgress * (ps.length - 1)
+        const rawIdx    = reelProg * (ps.length - 1)
         const newActive = Math.round(rawIdx)
 
-        if (newActive !== activeReel) {
-          activeReel = newActive
-          switchProject(ps, activeReel, reelBgs, reelCount, reelTitle, reelSub, reelLink)
+        if (newActive !== curActive) {
+          curActive = newActive
+          // Swap bg
+          reelBgs.forEach((b,i) => b.classList.toggle('on', i === curActive))
+          // Update left panel
+          const p = ps[curActive]
+          rlNum.textContent   = `${String(curActive+1).padStart(2,'0')} / ${String(ps.length).padStart(2,'0')}`
+          rlTitle.textContent = p.title
+          rlSub.innerHTML     = `${p.client?`<span>${p.client}</span>`:''}${p.category?`<span>${Array.isArray(p.category)?p.category[0]:p.category}</span>`:''}`
+          rlLink.href         = `portfolio/${p.slug}.html`
         }
 
-        // Update name sizes
-        nameItems.forEach((item, i) => {
+        // Update reel item sizes
+        reelItems.forEach((item, i) => {
           const dist = Math.abs(i - rawIdx)
-          const distKey = dist < 0.5 ? '0' : dist < 1.5 ? '1' : dist < 2.5 ? '2' : dist < 3.5 ? '3' : 'far'
-          item.dataset.dist = distKey
+          item.dataset.d = dist < .5 ? '0' : dist < 1.5 ? '1' : dist < 2.5 ? '2' : dist < 3.5 ? '3' : 'x'
         })
 
-        // Translate reel list so active item sits in center
-        const itemH = nameItems[0]?.offsetHeight || 60
-        const centerY = vh / 2 - itemH / 2
-        const offset = rawIdx * itemH * 1.15 // 1.15 accounts for gap
-        reelNames.style.transform = `translateY(calc(${centerY}px - ${offset}px))`
+        // Translate list so active item is centered
+        // Measure current active item height for centering
+        const activeEl = reelItems[curActive]
+        const activeH  = activeEl ? activeEl.offsetHeight : 72
+        // Accumulate offset up to active item
+        let offsetPx = 0
+        for (let i = 0; i < reelItems.length; i++) {
+          if (i === curActive) break
+          offsetPx += reelItems[i].offsetHeight * 1.1  // 1.1 matches padding gap
+        }
+        // Smooth via rawIdx for inertia feel
+        const smoothOffset = rawIdx * (offsetPx / Math.max(curActive, 1) || activeH * 1.1)
+        const centerOffset = vh / 2 - activeH / 2
+        reelList.style.transform = `translateY(${centerOffset - smoothOffset}px)`
 
         requestAnimationFrame(tick)
       }
 
       requestAnimationFrame(tick)
 
-      // Click on reel name
-      document.getElementById('reel-names').addEventListener('click', e => {
-        const item = e.target.closest('.reel-name')
-        if (!item) return
-        window.location.href = `portfolio/${item.dataset.slug}.html`
+      // Click on reel item → navigate
+      reelList.addEventListener('click', e => {
+        const item = e.target.closest('.reel-item')
+        if (item) window.location.href = `portfolio/${item.dataset.slug}.html`
       })
-    }
-
-    function switchProject(ps, idx, bgs, countEl, titleEl, subEl, linkEl) {
-      // Swap background
-      ;[...bgs].forEach((bg, i) => bg.classList.toggle('is-active', i === idx))
-
-      const p = ps[idx]
-      countEl.textContent = `${String(idx+1).padStart(2,'0')} / ${String(ps.length).padStart(2,'0')}`
-      titleEl.textContent = p.title
-      subEl.innerHTML = `
-        ${p.client ? `<span>${p.client}</span>` : ''}
-        ${p.category ? `<span>${Array.isArray(p.category)?p.category[0]:p.category}</span>` : ''}
-      `
-      linkEl.href = `portfolio/${p.slug}.html`
     }
   </script>
 
