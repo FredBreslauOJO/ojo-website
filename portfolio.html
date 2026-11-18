@@ -60,7 +60,7 @@
       position: relative; z-index: 2;
       text-align: center; padding: 0 var(--pad);
       /* background-clip reveals the image inside the letterforms */
-      background-size: 100vw auto;
+      background-size: cover;
       background-position: center;
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent; color: transparent;
@@ -234,10 +234,10 @@
 
     // Demo gradient backgrounds (when no cover image)
     const GRADS = [
-      'linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #0d1a3a 100%)',
-      'linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 50%, #0d2a1a 100%)',
-      'linear-gradient(135deg, #2a0a0a 0%, #4a1a0a 50%, #1a0a0a 100%)',
-      'linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 50%, #0a1a3a 100%)',
+      'linear-gradient(135deg, #2a1a4a 0%, #4a2a7a 50%, #1a2a5a 100%)',
+      'linear-gradient(135deg, #0a2a1a 0%, #1a5a2a 50%, #0a3a2a 100%)',
+      'linear-gradient(135deg, #4a1010 0%, #7a2a10 50%, #2a1010 100%)',
+      'linear-gradient(135deg, #101040 0%, #202070 50%, #102050 100%)',
     ]
 
     let projects = []
@@ -265,7 +265,7 @@
             <div class="ko-bg" id="ko-bg" style="${bgStyle(first,0)}"></div>
 
             <div class="ko-text" id="ko-text"
-              style="${first.cover_image ? `background-image:url('${first.cover_image}')` : `background:${GRADS[0]};background-size:100vw 100vh`}">
+              style="${first.cover_image ? `background-image:url('${first.cover_image}');background-size:cover;background-position:center` : `background:${GRADS[0]}`}">
               <h1>Port<br>folio</h1>
             </div>
 
@@ -326,7 +326,9 @@
 
       // Set reel height: each project gets 70vh of scroll, plus 100vh for the sticky "entrance"
       const reelEl = document.getElementById('reel-scroll')
-      reelEl.style.height = `${Math.max(400, ps.length * 70 + 100)}vh`
+      // Height must be (N-1)*step + 100vh so the container ends exactly when sticky exits
+      // Using N*step would leave 100vh of empty black scroll at the end
+      reelEl.style.height = `${Math.max(200, (ps.length - 1) * 70 + 100)}vh`
 
       initScroll(ps)
     }
