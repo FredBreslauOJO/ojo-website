@@ -18,11 +18,16 @@
       --dim: rgba(240,238,233,0.12);
       --pad: clamp(1.5rem, 4vw, 4rem);
     }
-    html, body { background: var(--bg); color: var(--fg); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; overflow-x: hidden; }
+    html, body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      overflow-x: hidden;
+    }
 
     /* NAV */
     .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 var(--pad); height: 60px;
       mix-blend-mode: difference; pointer-events: none;
@@ -34,12 +39,11 @@
     .nav__link:hover, .nav__link--active { opacity: 1; }
     @media (max-width: 600px) { .nav__links { display: none; } }
 
-    /* ════════════════════════════
-       KNOCKOUT SECTION
-       Total scroll = 180vh
-       (100vh visible + 80vh animation)
-    ════════════════════════════ */
-    .ko-scroll { height: 180vh; }
+    /* ════════════════════════════════════════════
+       KO SECTION — position: sticky inside wrapper
+       Wrapper height 160vh = 60vh of scroll range
+    ════════════════════════════════════════════ */
+    .ko-wrap { height: 160vh; }
 
     .ko-stage {
       position: sticky; top: 0; height: 100vh;
@@ -47,24 +51,19 @@
       align-items: center; justify-content: center;
     }
 
-    /* Full-bleed image that STARTS hidden, reveals as scroll progresses */
     .ko-bg {
       position: absolute; inset: 0;
       background-size: cover; background-position: center;
       opacity: 0;
-      /* no transition — driven by JS */
     }
 
-    /* Knockout text — image shows THROUGH letters from the start */
     .ko-text {
       position: relative; z-index: 2;
       text-align: center; padding: 0 var(--pad);
-      /* background-clip reveals the image inside the letterforms */
       background-size: cover;
       background-position: center;
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent; color: transparent;
-      /* fallback color when no image */
       background-color: var(--fg);
       will-change: opacity;
     }
@@ -74,47 +73,56 @@
       font-weight: 400; line-height: .88; letter-spacing: -.03em;
     }
 
-    /* Scroll cue */
     .ko-cue {
       position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
       z-index: 10; display: flex; flex-direction: column; align-items: center; gap: .5rem;
       color: var(--fg);
     }
     .ko-cue span { font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; opacity: .4; }
-    .ko-cue__arrow {
-      width: 1px; background: rgba(240,238,233,.3);
-      animation: drop 1.6s ease-in-out infinite;
-    }
+    .ko-cue__arrow { width: 1px; background: rgba(240,238,233,.3); animation: drop 1.6s ease-in-out infinite; }
     @keyframes drop {
       0%,100% { height: 20px; opacity: .3; }
-      50% { height: 36px; opacity: .7; }
+      50%      { height: 36px; opacity: .7; }
     }
 
-    /* Project info that reveals at end of KO scroll */
     .ko-reveal {
       position: absolute; inset: 0; z-index: 3;
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: clamp(2rem,5vw,5rem) var(--pad);
       opacity: 0; pointer-events: none;
     }
-    .ko-reveal__eye { font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+    .ko-reveal__eye   { font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
     .ko-reveal__title { font-family: "Gloock", Georgia, serif; font-size: clamp(2.5rem,7vw,7rem); font-weight: 400; line-height: 1; letter-spacing: -.02em; max-width: 14ch; }
-    .ko-reveal__sub { margin-top: 1rem; font-size: .75rem; color: var(--muted); display: flex; gap: 1.5rem; }
-    .ko-reveal__link {
+    .ko-reveal__sub   { margin-top: 1rem; font-size: .75rem; color: var(--muted); display: flex; gap: 1.5rem; }
+    .ko-reveal__link  {
       position: absolute; bottom: clamp(2rem,5vw,5rem); right: var(--pad);
       font-size: .75rem; letter-spacing: .06em; text-transform: uppercase;
       color: var(--fg); text-decoration: none;
       border-bottom: 1px solid rgba(240,238,233,.3); padding-bottom: 2px;
-      transition: border-color 200ms;
     }
-    .ko-reveal__link:hover { border-color: var(--fg); }
 
-    /* ════════════════════════════
-       REEL SECTION
-       height set by JS = max(400vh, N * 70vh + 100vh)
-    ════════════════════════════ */
-    .reel-stage {
-      position: sticky; top: 0; height: 100vh; overflow: hidden;
+    /* ════════════════════════════════════════════
+       REEL TRIGGER — only provides scroll real estate
+       Height set by JS. No visual content.
+    ════════════════════════════════════════════ */
+    #reel-trigger { /* height set by JS */ }
+
+    /* ════════════════════════════════════════════
+       REEL STAGE — position: FIXED, always in viewport
+       Shown/hidden by JS based on scroll position
+    ════════════════════════════════════════════ */
+    #reel-stage {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      /* Smooth fade only on ENTRY (200ms). Exit is instant to avoid overlap with footer. */
+      transition: opacity 200ms ease;
+    }
+    #reel-stage.reel-active {
+      opacity: 1;
+      pointer-events: all;
     }
 
     /* BG layers */
@@ -143,17 +151,16 @@
     /* Left */
     .reel-left { display: flex; flex-direction: column; gap: 2.5rem; }
     .reel-left__label { font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-    .reel-left__num { font-family: "IBM Plex Mono", monospace; font-size: .6875rem; color: var(--muted); letter-spacing: .06em; }
+    .reel-left__num   { font-family: "IBM Plex Mono", monospace; font-size: .6875rem; color: var(--muted); letter-spacing: .06em; }
     .reel-left__title { font-family: "Gloock", Georgia, serif; font-size: clamp(1.5rem,3vw,3.2rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; max-width: 14ch; }
-    .reel-left__sub { font-size: .75rem; color: var(--muted); display: flex; flex-direction: column; gap: .3rem; margin-top: -1.5rem; }
-    .reel-left__link {
+    .reel-left__sub   { font-size: .75rem; color: var(--muted); display: flex; flex-direction: column; gap: .3rem; margin-top: -1.5rem; }
+    .reel-left__link  {
       display: inline-flex; align-items: center; gap: .5rem;
       font-size: .75rem; letter-spacing: .06em; text-transform: uppercase;
       color: var(--fg); text-decoration: none;
       border-bottom: 1px solid rgba(240,238,233,.25); padding-bottom: 2px;
-      width: fit-content; transition: border-color 200ms;
+      width: fit-content;
     }
-    .reel-left__link:hover { border-color: var(--fg); }
 
     /* Right — name reel */
     .reel-right {
@@ -164,7 +171,6 @@
     }
     .reel-list {
       display: flex; flex-direction: column;
-      transition: transform 350ms cubic-bezier(.25,.46,.45,.94);
       will-change: transform;
     }
     .reel-item {
@@ -174,21 +180,21 @@
       transition: font-size 350ms cubic-bezier(.25,.46,.45,.94), opacity 300ms, color 300ms;
       padding: .05em 0;
     }
-    /* Sizes controlled by JS via data-d */
     .reel-item[data-d="0"] { font-size: clamp(2.2rem,5vw,5.5rem); opacity: 1; color: var(--fg); }
     .reel-item[data-d="1"] { font-size: clamp(1.4rem,2.8vw,3rem);  opacity: .45; color: var(--fg); }
     .reel-item[data-d="2"] { font-size: clamp(1rem,2vw,2rem);       opacity: .22; color: var(--fg); }
     .reel-item[data-d="3"] { font-size: clamp(.8rem,1.5vw,1.5rem);  opacity: .1;  color: var(--fg); }
     .reel-item[data-d="x"] { font-size: clamp(.7rem,1.2vw,1.2rem);  opacity: .05; color: var(--fg); }
 
-    /* Mobile */
     @media (max-width: 700px) {
       .reel-body { grid-template-columns: 1fr; align-items: flex-end; padding-bottom: 5rem; }
       .reel-left { display: none; }
       .reel-right { height: 60vh; }
     }
 
-    /* Footer */
+    /* ════════════
+       FOOTER
+    ════════════ */
     .pf-footer {
       display: flex; align-items: center; justify-content: space-between;
       padding: 2rem var(--pad); border-top: 1px solid var(--dim);
@@ -197,7 +203,7 @@
     .pf-footer__copy { font-size: .6875rem; color: rgba(240,238,233,.18); letter-spacing: .04em; }
 
     @media (prefers-reduced-motion: reduce) {
-      .ko-text, .ko-bg, .reel-bg, .reel-list, .reel-item { transition: none !important; animation: none !important; }
+      .ko-cue__arrow, .reel-bg, .reel-item { transition: none !important; animation: none !important; }
     }
   </style>
 </head>
@@ -212,9 +218,33 @@
     </div>
   </nav>
 
-  <div id="pf-root"></div>
+  <div id="pf-root">
+    <!-- KO section and reel trigger injected by JS -->
+  </div>
 
-  <footer class="pf-footer">
+  <!-- REEL STAGE: position fixed, controlled by JS visibility -->
+  <div id="reel-stage">
+    <div class="reel-bgs"  id="reel-bgs"></div>
+    <div class="reel-overlay"></div>
+    <div class="reel-body">
+      <div class="reel-left">
+        <div>
+          <div class="reel-left__label">Projetos</div>
+          <div class="reel-left__num" id="rl-num"></div>
+        </div>
+        <div>
+          <div class="reel-left__title" id="rl-title"></div>
+          <div class="reel-left__sub"   id="rl-sub"></div>
+        </div>
+        <a class="reel-left__link" id="rl-link" href="#">Ver projeto ↗</a>
+      </div>
+      <div class="reel-right">
+        <div class="reel-list" id="reel-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="pf-footer" id="pf-footer">
     <span class="pf-footer__logo">OJO</span>
     <span class="pf-footer__copy">© 2024 OJO Studio</span>
   </footer>
@@ -224,222 +254,196 @@
 
     const lang = localStorage.getItem('ojo-lang') || 'pt'
 
-    // Demo fallback with gradient placeholders (no external image deps)
     const DEMO = [
-      { slug: 'bmw', title: 'BMW',         client: 'BMW Group',   category: 'Branding',    year: 2024, cover_image: '' },
-      { slug: 'ojo', title: 'OJO Rebrand', client: 'OJO Studio',  category: 'Identidade',  year: 2024, cover_image: '' },
-      { slug: 'cp1', title: 'Lançamento',  client: 'Cliente',     category: 'Motion',      year: 2023, cover_image: '' },
-      { slug: 'cp2', title: 'Editorial',   client: 'Magazine',    category: 'Editorial',   year: 2023, cover_image: '' },
+      { slug: 'bmw',  title: 'BMW',          client: 'BMW Group',  category: 'Branding',   year: 2024, cover_image: '' },
+      { slug: 'ojo',  title: 'OJO Rebrand',  client: 'OJO Studio', category: 'Identidade', year: 2024, cover_image: '' },
+      { slug: 'cp1',  title: 'Lançamento',   client: 'Cliente',    category: 'Motion',     year: 2023, cover_image: '' },
+      { slug: 'cp2',  title: 'Editorial',    client: 'Magazine',   category: 'Editorial',  year: 2023, cover_image: '' },
     ]
 
-    // Demo gradient backgrounds (when no cover image)
     const GRADS = [
-      'linear-gradient(135deg, #2a1a4a 0%, #4a2a7a 50%, #1a2a5a 100%)',
-      'linear-gradient(135deg, #0a2a1a 0%, #1a5a2a 50%, #0a3a2a 100%)',
-      'linear-gradient(135deg, #4a1010 0%, #7a2a10 50%, #2a1010 100%)',
-      'linear-gradient(135deg, #101040 0%, #202070 50%, #102050 100%)',
+      'linear-gradient(135deg,#2a1a4a,#4a2a7a,#1a2a5a)',
+      'linear-gradient(135deg,#0a2a1a,#1a5a2a,#0a3a2a)',
+      'linear-gradient(135deg,#4a1010,#7a2a10,#2a1010)',
+      'linear-gradient(135deg,#101040,#202070,#102050)',
     ]
+
+    function bgStyle(p, i) {
+      return p.cover_image
+        ? `background-image:url('${p.cover_image}');background-size:cover;background-position:center`
+        : `background:${GRADS[i % GRADS.length]}`
+    }
 
     let projects = []
-    try { projects = await getProjects({ publishedOnly: true, locale: lang }) }
-    catch(e) { console.warn('Using demo data:', e) }
+    try { projects = await getProjects({ publishedOnly: true, locale: lang }) } catch(e) {}
     if (!projects.length) projects = DEMO
 
-    build(projects)
+    buildKO(projects)
+    buildReel(projects)
+    initScroll(projects)
 
-    // ─────────────────────────────────────
-    function build(ps) {
-      const root = document.getElementById('pf-root')
+    // ─── Build KO section ───────────────────────────
+    function buildKO(ps) {
       const first = ps[0]
-
-      // Determine bg style for a project
-      function bgStyle(p, i) {
-        return p.cover_image ? `background-image:url('${p.cover_image}')` : `background:${GRADS[i % GRADS.length]}`
-      }
-
+      const root = document.getElementById('pf-root')
       root.innerHTML = `
-        <!-- SECTION 1: KNOCKOUT HERO (180vh total) -->
-        <div class="ko-scroll" id="ko-scroll">
+        <div class="ko-wrap" id="ko-wrap">
           <div class="ko-stage" id="ko-stage">
-
             <div class="ko-bg" id="ko-bg" style="${bgStyle(first,0)}"></div>
-
             <div class="ko-text" id="ko-text"
-              style="${first.cover_image ? `background-image:url('${first.cover_image}');background-size:cover;background-position:center` : `background:${GRADS[0]}`}">
+              style="${first.cover_image
+                ? `background-image:url('${first.cover_image}');background-size:cover;background-position:center`
+                : `background:${GRADS[0]}`}">
               <h1>Port<br>folio</h1>
             </div>
-
             <div class="ko-cue" id="ko-cue">
               <span>scroll</span>
               <div class="ko-cue__arrow"></div>
             </div>
-
             <div class="ko-reveal" id="ko-reveal">
               <div class="ko-reveal__eye">01 / ${String(ps.length).padStart(2,'0')}</div>
               <h2 class="ko-reveal__title">${first.title}</h2>
               <div class="ko-reveal__sub">
-                ${first.client?`<span>${first.client}</span>`:''}
-                ${first.category?`<span>${Array.isArray(first.category)?first.category[0]:first.category}</span>`:''}
-                ${first.year?`<span>${first.year}</span>`:''}
+                ${first.client   ? `<span>${first.client}</span>` : ''}
+                ${first.category ? `<span>${Array.isArray(first.category) ? first.category[0] : first.category}</span>` : ''}
+                ${first.year     ? `<span>${first.year}</span>` : ''}
               </div>
               <a class="ko-reveal__link" href="portfolio/${first.slug}.html">Ver projeto ↗</a>
             </div>
-
           </div>
         </div>
-
-        <!-- SECTION 2: PROJECT REEL -->
-        <div id="reel-scroll">
-          <div class="reel-stage" id="reel-stage">
-
-            <div class="reel-bgs" id="reel-bgs">
-              ${ps.map((p,i)=>`<div class="reel-bg${i===0?' on':''}" style="${bgStyle(p,i)}"></div>`).join('')}
-            </div>
-            <div class="reel-overlay"></div>
-
-            <div class="reel-body">
-              <div class="reel-left">
-                <div>
-                  <div class="reel-left__label">Projetos</div>
-                  <div class="reel-left__num" id="rl-num">01 / ${String(ps.length).padStart(2,'0')}</div>
-                </div>
-                <div>
-                  <div class="reel-left__title" id="rl-title">${first.title}</div>
-                  <div class="reel-left__sub" id="rl-sub">
-                    ${first.client?`<span>${first.client}</span>`:''}
-                    ${first.category?`<span>${Array.isArray(first.category)?first.category[0]:first.category}</span>`:''}
-                  </div>
-                </div>
-                <a class="reel-left__link" id="rl-link" href="portfolio/${first.slug}.html">Ver projeto ↗</a>
-              </div>
-
-              <div class="reel-right">
-                <div class="reel-list" id="reel-list">
-                  ${ps.map((p,i)=>`<div class="reel-item" data-i="${i}" data-d="${Math.min(i,3)<3?i:'x'}" data-slug="${p.slug}">${p.title}</div>`).join('')}
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
+        <!-- REEL TRIGGER: only provides scroll range, no visual content -->
+        <div id="reel-trigger"></div>
       `
-
-      // Set reel height: each project gets 70vh of scroll, plus 100vh for the sticky "entrance"
-      const reelEl = document.getElementById('reel-scroll')
-      // Height must be (N-1)*step + 100vh so the container ends exactly when sticky exits
-      // Using N*step would leave 100vh of empty black scroll at the end
-      reelEl.style.height = `${Math.max(200, (ps.length - 1) * 70 + 100)}vh`
-
-      initScroll(ps)
     }
 
-    // ─────────────────────────────────────
+    // ─── Build Reel (into the fixed #reel-stage already in DOM) ─────
+    function buildReel(ps) {
+      const bgsEl   = document.getElementById('reel-bgs')
+      const listEl  = document.getElementById('reel-list')
+      const rlNum   = document.getElementById('rl-num')
+      const rlTitle = document.getElementById('rl-title')
+      const rlSub   = document.getElementById('rl-sub')
+      const rlLink  = document.getElementById('rl-link')
+
+      bgsEl.innerHTML  = ps.map((p,i) => `<div class="reel-bg${i===0?' on':''}" style="${bgStyle(p,i)}"></div>`).join('')
+      listEl.innerHTML = ps.map((p,i) => `<div class="reel-item" data-i="${i}" data-d="${i < 3 ? i : 'x'}" data-slug="${p.slug}">${p.title}</div>`).join('')
+
+      const first = ps[0]
+      rlNum.textContent   = `01 / ${String(ps.length).padStart(2,'0')}`
+      rlTitle.textContent = first.title
+      rlSub.innerHTML     = `${first.client ? `<span>${first.client}</span>` : ''}${first.category ? `<span>${Array.isArray(first.category) ? first.category[0] : first.category}</span>` : ''}`
+      rlLink.href         = `portfolio/${first.slug}.html`
+
+      listEl.addEventListener('click', e => {
+        const item = e.target.closest('.reel-item')
+        if (item) window.location.href = `portfolio/${item.dataset.slug}.html`
+      })
+    }
+
+    // ─── Scroll engine ───────────────────────────────
     function initScroll(ps) {
-      const koScrollEl = document.getElementById('ko-scroll')
+      // Set reel trigger height:
+      // Each project needs ~70vh of scroll. With (N-1) projects to transition through:
+      // height = max(200vh, (N-1) * 70vh)
+      // No +100vh padding — the trigger is JUST the animation range.
+      // The fixed stage appears/disappears without container exit problems.
+      const trigger = document.getElementById('reel-trigger')
+      trigger.style.height = `${Math.max(200, (ps.length - 1) * 70)}vh`
+
+      const koWrapEl   = document.getElementById('ko-wrap')
       const koBg       = document.getElementById('ko-bg')
       const koText     = document.getElementById('ko-text')
       const koReveal   = document.getElementById('ko-reveal')
       const koCue      = document.getElementById('ko-cue')
+      const reelStage  = document.getElementById('reel-stage')
+      const reelBgs    = [...document.getElementById('reel-bgs').children]
+      const reelList   = document.getElementById('reel-list')
+      const reelItems  = [...reelList.querySelectorAll('.reel-item')]
+      const rlNum      = document.getElementById('rl-num')
+      const rlTitle    = document.getElementById('rl-title')
+      const rlSub      = document.getElementById('rl-sub')
+      const rlLink     = document.getElementById('rl-link')
 
-      const reelEl    = document.getElementById('reel-scroll')
-      const reelBgs   = [...document.getElementById('reel-bgs').children]
-      const reelList  = document.getElementById('reel-list')
-      const reelItems = [...reelList.querySelectorAll('.reel-item')]
-      const rlNum     = document.getElementById('rl-num')
-      const rlTitle   = document.getElementById('rl-title')
-      const rlSub     = document.getElementById('rl-sub')
-      const rlLink    = document.getElementById('rl-link')
+      let curActive = -1
 
-      let curActive = 0
-
-      function clamp(v,a,b){ return Math.max(a,Math.min(b,v)) }
-      // Map t from [a,b] to [0,1], clamped
-      function norm(t,a,b){ return clamp((t-a)/(b-a),0,1) }
+      function clamp(v,a,b) { return v < a ? a : v > b ? b : v }
+      function norm(v,a,b)  { return clamp((v-a)/(b-a),0,1) }
 
       function tick() {
         const wy = window.scrollY
         const vh = window.innerHeight
 
         // ─── KO section ───
-        // koScrollEl.offsetHeight = 180vh = 180% * vh
-        // scrollable range: 0 → 80vh (last 80vh of the 180vh section)
-        const koH    = koScrollEl.offsetHeight   // ≈ 180vh
-        const koEnd  = koH - vh                  // ≈ 80vh of scroll range
-        const koRaw  = clamp(wy, 0, koEnd)
-        const koProg = koRaw / koEnd              // 0 → 1
+        // ko-wrap height = 160vh, sticky range = 60vh
+        const koH    = koWrapEl.offsetHeight           // ≈ 160vh
+        const koEnd  = koH - vh                        // ≈ 60vh of scroll range
+        const koProg = clamp(wy / Math.max(koEnd, 1), 0, 1)
 
-        // Phase A (0→0.5): overlay fades out, image reveals through text
-        // Phase B (0.5→0.8): full bg image fades in, text fades out
-        // Phase C (0.8→1.0): project info fades in
-        const phA = norm(koProg, 0,   0.5)
-        const phB = norm(koProg, 0.5, 0.8)
-        const phC = norm(koProg, 0.8, 1.0)
+        const phA = norm(koProg, 0,   0.45)   // image clears through text
+        const phB = norm(koProg, 0.45, 0.78)  // image fills screen, text fades
+        const phC = norm(koProg, 0.78, 1.0)   // project reveal
 
-        // Text: fully visible → fades out during phB
-        koText.style.opacity = String(1 - phB)
-        // Full bg image: appears during phB
-        koBg.style.opacity   = String(phB)
-        // Scroll cue: visible at start, fades quickly
-        koCue.style.opacity  = String(clamp(1 - koProg * 4, 0, 1))
-        // Reveal: fades in during phC
-        koReveal.style.opacity        = String(phC)
-        koReveal.style.pointerEvents  = phC > 0.5 ? 'all' : 'none'
+        koText.style.opacity  = String(1 - phB)
+        koBg.style.opacity    = String(phB)
+        koBg.style.transform  = `scale(1.06) translateY(${koProg * 20}px)`
+        koCue.style.opacity   = String(clamp(1 - koProg * 5, 0, 1))
+        koReveal.style.opacity       = String(phC)
+        koReveal.style.pointerEvents = phC > 0.5 ? 'all' : 'none'
 
-        // Subtle parallax on ko-bg
-        koBg.style.transform = `scale(1.06) translateY(${koProg * 20}px)`
+        // ─── Reel section (fixed stage) ───
+        const triggerTop = trigger.offsetTop
+        const triggerH   = trigger.offsetHeight
 
-        // ─── Reel section ───
-        const reelTop      = reelEl.offsetTop
-        const reelH        = reelEl.offsetHeight
-        const reelScrolled = clamp(wy - reelTop, 0, reelH - vh)
-        const reelProg     = reelScrolled / (reelH - vh)   // 0 → 1
+        // Reel is active when scroll is within the trigger range
+        const reelActive = wy >= triggerTop && wy < triggerTop + triggerH
 
-        const rawIdx    = reelProg * (ps.length - 1)
-        const newActive = Math.round(rawIdx)
-
-        if (newActive !== curActive) {
-          curActive = newActive
-          // Swap bg
-          reelBgs.forEach((b,i) => b.classList.toggle('on', i === curActive))
-          // Update left panel
-          const p = ps[curActive]
-          rlNum.textContent   = `${String(curActive+1).padStart(2,'0')} / ${String(ps.length).padStart(2,'0')}`
-          rlTitle.textContent = p.title
-          rlSub.innerHTML     = `${p.client?`<span>${p.client}</span>`:''}${p.category?`<span>${Array.isArray(p.category)?p.category[0]:p.category}</span>`:''}`
-          rlLink.href         = `portfolio/${p.slug}.html`
+        if (reelActive !== reelStage.classList.contains('reel-active')) {
+          if (reelActive) {
+            reelStage.style.transition = 'opacity 200ms ease'  // fade IN
+            reelStage.classList.add('reel-active')
+          } else {
+            reelStage.style.transition = 'none'                 // snap OUT (no overlap with footer)
+            reelStage.classList.remove('reel-active')
+          }
         }
 
-        // Update reel item sizes
-        reelItems.forEach((item, i) => {
-          const dist = Math.abs(i - rawIdx)
-          item.dataset.d = dist < .5 ? '0' : dist < 1.5 ? '1' : dist < 2.5 ? '2' : dist < 3.5 ? '3' : 'x'
-        })
+        if (reelActive) {
+          const reelProg = clamp((wy - triggerTop) / triggerH, 0, 1)
+          const rawIdx   = reelProg * (ps.length - 1)
+          const newActive = Math.round(rawIdx)
 
-        // Translate list so active item is centered
-        // Measure current active item height for centering
-        const activeEl = reelItems[curActive]
-        const activeH  = activeEl ? activeEl.offsetHeight : 72
-        // Accumulate offset up to active item
-        let offsetPx = 0
-        for (let i = 0; i < reelItems.length; i++) {
-          if (i === curActive) break
-          offsetPx += reelItems[i].offsetHeight * 1.1  // 1.1 matches padding gap
+          if (newActive !== curActive) {
+            curActive = newActive
+            reelBgs.forEach((b,i) => b.classList.toggle('on', i === curActive))
+            const p = ps[curActive]
+            rlNum.textContent   = `${String(curActive+1).padStart(2,'0')} / ${String(ps.length).padStart(2,'0')}`
+            rlTitle.textContent = p.title
+            rlSub.innerHTML     = `${p.client ? `<span>${p.client}</span>` : ''}${p.category ? `<span>${Array.isArray(p.category) ? p.category[0] : p.category}</span>` : ''}`
+            rlLink.href         = `portfolio/${p.slug}.html`
+          }
+
+          // Update item sizes
+          reelItems.forEach((item, i) => {
+            const dist = Math.abs(i - rawIdx)
+            item.dataset.d = dist < .5 ? '0' : dist < 1.5 ? '1' : dist < 2.5 ? '2' : dist < 3.5 ? '3' : 'x'
+          })
+
+          // Center active item
+          let offsetPx = 0
+          for (let i = 0; i < curActive; i++) {
+            offsetPx += reelItems[i].offsetHeight * 1.1
+          }
+          const activeH     = reelItems[curActive] ? reelItems[curActive].offsetHeight : 72
+          const smoothOffset = rawIdx * (curActive > 0 ? offsetPx / curActive : activeH * 1.1)
+          const centerOffset = vh / 2 - activeH / 2
+          reelList.style.transform = `translateY(${centerOffset - smoothOffset}px)`
         }
-        // Smooth via rawIdx for inertia feel
-        const smoothOffset = rawIdx * (offsetPx / Math.max(curActive, 1) || activeH * 1.1)
-        const centerOffset = vh / 2 - activeH / 2
-        reelList.style.transform = `translateY(${centerOffset - smoothOffset}px)`
 
         requestAnimationFrame(tick)
       }
 
       requestAnimationFrame(tick)
-
-      // Click on reel item → navigate
-      reelList.addEventListener('click', e => {
-        const item = e.target.closest('.reel-item')
-        if (item) window.location.href = `portfolio/${item.dataset.slug}.html`
-      })
     }
   </script>
 
