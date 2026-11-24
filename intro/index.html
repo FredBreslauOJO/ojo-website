@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>OJO Studio · Apresentação comercial</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <div id="slides"></div>
+    <div id="ring"></div>
+    <div id="hud">
+      <div class="hud-l"><span class="hud-brand">OJO Studio</span><span class="hud-sec" id="hudSec"></span></div>
+      <div class="hud-r"><span id="hudNum">01</span><i></i><span id="hudTot">18</span></div>
+    </div>
+    <div id="bar"><b id="barFill"></b></div>
+  </div>
+</div>
+<div id="overview" hidden>
+  <header><h2>Páginas</h2><p>Arraste para reordenar · clique no olho para ocultar · Enter abre · Esc fecha</p>
+    <button id="ovLang"></button><button id="ovReset">Restaurar ordem</button><button id="ovClose">Fechar</button></header>
+  <div id="ovGrid"></div>
+</div>
+<div id="editor" hidden><div class="box"><h3 id="edTitle"></h3><div id="edFields"></div><footer><button id="edReset">Restaurar texto original</button><button id="edCancel">Cancelar</button><button id="edSave">Salvar</button></footer></div></div>
+<div id="help" hidden>
+  <div><h3>Atalhos</h3>
+  <p><kbd>←</kbd> <kbd>→</kbd> navegar · <kbd>espaço</kbd> avançar · <kbd>G</kbd> páginas · <kbd>F</kbd> tela cheia · <kbd>L</kbd> idioma · <kbd>T</kbd> transição · <kbd>M</kbd> motivo visual · <kbd>H</kbd> ajuda · <kbd>1</kbd>–<kbd>9</kbd> ir para página · <kbd>Home</kbd>/<kbd>End</kbd></p></div>
+</div>
+<div id="start">
+  <div class="st-bg"></div>
+  <div class="st-top"><span>OJO Studio</span><span>Apresentação comercial · Commercial presentation</span></div>
+  <div class="st-main">
+    <div id="startPlay" class="st-card" role="button" tabindex="0" aria-label="Play">
+      <img src="img/thumb.jpg" alt="">
+      <video muted loop playsinline preload="none" data-src="media/front-branding.mp4"></video>
+      <i class="st-shade"></i>
+      <span class="st-play"><b></b><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+    </div>
+    <div class="st-opts"><button data-lang="pt"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Assistir em Português (BR)</button><button data-lang="en"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Watch in English</button></div>
+  </div>
+  <div class="st-foot">Enter para iniciar · <kbd>P</kbd> PT-BR · <kbd>E</kbd> EN · <kbd>L</kbd> troca o idioma durante a apresentação</div>
+</div>
+<div id="toast"></div>
+<div id="cur"><i></i></div>
+<script src="decks/layouts.js"></script>
+<script src="decks/ojo.js"></script>
+<script src="decks/demo.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+OJO · Apresentação interativa (MVP)
+
+ABRIR: dê dois cliques em index.html (Chrome ou Safari). Funciona offline.
+Deck de demonstração dos tipos de página: index.html?deck=demo
+
+TECLAS: ← → / espaço navegar · G páginas (arrastar para reordenar, olho para ocultar) · F tela cheia · H ajuda · 1-9 ir para página
+O nome do cliente na capa é editável (clique) e fica salvo no navegador.
+
+ESTRUTURA
+decks/ojo.js      conteúdo: cada página = { type, dados }
+decks/layouts.js  tipos de página (cover, divider, statement, split, triple, video, gallery, table, logos, cards4, case, audience, twocol, europe, process, cta, closing)
+decks/demo.js     exemplo de cada tipo genérico
+js/engine.js      navegação, transições, vídeos, reordenação
+media/            12 loops de vídeo (sem áudio) + posters
+
+NOVO: tela inicial com play (PT-BR ou EN), tecla L troca o idioma durante a apresentação, T transições, M motivo visual.
+Os textos em inglês estão em decks/ojo.js (objeto EN), no mesmo formato dos dados em português.
