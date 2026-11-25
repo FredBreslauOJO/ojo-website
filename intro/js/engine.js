@@ -5,6 +5,7 @@ var KEY='pres.'+DECK.name+'.';
 var store={get:function(k,d){try{var v=localStorage.getItem(KEY+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem(KEY+k,JSON.stringify(v))}catch(e){}}};
 var stage=$('#stage'),host=$('#slides'),ring=$('#ring');
 var all=DECK.slides.slice(),byId={};all.forEach(function(s){byId[s.id]=s});
+if(store.get('ver',null)!==(DECK.ver||1)){store.set('order',null);store.set('ver',DECK.ver||1)}
 var order=store.get('order',null),hidden=store.get('hidden',[]),client=store.get('client',null),lang=q.get('lang')||store.get('lang','pt'),edits={};
 window.LANG=lang;function ek(){return lang==='pt'?'edits':'edits.en'}edits=store.get(ek(),{});
 function merge(t,p){Object.keys(p).forEach(function(k){if(p[k]&&typeof p[k]==='object'&&t[k]&&typeof t[k]==='object')merge(t[k],p[k]);else t[k]=p[k]});return t}

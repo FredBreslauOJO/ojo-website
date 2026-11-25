@@ -96,7 +96,7 @@ L.cards4=function(d){var o='<div class="pad">'+rv('fade',0,esc(d.eyebrow||''),'p
 
 // case: 3 mídias + texto
 L.case=function(d){var o='<div class="pad" style="padding:0">'
- +rv('fade',0,'<img class="logo-i" src="'+d.logo+'" alt="" style="height:64px">','position:absolute;left:140px;top:110px')
+ +rv('fade',0,'<img class="logo-i" src="'+d.logo+'" alt="" style="height:'+(d.logoH||64)+'px">','position:absolute;left:140px;top:110px')
  +(d.badge?rv('fade',.3,'<img class="badge-img" src="'+d.badge+'" alt="Red Dot Winner">','position:absolute;left:232px;top:121px'):'')
  +(d.stat?rv('',.4,'<div class="h2" style="color:var(--or);text-align:right;line-height:1">'+esc(d.stat.n)+'</div><div class="mut" style="font:600 14px var(--sans);letter-spacing:.16em;text-transform:uppercase;text-align:right;margin-top:8px">'+esc(d.stat.l)+'</div>','position:absolute;left:520px;width:240px;top:104px'):'')
  +rv('fade',.05,esc(d.num),'position:absolute;left:140px;top:210px','div').replace('class="rv fade"','class="rv fade eyebrow"')
