@@ -198,11 +198,28 @@ img{display:block;max-width:100%}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .toast.err{border-color:rgba(220,80,80,.4);color:#e88}
 
-/* ─── PRESENTATION TAB ───────────────────────────────────────── */
-.pres-frame{width:100%;height:calc(100vh - 160px);border:1px solid var(--edge);border-radius:var(--r);overflow:hidden;background:#000}
-.pres-frame iframe{width:100%;height:100%;border:none;display:block}
-.pres-actions{display:flex;gap:12px;margin-bottom:20px;align-items:center}
-.pres-info{flex:1;font:400 14px/1.5 var(--sans);color:var(--fg2)}
+/* ─── OJO LOGO SVG ───────────────────────────────────────────── */
+.ojg{fill:#f1ad1d}.ojw{fill:#fff}.ojr{fill:#ec1c24}
+.auth-logo svg{width:96px;height:auto;display:block}
+.side__logo svg{width:80px;height:auto;display:block}
+
+/* ─── PRESENTATIONS GRID ─────────────────────────────────────── */
+.pres-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.pres-card{background:var(--panel);border:1px solid var(--edge);border-radius:var(--r);overflow:hidden;transition:border-color .25s,transform .25s var(--ease)}
+.pres-card:hover{border-color:rgba(255,90,31,.3);transform:translateY(-2px)}
+.pres-card--matriz{border-color:rgba(255,90,31,.35)!important}
+.pres-card__thumb{aspect-ratio:16/9;background:#0a0a0c;display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid var(--edge-s)}
+.pres-card__thumb svg{width:52%;opacity:.65}
+.pres-card__badge{position:absolute;top:10px;left:10px;font:700 10px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:rgba(255,90,31,.18);color:var(--or);border:1px solid rgba(255,90,31,.3)}
+.pres-card__body{padding:16px}
+.pres-card__name{font:400 17px/1.2 var(--serif);margin-bottom:5px}
+.pres-card__meta{font:400 12px/1 var(--sans);color:var(--fg2)}
+.pres-card__actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.pc-btn{padding:7px 11px;border-radius:var(--r-sm);font:600 11px/1 var(--sans);letter-spacing:.06em;border:1px solid var(--edge);color:var(--fg2);transition:color .2s,border-color .2s,background .2s;white-space:nowrap;cursor:pointer;background:none}
+.pc-btn:hover{color:var(--paper);border-color:rgba(243,239,232,.3)}
+.pc-btn--or{background:rgba(255,90,31,.1);color:var(--or);border-color:rgba(255,90,31,.25)}
+.pc-btn--or:hover{background:rgba(255,90,31,.22)}
+.pc-btn--danger:hover{color:#e55;border-color:rgba(220,80,80,.3)}
 
 /* ─── SECTION LABEL ──────────────────────────────────────────── */
 .sec-label{font:600 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--fg2);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--edge)}
@@ -226,6 +243,46 @@ img{display:block;max-width:100%}
 </head>
 <body>
 
+<!-- OJO LOGO SYMBOL (shared by login + sidebar) -->
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:none">
+  <symbol id="ojo-mark" viewBox="0 0 1920 779">
+    <path class="ojr" d="M1919.39,238.92c-2.19-32.76-10.01-63.69-23.44-92.81-13.43-29.12-30.8-54.5-52.07-76.1-21.27-21.61-45.7-38.68-73.24-51.2C1743.06,6.3,1714.26.03,1684.2.03c-24.19,0-47.03,4.06-68.52,12.17.12-.04.24-.1.36-.14l-178.33,66.83-4.55-67.93h-137.79l-135.71,50.86c-19.22-17.77-40.82-32.12-64.8-43.01C1067.3,6.3,1038.5.03,1008.44.03c-24.19,0-47.03,4.06-68.52,12.17.12-.04.23-.1.36-.14,0,0-815.21,305.41-820.38,307.92-25.88,12.51-48.02,29.58-66.41,51.19-18.38,21.61-32.35,46.98-41.87,76.1-9.55,29.12-13.2,60.05-11.01,92.81,2.19,32.76,9.99,63.71,23.44,92.83,13.42,29.12,30.79,54.5,52.06,76.1,21.27,21.61,45.7,38.68,73.26,51.18,27.56,12.52,56.38,18.77,86.44,18.77,24.06,0,46.76-4.01,68.14-12.02l134.36-50.35,3.4,50.78h105.83c22.05,0,40.5-2.79,55.38-8.36l144.9-54.3c1.35,1.43,2.67,2.9,4.05,4.3,21.27,21.61,45.7,38.68,73.26,51.18,27.56,12.52,56.38,18.77,86.44,18.77,24.06,0,46.77-4.01,68.17-12.03,0,0,814.95-305.29,820.37-307.91,25.87-12.5,48.02-29.57,66.39-51.18,18.38-21.61,32.35-46.98,41.88-76.1,9.54-29.12,13.2-60.07,11.01-92.83"/>
+    <path class="ojg" d="M515.29,742.84l-3.4-50.78-33.87,12.7,3.31,49.4h105.84c22.05,0,40.5-2.79,55.38-8.36l18.55-6.95c-11.7,2.59-24.93,3.99-39.97,3.99h-105.84Z"/>
+    <path class="ojg" d="M222.96,735.66c-27.56-12.5-51.99-29.57-73.26-51.18-21.27-21.6-38.64-46.98-52.06-76.1-13.44-29.11-21.24-60.06-23.44-92.82-2.19-32.76,1.47-63.69,11.01-92.82,9.52-29.12,23.49-54.5,41.87-76.1,18.38-21.61,40.52-38.68,66.41-51.19,5.17-2.5,10.42-4.75,15.76-6.76l9.25-3.46c2.79-1.6,5.64-3.13,8.53-4.61l-51.75,19.4c-5.33,2-10.59,4.25-15.76,6.75-25.88,12.52-48.03,29.59-66.41,51.19-18.38,21.61-32.35,46.99-41.87,76.11-9.55,29.11-13.2,60.04-11.01,92.81,2.19,32.76,9.99,63.71,23.44,92.83,13.42,29.12,30.79,54.5,52.06,76.1,21.28,21.61,45.71,38.69,73.26,51.18,27.56,12.52,56.38,18.77,86.44,18.77,24.05,0,46.76-4.01,68.13-12.02l13.25-4.97c-15.18,3.74-30.98,5.66-47.42,5.66-30.06,0-58.88-6.25-86.44-18.77"/>
+    <path class="ojg" d="M898.72,735.66c-27.56-12.5-51.99-29.57-73.26-51.18-1.38-1.4-2.7-2.87-4.06-4.3l-32.98,12.36s-.01.04-.02.07c21.99,23.13,47.45,41.27,76.35,54.37,27.56,12.52,56.38,18.77,86.44,18.77,24.06,0,46.78-4.01,68.17-12.02l13.24-4.97c-15.19,3.74-30.99,5.67-47.43,5.67-30.06,0-58.88-6.25-86.44-18.77"/>
+    <path class="ojg" d="M974.2,705.47c-27.56-12.5-51.99-29.57-73.26-51.18-1.22-1.24-2.39-2.52-3.58-3.8l-37.09,13.9s0,.04-.01.07c21.95,23.05,47.37,41.14,76.2,54.22,27.56,12.52,56.38,18.77,86.44,18.77,24.06,0,46.77-4.01,68.16-12.03l20.74-7.77c-16.33,4.38-33.38,6.59-51.17,6.59-30.06,0-58.87-6.25-86.44-18.77"/>
+    <path class="ojg" d="M298.44,705.47c-27.56-12.5-51.99-29.57-73.26-51.18-21.27-21.6-38.64-46.98-52.06-76.1-13.44-29.11-21.24-60.06-23.44-92.82-2.19-32.76,1.47-63.69,11.01-92.82,9.52-29.12,23.49-54.5,41.86-76.1,16.56-19.46,36.2-35.21,58.84-47.3l-42.91,16.08c-20.47,11.68-38.39,26.47-53.67,44.43-18.38,21.61-32.35,46.98-41.87,76.1-9.55,29.12-13.2,60.05-11.01,92.81,2.2,32.76,9.99,63.71,23.44,92.83,13.41,29.12,30.78,54.5,52.06,76.1,21.27,21.61,45.7,38.68,73.26,51.18,27.56,12.52,56.38,18.77,86.44,18.77,24.06,0,46.76-4.01,68.14-12.02l20.75-7.78c-16.32,4.38-33.37,6.59-51.15,6.59-30.06,0-58.88-6.25-86.44-18.77"/>
+    <path class="ojg" d="M590.77,712.65l-3.36-50.11-26.84,10.06c-3.58,1.34-7.21,2.53-10.86,3.64l3.32,49.62h105.84c22.05,0,40.5-2.79,55.38-8.36l25.01-9.37c-12.3,2.99-26.49,4.52-42.64,4.52h-105.84Z"/>
+    <path class="ojg" d="M770.2,684.34h-105.84l-3.29-49.19-19.36,7.25c-2.69,1.01-5.4,1.95-8.14,2.84l-6.52,2.44,3.34,49.88h105.83c17.15,0,32.06-1.74,44.86-5.11l41.29-15.47c-14.32,4.85-31.63,7.37-52.18,7.37"/>
+    <path class="ojg" d="M1134.23,695.93c-30.06,0-58.88-6.25-86.44-18.77-27.56-12.5-51.99-29.57-73.26-51.18-1-1.01-1.95-2.06-2.92-3.1l-30.92,11.58c-1.04.39-2.24.66-3.31,1.03l-.23.08c1.13,1.21,2.25,2.44,3.41,3.62,21.28,21.61,45.71,38.68,73.26,51.18,27.56,12.52,56.38,18.77,86.44,18.77,18.78,0,36.73-2.48,53.88-7.36l40.21-15.07c-19.02,6.15-39.06,9.22-60.13,9.22"/>
+    <path class="ojg" d="M458.47,695.93c-30.06,0-58.88-6.25-86.44-18.77-27.56-12.5-51.99-29.57-73.26-51.18-21.27-21.6-38.64-46.98-52.06-76.1-13.44-29.11-21.24-60.06-23.44-92.82-2.19-32.76,1.47-63.69,11.01-92.82,9.52-29.12,23.49-54.5,41.87-76.1,15.53-18.26,33.79-33.25,54.69-45.02l-31.58,11.83c-21.91,11.96-40.95,27.43-57.08,46.4-18.38,21.61-32.35,46.98-41.87,76.1-9.55,29.12-13.2,60.05-11.01,92.81,2.19,32.76,9.99,63.71,23.44,92.83,13.42,29.12,30.79,54.5,52.06,76.1,21.28,21.61,45.71,38.68,73.26,51.18,27.56,12.52,56.38,18.77,86.44,18.77,18.78,0,36.73-2.48,53.87-7.36l40.23-15.08c-19.02,6.15-39.06,9.23-60.14,9.23"/>
+    <path class="ojg" d="M1004.58,610.59c22.18,23.54,47.91,41.97,77.18,55.25,27.56,12.52,56.38,18.77,86.44,18.77,15.84,0,31.09-1.78,45.78-5.25l56.53-21.19c-19.22,6.29-39.48,9.45-60.8,9.45-30.06,0-58.87-6.25-86.44-18.77-27.56-12.49-51.99-29.57-73.26-51.17-.99-1.01-1.95-2.05-2.91-3.09l-42.51,15.93s-.01.04-.02.08"/>
+    <path class="ojg" d="M698.33,673.02h105.84c14.54,0,27.36-1.33,38.78-3.76l16.2-6.07c.05.05.1.1.15.15l64.75-24.27s-.06.01-.1.03l-22.88,8.57c-14.88,5.58-33.33,8.36-55.38,8.36h-105.84l-3.29-49.18-41.61,15.6,3.39,50.57Z"/>
+    <path class="ojg" d="M533.95,667.63c-30.06,0-58.88-6.25-86.44-18.77-27.56-12.5-51.99-29.57-73.26-51.18-21.27-21.6-38.64-46.98-52.06-76.1-13.44-29.11-21.24-60.06-23.44-92.82-2.19-32.76,1.47-63.69,11.01-92.82,9.52-29.12,23.49-54.5,41.87-76.1,15.51-18.24,33.74-33.21,54.6-44.97l-32.41,12.15c-24.71,12.38-45.98,28.96-63.71,49.81-18.38,21.6-32.35,46.98-41.87,76.1-9.55,29.11-13.2,60.05-11.01,92.81,2.19,32.76,9.99,63.71,23.44,92.83,13.42,29.12,30.79,54.5,52.06,76.1,21.27,21.61,45.7,38.68,73.26,51.18,27.56,12.51,56.37,18.76,86.44,18.76,15.84,0,31.09-1.77,45.77-5.25l11.42-4.28v.21s69.67-26.1,69.67-26.1l-.15.04-17.06,6.39c-21.37,8.01-44.08,12.02-68.13,12.02"/>
+    <path class="ojg" d="M448.81,218.49s.08-.09.13-.13c.06-.06.12-.13.18-.19.99-1.05,2.03-2.05,3.05-3.09.45-.45.9-.91,1.35-1.36-.04.04-.08.09-.13.13.5-.5.98-1.01,1.48-1.5-.03.03-.07.06-.11.09.32-.31.63-.63.95-.95.09-.08.18-.17.26-.25.1-.1.21-.2.31-.3,1.34-1.28,2.73-2.5,4.1-3.75.85-.77,1.68-1.57,2.54-2.32.13-.11.26-.23.39-.35.14-.12.28-.24.41-.36,1.04-.9,2.12-1.77,3.17-2.65-.16.13-.31.29-.48.43.14-.11.28-.23.41-.34.49-.41.99-.84,1.5-1.25-.03.02-.06.04-.08.06.1-.08.2-.16.3-.24.63-.51,1.25-1.05,1.89-1.55.18-.14.34-.28.52-.42.16-.13.33-.26.49-.39,1.77-1.38,3.58-2.71,5.4-4.04.48-.34.95-.7,1.43-1.05.21-.14.41-.29.61-.44.08-.06.16-.12.24-.18-.07.04-.13.1-.2.14.56-.39,1.13-.75,1.69-1.13.1-.07.19-.16.29-.23-.47.33-.96.63-1.43.96,1.9-1.35,3.86-2.64,5.82-3.92-.82.54-1.62,1.11-2.42,1.66.43-.29.86-.58,1.3-.87.75-.5,1.48-1.02,2.24-1.52-.05.04-.1.06-.15.09.14-.09.27-.18.41-.26-.09.05-.17.11-.26.17.1-.06.2-.12.3-.18.18-.11.34-.23.51-.34-.07.04-.14.08-.2.13,2.27-1.45,4.58-2.86,6.92-4.23-.91.53-1.79,1.11-2.69,1.65.48-.29.95-.57,1.43-.85.73-.44,1.44-.9,2.18-1.32-.16.09-.32.17-.48.26.35-.2.69-.41,1.05-.61-.19.11-.38.23-.57.34.13-.07.25-.13.37-.21.21-.12.41-.24.61-.36-.12.07-.24.13-.36.19.41-.23.81-.48,1.22-.71,0,0,0,0,0,0l-40.19,15.06c-25.38,12.46-47.16,29.32-65.26,50.6-18.38,21.61-32.35,46.98-41.87,76.1-9.55,29.12-13.2,60.05-11.01,92.82,2.19,32.76,9.99,63.71,23.44,92.82,13.42,29.12,30.79,54.5,52.06,76.11,21.28,21.6,45.71,38.68,73.26,51.17,27.56,12.52,56.38,18.77,86.44,18.77,15.77,0,30.96-1.75,45.57-5.2l117.3-43.95.11,1.6,39.52-14.81,3.4,50.78h105.84c14.48,0,27.25-1.32,38.64-3.73l122.01-45.73c.38.4.76.8,1.15,1.21l38.48-14.42c1.35,1.43,2.67,2.9,4.05,4.31,21.28,21.6,45.71,38.68,73.26,51.17,27.56,12.52,56.38,18.77,86.44,18.77,15.23,0,29.92-1.62,44.07-4.83l66.61-24.96s-.02-.04-.03-.06c-.01-.03-.03-.06-.03-.09-18.9,6.06-38.76,9.19-59.68,9.19-30.06,0-58.87-6.25-86.44-18.77-27.56-12.5-51.99-29.57-73.26-51.18-1.38-1.4-2.7-2.87-4.05-4.3l-144.9,54.3c-14.87,5.57-33.33,8.36-55.38,8.36h-105.83l-3.4-50.78-134.36,50.35c-21.38,8.01-44.08,12.02-68.14,12.02-30.06,0-58.87-6.25-86.44-18.77-27.56-12.5-51.99-29.57-73.26-51.18-21.27-21.6-38.64-46.98-52.06-76.1-13.45-29.11-21.24-60.06-23.44-92.82-2.2-32.76,1.46-63.69,11.01-92.82,9.52-29.12,23.49-54.5,41.87-76.1,2.16-2.54,4.38-5.02,6.65-7.43l-.06.06"/>
+    <polygon class="ojg" points="1347.13 112.85 1386.65 98.05 1382.21 31.72 1244.42 31.72 1209.17 44.92 1342.59 44.92 1347.13 112.85"/>
+    <path class="ojg" d="M1004.29,52.77c23.97,10.89,45.58,25.23,64.8,43.01l38.29-14.35c-18.89-17.22-40.03-31.22-63.46-41.87-27.56-12.51-56.36-18.77-86.42-18.77-24.19,0-47.03,4.06-68.52,12.17.12-.04.24-.1.36-.14l-17.09,6.41c14.63-3.45,29.83-5.22,45.62-5.22,30.06,0,58.86,6.26,86.42,18.77"/>
+    <path class="ojg" d="M1868.44,259.67c-2.19-32.76-10.01-63.69-23.44-92.81-13.43-29.12-30.8-54.5-52.07-76.1-21.27-21.61-45.7-38.68-73.24-51.2-27.57-12.51-56.38-18.77-86.44-18.77-24.19,0-47.03,4.06-68.52,12.17.12-.04.24-.1.36-.14l-17.09,6.41c14.63-3.46,29.83-5.22,45.62-5.22,30.06,0,58.87,6.25,86.44,18.77,27.54,12.51,51.97,29.59,73.24,51.2,21.28,21.6,38.64,46.98,52.07,76.1,13.43,29.12,21.24,60.06,23.44,92.82,2.19,32.76-1.48,63.71-11.01,92.83-9.53,29.12-23.5,54.5-41.88,76.1-18.38,21.61-40.52,38.68-66.39,51.17-5.43,2.62-10.95,4.96-16.56,7.03.26-.1.53-.18.8-.28l-21.58,8.09c-1.4.71-2.75,1.46-4.18,2.15-5.43,2.62-10.95,4.95-16.55,7.03.26-.1.53-.18.8-.28l-164.56,61.67c-.52.26-1.03.54-1.55.8l247.25-92.67c-.27.1-.54.18-.8.28,5.61-2.07,11.13-4.41,16.56-7.03,25.86-12.5,48.01-29.57,66.39-51.18,18.38-21.61,32.35-46.98,41.88-76.1,9.54-29.12,13.2-60.07,11.01-92.83"/>
+    <polygon class="ojg" points="1267.1 73.23 1271.64 140.96 1305.51 128.26 1301.07 61.91 1163.86 61.91 1133.65 73.23 1267.1 73.23"/>
+    <path class="ojg" d="M842.38,62.31c30.06,0,58.86,6.25,86.42,18.77,23.91,10.86,45.45,25.16,64.63,42.86l24.54-9.2h.56l7.88-2.96c-18.93-17.31-40.14-31.36-63.65-42.03-27.56-12.52-56.36-18.77-86.42-18.77-21.1,0-41.18,3.09-60.23,9.26l-19.5,7.31c14.68-3.48,29.93-5.25,45.76-5.25"/>
+    <path class="ojg" d="M1734.4,458.8c18.38-21.61,32.35-46.98,41.88-76.1,9.54-29.12,13.2-60.07,11.01-92.83-2.2-32.76-10.01-63.69-23.44-92.81-13.44-29.12-30.8-54.5-52.07-76.1-21.27-21.61-45.7-38.68-73.24-51.2-27.57-12.51-56.38-18.77-86.44-18.77-21.1,0-41.17,3.1-60.22,9.26l-19.51,7.31c14.68-3.47,29.92-5.25,45.76-5.25,30.06,0,58.86,6.25,86.44,18.77,27.54,12.51,51.97,29.59,73.24,51.19,21.27,21.61,38.64,46.98,52.07,76.1,13.43,29.12,21.24,60.05,23.44,92.81,2.19,32.76-1.48,63.71-11.01,92.83-9.54,29.12-23.5,54.5-41.88,76.1-18.38,21.61-40.53,38.68-66.39,51.18-5.43,2.62-10.95,4.95-16.55,7.03.04-.01.08-.03.12-.04l54.58-20.46c24.07-12.28,44.84-28.6,62.22-49.02"/>
+    <path class="ojg" d="M894.84,94.29c-27.56-12.51-56.36-18.77-86.42-18.77-17.22,0-33.74,2.1-49.59,6.21l-41.59,15.58c16.44-4.46,33.63-6.7,51.55-6.7,30.06,0,58.86,6.26,86.42,18.77,23.67,10.75,45.01,24.9,64.04,42.36l39.83-14.93c-19.08-17.54-40.49-31.75-64.24-42.53"/>
+    <path class="ojg" d="M1233.14,86.44h-135.32l-40.28,15.1h135.97l4.47,66.81,29.33-10.99c-.12.04-.23.1-.35.14,2.71-1.03,5.45-1.98,8.2-2.87l2.48-.93-4.5-67.26Z"/>
+    <path class="ojg" d="M1600.08,534.51c25.86-12.5,48.01-29.57,66.39-51.18,18.38-21.6,32.35-46.98,41.88-76.1,9.54-29.12,13.2-60.06,11.01-92.83-2.19-32.76-10.01-63.69-23.43-92.81-13.44-29.12-30.81-54.5-52.07-76.1-21.27-21.6-45.7-38.68-73.24-51.2-27.57-12.51-56.38-18.76-86.44-18.76-17.22,0-33.75,2.1-49.6,6.2l-41.59,15.58c16.45-4.45,33.63-6.69,51.55-6.69,30.07,0,58.87,6.25,86.44,18.77,27.55,12.51,51.98,29.59,73.25,51.19,21.27,21.61,38.64,46.98,52.07,76.1,13.43,29.12,21.24,60.05,23.44,92.81,2.2,32.76-1.47,63.71-11.01,92.83-9.54,29.12-23.5,54.5-41.88,76.1-18.38,21.61-40.53,38.68-66.39,51.18-.42.2-.85.38-1.26.57l36.49-13.67c1.47-.66,2.94-1.29,4.4-1.99"/>
+    <path class="ojg" d="M731.05,103.82c-15.23,0-29.92,1.62-44.08,4.83l-85.38,31.99c3.39-1.05,6.81-1.98,10.26-2.84l13.3-4.99c-.12.05-.24.1-.36.14,21.49-8.1,44.33-12.17,68.52-12.17,30.06,0,58.87,6.26,86.42,18.77,22.97,10.43,43.71,24.14,62.31,40.89l40.06-15.01c-19.18-17.71-40.72-32.01-64.63-42.86-27.56-12.52-56.36-18.77-86.42-18.77"/>
+    <path class="ojg" d="M950.03,143.05l30.21-11.32h137.79l4.35,64.95,37.92-14.21-4.53-67.73h-135.3l-100.46,37.65c-.24-.23-12.8,3.87-12.8,3.87h3.82l35.24-13.21h3.76Z"/>
+    <path class="ojg" d="M1300.55,132.97c21.49-8.1,44.33-12.16,68.52-12.16,30.06,0,58.86,6.25,86.44,18.76,27.54,12.52,51.97,29.59,73.24,51.2,21.28,21.61,38.64,46.98,52.07,76.1,13.43,29.12,21.24,60.05,23.44,92.81,2.19,32.76-1.48,63.71-11.01,92.83-9.53,29.12-23.5,54.5-41.88,76.1-15.27,17.95-33.18,32.73-53.63,44.4l9.22-3.46c-.26.1-.53.18-.8.28,5.6-2.07,11.13-4.41,16.55-7.03,25.86-12.5,48.02-29.57,66.39-51.18,18.38-21.61,32.35-46.98,41.88-76.1,9.54-29.12,13.2-60.07,11.01-92.83-2.2-32.76-10.01-63.69-23.44-92.82-13.44-29.11-30.8-54.5-52.07-76.1-21.27-21.61-45.7-38.69-73.24-51.2-27.57-12.51-56.38-18.77-86.44-18.77-15.86,0-31.12,1.78-45.83,5.27l-55.36,20.75-.05-.66-59.69,22.37c1.32-.34,2.64-.68,3.98-1l17.09-6.4c-.12.04-.24.09-.36.14,6.86-2.59,13.88-4.71,21.02-6.48l13.3-4.98c-.12.05-.24.1-.36.14"/>
+    <polygon class="ojg" points="946.27 143.05 911.03 156.26 1044.43 156.26 1048.98 224.19 1088.5 209.38 1084.06 143.05 946.27 143.05"/>
+    <path class="ojg" d="M659.34,132.13c-16.46,0-32.28,1.93-47.5,5.69l-29.13,10.91c11.97-2.24,24.29-3.39,37-3.39,30.06,0,58.86,6.25,86.42,18.77,23.97,10.88,45.58,25.23,64.8,43.01l38.29-14.35c-18.89-17.22-40.02-31.23-63.46-41.87-27.56-12.52-56.36-18.77-86.42-18.77"/>
+    <path class="ojg" d="M1455.23,588.94c24.04-12.28,44.8-28.59,62.16-49,18.38-21.61,32.35-46.98,41.88-76.1,9.54-29.12,13.2-60.07,11.01-92.83-2.2-32.76-10.01-63.69-23.44-92.81-13.44-29.12-30.8-54.5-52.07-76.1-21.27-21.61-45.7-38.68-73.24-51.2-27.57-12.51-56.38-18.77-86.44-18.77-16.46,0-32.28,1.93-47.5,5.69l-29.13,10.91c11.96-2.24,24.29-3.39,37-3.39,30.06,0,58.86,6.25,86.44,18.77,27.54,12.51,51.97,29.59,73.24,51.19,21.27,21.61,38.64,46.99,52.07,76.1,13.43,29.12,21.24,60.06,23.44,92.82,2.19,32.76-1.48,63.71-11.01,92.83-9.54,29.12-23.5,54.5-41.88,76.1-18.38,21.6-40.53,38.68-66.39,51.17-5.43,2.62-10.95,4.96-16.55,7.03.26-.1.53-.18.8-.28l-14.17,5.31c.54-.25,1.09-.48,1.62-.73-1.42.68-2.87,1.31-4.31,1.95l76.47-28.66Z"/>
+    <path class="ojw" d="M1377.5,284.63c14.11,14.34,25.56,30.95,34.34,49.83,8.77,18.89,13.89,39.24,15.35,61.08,1.47,21.84-.93,42.22-7.18,61.09-6.25,18.89-15.48,35.49-27.67,49.82-12.2,14.34-26.68,25.6-43.45,33.79-16.78,8.2-35.19,12.29-55.23,12.29s-39-4.09-56.88-12.29c-17.88-8.19-33.87-19.44-47.98-33.79-14.11-14.33-25.56-30.93-34.33-49.82-8.78-18.87-13.91-39.25-15.37-61.09-1.47-21.84.95-42.19,7.19-61.08,6.24-18.88,15.47-35.49,27.66-49.83,12.18-14.33,26.67-25.6,43.45-33.79,16.79-8.18,35.2-12.28,55.24-12.28s39,4.09,56.88,12.28c17.86,8.19,33.85,19.46,47.97,33.79M1366.44,432.75c3.81-11.61,5.27-24.01,4.39-37.2-.88-13.19-4.01-25.6-9.37-37.19-5.38-11.61-12.32-21.72-20.82-30.38-8.52-8.63-18.26-15.47-29.25-20.47-10.97-5-22.53-7.5-34.62-7.5s-23.32,2.5-33.64,7.5c-10.3,5.01-19.13,11.84-26.48,20.47-7.36,8.66-12.95,18.77-16.76,30.38-3.83,11.6-5.28,24.01-4.41,37.19.88,13.2,4.01,25.6,9.39,37.2,5.37,11.61,12.31,21.74,20.82,30.36,8.51,8.66,18.26,15.48,29.23,20.48,10.99,5.02,22.53,7.51,34.64,7.51s23.32-2.5,33.62-7.51c10.32-5,19.14-11.82,26.5-20.48,7.35-8.62,12.94-18.75,16.76-30.36"/>
+    <path class="ojw" d="M1478.92,302.73c13.43,29.12,21.24,60.05,23.44,92.82,2.19,32.76-1.48,63.71-11.01,92.82-9.54,29.12-23.5,54.5-41.89,76.1-18.38,21.61-40.52,38.68-66.39,51.18-25.9,12.52-53.86,18.77-83.92,18.77s-58.88-6.25-86.44-18.77c-27.56-12.5-51.99-29.57-73.26-51.18-21.27-21.6-38.64-46.98-52.06-76.1-13.45-29.11-21.24-60.06-23.44-92.82-2.2-32.76,1.47-63.69,11.01-92.82,9.52-29.12,23.49-54.5,41.86-76.1,18.38-21.61,40.52-38.68,66.41-51.2,25.88-12.51,53.86-18.76,83.92-18.76s58.86,6.25,86.44,18.76c27.54,12.52,51.97,29.59,73.24,51.2,21.28,21.61,38.64,46.98,52.07,76.1M1435.5,463.46c6.94-21.17,9.6-43.8,7.98-67.91-1.62-24.11-7.3-46.75-17.07-67.9-9.77-21.17-22.48-39.71-38.16-55.62-15.69-15.93-33.53-28.43-53.57-37.54-20.02-9.11-41.1-13.66-63.22-13.66s-42.59,4.55-61.41,13.66c-18.8,9.11-34.99,21.61-48.52,37.54-13.56,15.92-23.79,34.46-30.72,55.62-6.94,21.15-9.59,43.8-7.97,67.9,1.62,24.12,7.29,46.75,17.06,67.91,9.77,21.15,22.48,39.7,38.17,55.62,15.67,15.93,33.53,28.44,53.55,37.54,20.04,9.1,41.1,13.65,63.24,13.65s42.59-4.55,61.39-13.65c18.82-9.1,34.99-21.61,48.55-37.54,13.54-15.92,23.76-34.47,30.7-55.62"/>
+    <path class="ojw" d="M878.34,167.58h137.79l22.75,339.89c2.83,42.32-4.05,72.13-20.63,89.41-16.6,17.31-44.3,25.95-83.13,25.95h-105.84l-7.31-109.21h45.71c13.36,0,22.15-2.72,26.38-8.19,4.23-5.45,6-13.18,5.33-23.2l-21.06-314.65ZM978.27,509.52l-19.23-287.34h-16.9l19.23,287.34c.94,14.11-.66,24.69-4.77,31.74-4.13,7.06-14.54,10.58-31.23,10.58h-50.73l1.1,16.39h50.73c20.46,0,34.52-4.9,42.23-14.68,7.7-9.78,10.89-24.46,9.58-44.03"/>
+    <path class="ojw" d="M701.75,284.63c14.11,14.34,25.56,30.95,34.34,49.83,8.78,18.89,13.89,39.24,15.36,61.08,1.46,21.84-.93,42.22-7.18,61.09-6.24,18.89-15.48,35.49-27.66,49.82-12.2,14.34-26.69,25.6-43.47,33.79-16.78,8.2-35.18,12.29-55.22,12.29s-39.01-4.09-56.88-12.29c-17.88-8.19-33.87-19.44-47.97-33.79-14.12-14.33-25.56-30.93-34.34-49.82-8.79-18.87-13.91-39.25-15.37-61.09-1.46-21.84.93-42.19,7.19-61.08,6.25-18.88,15.47-35.49,27.66-49.83,12.19-14.33,26.67-25.6,43.45-33.79,16.77-8.18,35.2-12.28,55.24-12.28s38.99,4.09,56.86,12.28c17.88,8.19,33.87,19.46,47.99,33.79M690.68,432.75c3.81-11.61,5.27-24.01,4.39-37.2-.88-13.19-4.01-25.6-9.37-37.19-5.38-11.61-12.32-21.72-20.83-30.38-8.52-8.63-18.26-15.47-29.25-20.47-10.97-5-22.53-7.5-34.62-7.5s-23.32,2.5-33.64,7.5c-10.3,5.01-19.14,11.84-26.49,20.47-7.36,8.66-12.95,18.77-16.76,30.38-3.83,11.6-5.28,24.01-4.41,37.19.89,13.2,4.01,25.6,9.39,37.2,5.37,11.61,12.31,21.74,20.83,30.36,8.5,8.66,18.26,15.48,29.23,20.48,10.99,5.02,22.53,7.51,34.64,7.51s23.32-2.5,33.62-7.51c10.32-5,19.14-11.82,26.5-20.48,7.35-8.62,12.94-18.75,16.76-30.36"/>
+    <path class="ojw" d="M803.16,302.73c13.43,29.12,21.24,60.05,23.44,92.82,2.19,32.76-1.48,63.71-11.01,92.82-9.54,29.12-23.5,54.5-41.89,76.1-18.38,21.61-40.52,38.68-66.41,51.18-25.88,12.52-53.85,18.77-83.91,18.77s-58.88-6.25-86.44-18.77c-27.56-12.5-51.99-29.57-73.26-51.18-21.27-21.6-38.64-46.98-52.06-76.1-13.45-29.11-21.24-60.06-23.44-92.82-2.19-32.76,1.47-63.69,11.01-92.82,9.52-29.12,23.49-54.5,41.86-76.1,18.38-21.61,40.53-38.68,66.41-51.2,25.89-12.51,53.86-18.76,83.92-18.76s58.86,6.25,86.42,18.76c27.56,12.52,51.99,29.59,73.26,51.2,21.28,21.61,38.64,46.98,52.07,76.1M759.74,463.46c6.94-21.17,9.6-43.8,7.98-67.91-1.62-24.11-7.3-46.75-17.07-67.9-9.77-21.17-22.48-39.71-38.17-55.62-15.68-15.93-33.52-28.43-53.56-37.54-20.02-9.11-41.1-13.66-63.22-13.66s-42.59,4.55-61.41,13.66c-18.8,9.11-34.98,21.61-48.52,37.54-13.56,15.92-23.8,34.46-30.72,55.62-6.94,21.15-9.6,43.8-7.99,67.9,1.62,24.12,7.31,46.75,17.08,67.91,9.75,21.15,22.48,39.7,38.17,55.62,15.67,15.93,33.53,28.44,53.55,37.54,20.04,9.1,41.1,13.65,63.24,13.65s42.59-4.55,61.39-13.65c18.82-9.1,34.99-21.61,48.53-37.54,13.56-15.92,23.78-34.47,30.72-55.62"/>
+  </symbol>
+</svg>
+
 <!-- LOADING -->
 <section class="view" id="viewLoading">
   <div class="loader"></div>
@@ -234,7 +291,7 @@ img{display:block;max-width:100%}
 <!-- LOGIN -->
 <section class="view view--gone" id="viewLogin">
   <form class="auth-card" id="loginForm" novalidate>
-    <div class="auth-logo">OJO<span>.</span></div>
+    <div class="auth-logo"><svg aria-label="OJO Studio"><use href="#ojo-mark"/></svg></div>
     <div>
       <div class="auth-title">Painel administrativo</div>
     </div>
@@ -257,7 +314,7 @@ img{display:block;max-width:100%}
 
   <!-- SIDEBAR -->
   <aside class="side">
-    <div class="side__logo">OJO<span>.</span></div>
+    <div class="side__logo"><svg aria-label="OJO Studio"><use href="#ojo-mark"/></svg></div>
     <nav class="side__nav">
       <button class="side__link active" data-tab="projetos">
         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>
@@ -265,7 +322,7 @@ img{display:block;max-width:100%}
       </button>
       <button class="side__link" data-tab="apresentacao">
         <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.845v6.31a1 1 0 0 1-1.447.914L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z"/></svg>
-        Apresentação
+        Apresentações
       </button>
     </nav>
     <div class="side__foot">
@@ -308,21 +365,25 @@ img{display:block;max-width:100%}
       </div>
     </section>
 
-    <!-- ===== TAB: APRESENTACAO ===== -->
+    <!-- ===== TAB: APRESENTACOES ===== -->
     <section class="tab" id="tabApresentacao">
       <header class="top">
         <div>
           <p class="top__eyebrow">Comercial</p>
-          <h1>Apresentação</h1>
+          <h1>Apresentações</h1>
+          <p class="top__muted">Gerencie e personalize as apresentações comerciais.</p>
         </div>
-        <a href="intro/index.html" target="_blank" rel="noopener" class="btn btn--ghost">
-          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
-          Abrir em tela cheia
-        </a>
+        <button class="btn btn--or" id="btnNewPres">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Nova apresentação
+        </button>
       </header>
-      <p class="pres-info" style="margin-bottom:20px">Apresentação comercial interativa da OJO Studio. Use a versão em tela cheia para reuniões. Edite os textos dentro da própria apresentação, e recarregue para ver as alterações.</p>
-      <div class="pres-frame">
-        <iframe src="intro/index.html" title="Apresentação comercial OJO Studio" allow="fullscreen" id="presFrame"></iframe>
+
+      <!-- Presentations grid -->
+      <div class="pres-grid" id="presGrid"></div>
+      <div class="empty-state view--gone" id="presEmpty">
+        <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.845v6.31a1 1 0 0 1-1.447.914L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z"/></svg>
+        <p>Nenhuma apresentação encontrada.</p>
       </div>
     </section>
 
@@ -444,6 +505,80 @@ img{display:block;max-width:100%}
         <button class="btn btn--ghost" type="button" data-close>Cancelar</button>
         <button class="btn btn--or" type="submit" form="projectForm" id="pdSave">Salvar projeto</button>
       </div>
+    </footer>
+  </aside>
+</div>
+
+<!-- DRAWER: APRESENTACAO -->
+<div class="drawer view--gone" id="presDrawer">
+  <div class="drawer__backdrop" data-close-pres></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="presDrawerTitle">
+    <header class="drawer__head">
+      <div>
+        <p class="top__eyebrow">Apresentação</p>
+        <h2 id="presDrawerTitle">Nova apresentação</h2>
+      </div>
+      <button class="icon-btn" data-close-pres aria-label="Fechar">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+
+    <div class="drawer__body">
+      <form id="presForm" novalidate>
+
+        <div class="f" style="margin-bottom:16px">
+          <span>Nome da apresentação *</span>
+          <input name="pres_name" maxlength="120" required placeholder="Ex: Proposta BMW Group">
+        </div>
+
+        <div class="drawer-section" style="margin-bottom:8px">
+          <p class="top__eyebrow" style="margin-bottom:12px">Slide de abertura</p>
+          <div class="grid2" style="margin-bottom:16px">
+            <div class="f">
+              <span>Cliente</span>
+              <input name="cover_client" maxlength="80" placeholder="Nome do cliente">
+            </div>
+            <div class="f">
+              <span>Data</span>
+              <input name="cover_date" maxlength="20" placeholder="26 · 11 · 26">
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-section" style="margin-bottom:8px">
+          <p class="top__eyebrow" style="margin-bottom:12px">Slide de proposta</p>
+          <div class="f" style="margin-bottom:16px">
+            <span>Investimento</span>
+            <input name="conversa_invest" maxlength="120" placeholder="R$ 80.000">
+          </div>
+          <div class="grid2" style="margin-bottom:16px">
+            <div class="f">
+              <span>Quando</span>
+              <input name="conversa_when" maxlength="80" placeholder="Jan 2026">
+            </div>
+            <div class="f">
+              <span>Contato</span>
+              <input name="conversa_contact" maxlength="120" placeholder="fred@ojo-studio.com">
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-section" style="margin-bottom:8px">
+          <p class="top__eyebrow" style="margin-bottom:12px">Slide de processo</p>
+          <div class="f" style="margin-bottom:16px">
+            <span>Rodapé / prazos</span>
+            <input name="processo_foot" maxlength="200" placeholder="4 semanas no total">
+          </div>
+        </div>
+
+        <p class="form-msg" id="presMsg" style="margin-bottom:0"></p>
+      </form>
+    </div>
+
+    <footer class="drawer__foot">
+      <button class="btn btn--danger btn--ghost" type="button" id="presDelete" style="margin-right:auto">Excluir</button>
+      <button class="btn btn--ghost" type="button" data-close-pres>Cancelar</button>
+      <button class="btn btn--or" type="submit" form="presForm" id="presSave">Salvar</button>
     </footer>
   </aside>
 </div>
@@ -1052,6 +1187,210 @@ pdDelete.onclick = () => {
     }
   )
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PRESENTATIONS
+   ═══════════════════════════════════════════════════════════════ */
+let presentations    = []
+let editingPresId    = null
+let presLoaded       = false
+
+const presGrid    = $('presGrid')
+const presEmpty   = $('presEmpty')
+const presDrawer  = $('presDrawer')
+const presForm    = $('presForm')
+const presMsg     = $('presMsg')
+const presDelete  = $('presDelete')
+const presSave    = $('presSave')
+const presDrawerTitle = $('presDrawerTitle')
+
+function fmtDate(iso) {
+  if (!iso) return ''
+  return new Date(iso).toLocaleDateString('pt-BR', {day:'2-digit',month:'short',year:'numeric'})
+}
+
+function renderPresentations() {
+  presGrid.innerHTML = ''
+  if (!presentations.length) { show(presEmpty); return }
+  hide(presEmpty)
+  presentations.forEach(p => {
+    const isMatriz = p.is_matriz
+    const name = p.name || 'Sem nome'
+    const dateStr = fmtDate(p.updated_at || p.created_at)
+    const card = document.createElement('div')
+    card.className = 'pres-card' + (isMatriz ? ' pres-card--matriz' : '')
+    card.innerHTML = `
+      <div class="pres-card__thumb">
+        <svg aria-hidden="true"><use href="#ojo-mark"/></svg>
+        ${isMatriz ? '<span class="pres-card__badge">Matriz</span>' : ''}
+      </div>
+      <div class="pres-card__body">
+        <p class="pres-card__name">${name}</p>
+        <p class="pres-card__meta">${isMatriz ? 'Apresentação base' : 'Atualizada ' + dateStr}</p>
+        <div class="pres-card__actions">
+          <button class="pc-btn pc-btn--or" data-open="${p.id}">Abrir</button>
+          <button class="pc-btn" data-edit="${p.id}">Editar</button>
+          ${!isMatriz ? `<button class="pc-btn" data-pdf="${p.id}">PDF</button>` : ''}
+          ${!isMatriz ? `<button class="pc-btn pc-btn--danger" data-del="${p.id}">Excluir</button>` : ''}
+        </div>
+      </div>`
+    presGrid.appendChild(card)
+  })
+
+  presGrid.querySelectorAll('[data-open]').forEach(b => b.onclick = () => {
+    window.open(`intro/index.html?pid=${b.dataset.open}`, '_blank')
+  })
+  presGrid.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => {
+    openPresDrawer(b.dataset.edit)
+  })
+  presGrid.querySelectorAll('[data-pdf]').forEach(b => b.onclick = () => {
+    window.open(`intro/index.html?pid=${b.dataset.pdf}&print=1`, '_blank')
+  })
+  presGrid.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+    const p = presentations.find(x => x.id == b.dataset.del)
+    if (!p) return
+    showConfirm(
+      'Excluir apresentação',
+      `"${p.name}" será removida permanentemente.`,
+      async () => {
+        try {
+          await sb.remove('presentations', p.id)
+          presentations = presentations.filter(x => x.id !== p.id)
+          renderPresentations()
+          showToast('Apresentação excluída.')
+        } catch(err) {
+          showToast('Erro ao excluir: ' + err.message, true)
+        }
+      }
+    )
+  })
+}
+
+async function loadPresentations() {
+  if (presLoaded) return
+  try {
+    const rows = await sb.select('presentations', { order: 'created_at.asc' })
+    presentations = rows || []
+    presLoaded = true
+    renderPresentations()
+  } catch(err) {
+    showToast('Erro ao carregar apresentações: ' + err.message, true)
+  }
+}
+
+function openPresDrawer(id) {
+  editingPresId = id || null
+  presMsg.textContent = ''
+  presForm.reset()
+  if (id) {
+    const p = presentations.find(x => x.id === id)
+    if (!p) return
+    presDrawerTitle.textContent = p.is_matriz ? 'Editar Matriz' : 'Editar apresentação'
+    presForm.elements['pres_name'].value = p.name || ''
+    const st = p.slide_texts || {}
+    presForm.elements['cover_client'].value   = st.cover?.client   || ''
+    presForm.elements['cover_date'].value     = st.cover?.date     || ''
+    presForm.elements['conversa_invest'].value  = st.conversa?.invest  || ''
+    presForm.elements['conversa_when'].value    = st.conversa?.when    || ''
+    presForm.elements['conversa_contact'].value = st.conversa?.contact || ''
+    presForm.elements['processo_foot'].value  = st.processo?.foot  || ''
+    presDelete.style.display = p.is_matriz ? 'none' : ''
+  } else {
+    presDrawerTitle.textContent = 'Nova apresentação'
+    presDelete.style.display = 'none'
+  }
+  show(presDrawer)
+  document.body.style.overflow = 'hidden'
+}
+
+function closePresDrawer() {
+  hide(presDrawer)
+  document.body.style.overflow = ''
+}
+
+presDrawer.querySelectorAll('[data-close-pres]').forEach(el => el.onclick = closePresDrawer)
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePresDrawer() })
+
+$('btnNewPres').onclick = async () => {
+  if (!presLoaded) await loadPresentations()
+  // Clone matrix as base
+  const matriz = presentations.find(p => p.is_matriz)
+  const baseTexts = matriz?.slide_texts || {}
+  editingPresId = null
+  presMsg.textContent = ''
+  presForm.reset()
+  presDrawerTitle.textContent = 'Nova apresentação'
+  presForm.elements['cover_client'].value   = baseTexts.cover?.client   || ''
+  presForm.elements['cover_date'].value     = baseTexts.cover?.date     || ''
+  presForm.elements['conversa_invest'].value  = baseTexts.conversa?.invest  || ''
+  presForm.elements['conversa_when'].value    = baseTexts.conversa?.when    || ''
+  presForm.elements['conversa_contact'].value = baseTexts.conversa?.contact || ''
+  presForm.elements['processo_foot'].value  = baseTexts.processo?.foot  || ''
+  presDelete.style.display = 'none'
+  show(presDrawer)
+  document.body.style.overflow = 'hidden'
+}
+
+presDelete.onclick = () => {
+  const p = presentations.find(x => x.id == editingPresId)
+  if (!p) return
+  showConfirm(
+    'Excluir apresentação',
+    `"${p.name}" será removida permanentemente.`,
+    async () => {
+      try {
+        await sb.remove('presentations', p.id)
+        presentations = presentations.filter(x => x.id !== p.id)
+        renderPresentations()
+        closePresDrawer()
+        showToast('Apresentação excluída.')
+      } catch(err) {
+        showToast('Erro ao excluir: ' + err.message, true)
+      }
+    }
+  )
+}
+
+presForm.onsubmit = async e => {
+  e.preventDefault()
+  presSave.disabled = true
+  presSave.textContent = 'Salvando…'
+  presMsg.textContent = ''
+  try {
+    const fd = new FormData(presForm)
+    const slide_texts = {
+      cover:    { client: fd.get('cover_client').trim(),   date: fd.get('cover_date').trim() },
+      conversa: { invest: fd.get('conversa_invest').trim(), when: fd.get('conversa_when').trim(), contact: fd.get('conversa_contact').trim() },
+      processo: { foot: fd.get('processo_foot').trim() }
+    }
+    const payload = {
+      name: fd.get('pres_name').trim() || 'Nova Apresentação',
+      slide_texts,
+      updated_at: new Date().toISOString()
+    }
+    if (editingPresId) {
+      const updated = await sb.update('presentations', editingPresId, payload)
+      const idx = presentations.findIndex(x => x.id == editingPresId)
+      if (idx >= 0) presentations[idx] = { ...presentations[idx], ...updated }
+    } else {
+      const created = await sb.insert('presentations', payload)
+      presentations.push(created)
+    }
+    renderPresentations()
+    closePresDrawer()
+    showToast(editingPresId ? 'Apresentação atualizada.' : 'Apresentação criada.')
+  } catch(err) {
+    presMsg.textContent = err.message
+  } finally {
+    presSave.textContent = 'Salvar'
+    presSave.disabled = false
+  }
+}
+
+// Lazy-load presentations when tab becomes active
+document.querySelectorAll('.side__link[data-tab="apresentacao"]').forEach(btn => {
+  btn.addEventListener('click', () => { if (!presLoaded) loadPresentations() })
+})
 
 /* ═══════════════════════════════════════════════════════════════
    START
