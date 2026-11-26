@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Painel | OJO Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────────── */
+:root {
+  --ink: #0b0b0c;
+  --paper: #f3efe8;
+  --or: #ff5a1f;
+  --mut: #6b6865;
+  --panel: #111113;
+  --edge: rgba(243,239,232,.1);
+  --edge-s: rgba(243,239,232,.06);
+  --fg: var(--paper);
+  --fg2: rgba(243,239,232,.55);
+  --serif: 'Gloock', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+  --ease: cubic-bezier(.22,1,.36,1);
+  --r: 8px;
+  --r-sm: 5px;
+}
+
+/* ─── RESET ──────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--ink);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;background:none;border:none;color:inherit}
+input,textarea,select{font:inherit;color:inherit;background:none;border:none;outline:none}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+[hidden]{display:none!important}
+
+/* ─── VIEWS (loading / login / app) ─────────────────────────── */
+.view{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center}
+.view--gone{display:none}
+
+/* Loading */
+.loader{width:40px;height:40px;border:2px solid var(--edge);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ─── LOGIN CARD ─────────────────────────────────────────────── */
+.auth-card{width:min(420px,92vw);background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:44px 40px 40px;display:flex;flex-direction:column;gap:22px}
+.auth-logo{font:400 28px/1 var(--serif);color:var(--paper)}
+.auth-logo span{color:var(--or)}
+.auth-title{font:400 22px/1.1 var(--serif)}
+.auth-muted{font:400 14px/1.5 var(--sans);color:var(--fg2)}
+.auth-muted code{background:var(--edge-s);border:1px solid var(--edge);border-radius:4px;padding:2px 7px;font-size:12px}
+.form-msg{font:500 13px var(--sans);color:#e55;min-height:1em}
+
+/* ─── APP SHELL ──────────────────────────────────────────────── */
+.app{display:grid;grid-template-columns:220px 1fr;height:100vh;position:fixed;inset:0}
+
+/* sidebar */
+.side{background:#0d0d0f;border-right:1px solid var(--edge);display:flex;flex-direction:column;padding:28px 0;gap:0;overflow:hidden}
+.side__logo{padding:0 24px 28px;border-bottom:1px solid var(--edge);display:flex;align-items:center;gap:10px;font:400 20px/1 var(--serif);letter-spacing:-.01em}
+.side__logo span{color:var(--or)}
+
+.side__nav{flex:1;padding:20px 12px;display:flex;flex-direction:column;gap:4px}
+.side__link{display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:var(--r-sm);font:500 13px/1 var(--sans);letter-spacing:.01em;color:var(--fg2);transition:background .2s,color .2s;width:100%;text-align:left}
+.side__link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;flex-shrink:0}
+.side__link:hover{background:var(--edge-s);color:var(--paper)}
+.side__link.active{background:rgba(255,90,31,.12);color:var(--or)}
+.side__link .badge{margin-left:auto;background:var(--or);color:#000;font:700 10px/1 var(--sans);padding:3px 7px;border-radius:20px}
+
+.side__foot{padding:20px 20px 0;border-top:1px solid var(--edge);display:flex;flex-direction:column;gap:10px}
+.side__site{font:500 12px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--fg2);transition:color .2s}
+.side__site:hover{color:var(--or)}
+.side__user{font:500 12px var(--sans);color:var(--fg2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side__logout{font:500 12px var(--sans);letter-spacing:.08em;color:var(--fg2);text-align:left;padding:6px 0;transition:color .2s}
+.side__logout:hover{color:var(--or)}
+
+/* main */
+.main{overflow-y:auto;background:var(--ink)}
+.tab{display:none;padding:48px 56px 80px;min-height:100vh}
+.tab.active{display:block}
+
+/* ─── TOP HEADER ─────────────────────────────────────────────── */
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:40px}
+.top__eyebrow{font:600 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.top h1{font:400 36px/1 var(--serif)}
+.top__muted{font:400 14px/1.5 var(--sans);color:var(--fg2);margin-top:6px}
+
+/* ─── BUTTONS ────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:var(--r-sm);font:600 13px/1 var(--sans);letter-spacing:.04em;transition:background .2s,color .2s,border-color .2s;white-space:nowrap;cursor:pointer}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+.btn--or{background:var(--or);color:#0b0b0c;border:1px solid var(--or)}
+.btn--or:hover{background:#ff7a45;border-color:#ff7a45}
+.btn--ghost{background:none;color:var(--fg2);border:1px solid var(--edge)}
+.btn--ghost:hover{color:var(--paper);border-color:rgba(243,239,232,.3)}
+.btn--danger{background:none;color:#e55;border:1px solid rgba(220,80,80,.3)}
+.btn--danger:hover{background:rgba(220,80,80,.1)}
+.btn-text{font:500 13px var(--sans);color:var(--fg2);transition:color .2s;padding:4px 0}
+.btn-text:hover{color:var(--or)}
+.btn-text--danger:hover{color:#e55}
+.icon-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1px solid var(--edge);color:var(--fg2);transition:color .2s,border-color .2s}
+.icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7}
+.icon-btn:hover{color:var(--paper);border-color:rgba(243,239,232,.3)}
+
+/* ─── KPI STRIP ──────────────────────────────────────────────── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:36px}
+.kpi{background:var(--panel);border:1px solid var(--edge);border-radius:var(--r);padding:24px}
+.kpi span{display:block;font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--fg2);margin-bottom:12px}
+.kpi strong{display:block;font:400 32px/1 var(--serif)}
+.kpi em{display:block;font:400 12px/1 var(--sans);color:var(--fg2);margin-top:6px}
+.kpi--or{border-color:rgba(255,90,31,.3)}
+.kpi--or strong{color:var(--or)}
+
+/* ─── PROJECT CARDS ──────────────────────────────────────────── */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.proj-card{background:var(--panel);border:1px solid var(--edge);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:border-color .25s,transform .25s var(--ease)}
+.proj-card:hover{border-color:rgba(255,90,31,.4);transform:translateY(-2px)}
+.proj-card__cover{aspect-ratio:16/9;background:var(--edge-s);position:relative;overflow:hidden}
+.proj-card__cover img{width:100%;height:100%;object-fit:cover}
+.proj-card__cover .cover-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:400 48px/1 var(--serif);color:var(--edge)}
+.proj-card__status{position:absolute;top:12px;right:12px;display:flex;gap:6px}
+.proj-card__pill{font:600 10px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.proj-card__pill--on{background:rgba(255,90,31,.2);color:var(--or);border:1px solid rgba(255,90,31,.3)}
+.proj-card__pill--off{background:rgba(243,239,232,.08);color:var(--fg2);border:1px solid var(--edge)}
+.proj-card__pill--feat{background:rgba(255,200,50,.15);color:#ffc832;border:1px solid rgba(255,200,50,.3)}
+.proj-card__body{padding:20px}
+.proj-card__cat{font:600 10px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--or);margin-bottom:8px}
+.proj-card__title{font:400 20px/1.15 var(--serif);margin-bottom:6px}
+.proj-card__meta{font:400 13px/1 var(--sans);color:var(--fg2)}
+.proj-card__order{position:absolute;top:12px;left:12px;width:28px;height:28px;border-radius:50%;background:rgba(11,11,12,.7);backdrop-filter:blur(4px);border:1px solid var(--edge);display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--sans);color:var(--fg2)}
+
+/* empty state */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;gap:16px;text-align:center;color:var(--fg2)}
+.empty-state svg{width:48px;height:48px;stroke:currentColor;fill:none;stroke-width:1.2;opacity:.4}
+.empty-state p{font:400 15px/1.5 var(--sans)}
+
+/* ─── DRAWER ─────────────────────────────────────────────────── */
+.drawer{position:fixed;inset:0;z-index:60;display:flex}
+.drawer__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+.drawer__panel{position:relative;margin-left:auto;width:min(680px,96vw);height:100%;background:#111113;border-left:1px solid var(--edge);display:flex;flex-direction:column;animation:slideIn .35s var(--ease)}
+@keyframes slideIn{from{transform:translateX(100%)}}
+.drawer.wide .drawer__panel{width:min(820px,96vw)}
+.drawer__head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:32px 36px 24px;border-bottom:1px solid var(--edge)}
+.drawer__head h2{font:400 28px/1 var(--serif)}
+.drawer__body{flex:1;overflow-y:auto;padding:32px 36px;display:flex;flex-direction:column;gap:24px}
+.drawer__foot{padding:20px 36px;border-top:1px solid var(--edge);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.drawer__foot-r{display:flex;align-items:center;gap:10px}
+
+/* ─── FORM FIELDS ────────────────────────────────────────────── */
+.f{display:flex;flex-direction:column;gap:7px}
+.f span,.f legend{font:600 11px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--fg2)}
+.f input,.f textarea,.f select{background:rgba(243,239,232,.05);border:1px solid var(--edge);border-radius:var(--r-sm);padding:11px 14px;font:400 15px/1 var(--sans);color:var(--paper);transition:border-color .2s;width:100%}
+.f input:focus,.f textarea:focus,.f select:focus{border-color:rgba(255,90,31,.5);outline:none}
+.f textarea{resize:vertical;line-height:1.55}
+.f small{font:400 12px var(--sans);color:var(--fg2)}
+.f select option{background:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.group{border:1px solid var(--edge);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px}
+.group legend{font:600 11px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--fg2);margin-bottom:4px}
+
+/* switch */
+.switch{display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.switch__ui{width:40px;height:22px;border-radius:11px;background:var(--edge);border:1px solid var(--edge);transition:background .2s;flex-shrink:0;position:relative}
+.switch__ui::after{content:"";position:absolute;left:3px;top:50%;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:var(--fg2);transition:left .2s,background .2s}
+.switch input:checked~.switch__ui{background:rgba(255,90,31,.25);border-color:rgba(255,90,31,.4)}
+.switch input:checked~.switch__ui::after{left:calc(100% - 19px);background:var(--or)}
+.switch span strong{font:600 14px var(--sans)}
+.switch span small{display:block;font:400 12px var(--sans);color:var(--fg2);margin-top:2px}
+
+/* image drop */
+.drop{border:1px dashed var(--edge);border-radius:var(--r);overflow:hidden;transition:border-color .2s;cursor:pointer}
+.drop:hover{border-color:rgba(255,90,31,.4)}
+.drop__empty{padding:36px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:var(--fg2)}
+.drop__empty svg{width:36px;height:36px;stroke:currentColor;fill:none;stroke-width:1.4;opacity:.5}
+.drop__empty strong{font:600 14px var(--sans);color:var(--paper)}
+.drop__empty span{font:400 12px var(--sans)}
+.drop__img{position:relative}
+.drop__img img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.drop__bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,.4)}
+.drop__bar span{flex:1;font:400 12px var(--sans);color:var(--fg2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drop__busy{padding:36px;display:flex;align-items:center;justify-content:center;gap:12px;color:var(--fg2);font:400 13px var(--sans)}
+.loader--sm{width:18px;height:18px;border-width:2px;flex-shrink:0}
+
+/* form msg */
+.form-msg-inline{font:500 13px var(--sans);color:#e55;min-height:1em}
+.form-msg-inline.ok{color:#5be}
+
+/* ─── CONFIRM ────────────────────────────────────────────────── */
+.confirm{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
+.confirm__card{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:36px 40px;max-width:400px;width:92vw;display:flex;flex-direction:column;gap:14px}
+.confirm__card h3{font:400 22px/1.1 var(--serif)}
+.confirm__card p{font:400 14px/1.5 var(--sans);color:var(--fg2)}
+.confirm__actions{display:flex;gap:10px;justify-content:flex-end;margin-top:4px}
+
+/* ─── TOAST ──────────────────────────────────────────────────── */
+.toast{position:fixed;left:50%;bottom:36px;transform:translate(-50%,10px);z-index:90;background:rgba(11,11,12,.9);border:1px solid var(--edge);color:var(--paper);padding:12px 22px;border-radius:40px;font:600 12px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast.err{border-color:rgba(220,80,80,.4);color:#e88}
+
+/* ─── PRESENTATION TAB ───────────────────────────────────────── */
+.pres-frame{width:100%;height:calc(100vh - 160px);border:1px solid var(--edge);border-radius:var(--r);overflow:hidden;background:#000}
+.pres-frame iframe{width:100%;height:100%;border:none;display:block}
+.pres-actions{display:flex;gap:12px;margin-bottom:20px;align-items:center}
+.pres-info{flex:1;font:400 14px/1.5 var(--sans);color:var(--fg2)}
+
+/* ─── SECTION LABEL ──────────────────────────────────────────── */
+.sec-label{font:600 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--fg2);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--edge)}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--edge);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(243,239,232,.2)}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .tab{padding:32px 24px 60px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .proj-grid{grid-template-columns:1fr}
+  .grid2,.grid3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<section class="view" id="viewLoading">
+  <div class="loader"></div>
+</section>
+
+<!-- LOGIN -->
+<section class="view view--gone" id="viewLogin">
+  <form class="auth-card" id="loginForm" novalidate>
+    <div class="auth-logo">OJO<span>.</span></div>
+    <div>
+      <div class="auth-title">Painel administrativo</div>
+    </div>
+    <div class="f">
+      <span>E-mail</span>
+      <input type="email" name="email" autocomplete="username" required placeholder="pedro@ojostudio.com">
+    </div>
+    <div class="f">
+      <span>Senha</span>
+      <input type="password" name="password" autocomplete="current-password" required>
+    </div>
+    <p class="form-msg" id="loginMsg"></p>
+    <button class="btn btn--or" type="submit" id="loginBtn" style="justify-content:center">Entrar</button>
+    <button class="btn-text" type="button" id="forgotBtn" style="text-align:center">Esqueci minha senha</button>
+  </form>
+</section>
+
+<!-- APP -->
+<div class="app view--gone" id="viewApp">
+
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="side__logo">OJO<span>.</span></div>
+    <nav class="side__nav">
+      <button class="side__link active" data-tab="projetos">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>
+        Projetos
+      </button>
+      <button class="side__link" data-tab="apresentacao">
+        <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.845v6.31a1 1 0 0 1-1.447.914L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z"/></svg>
+        Apresentação
+      </button>
+    </nav>
+    <div class="side__foot">
+      <a href="index.html" target="_blank" rel="noopener" class="side__site">Ver site ↗</a>
+      <p class="side__user" id="userEmail"></p>
+      <button class="side__logout" id="logoutBtn">Sair</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ===== TAB: PROJETOS ===== -->
+    <section class="tab active" id="tabProjetos">
+      <header class="top">
+        <div>
+          <p class="top__eyebrow">Portfólio</p>
+          <h1>Projetos</h1>
+          <p class="top__muted">Gerencie os projetos exibidos no site. Arraste para reordenar.</p>
+        </div>
+        <button class="btn btn--or" id="btnNewProject">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Novo projeto
+        </button>
+      </header>
+
+      <!-- KPIs -->
+      <div class="kpis" id="projectKpis">
+        <div class="kpi"><span>Total</span><strong id="kTotal">-</strong></div>
+        <div class="kpi kpi--or"><span>Publicados</span><strong id="kPublished">-</strong></div>
+        <div class="kpi"><span>Em destaque</span><strong id="kFeatured">-</strong></div>
+        <div class="kpi"><span>Rascunhos</span><strong id="kDraft">-</strong></div>
+      </div>
+
+      <!-- Project grid -->
+      <div class="proj-grid" id="projectGrid"></div>
+      <div class="empty-state view--gone" id="projectsEmpty">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8"/></svg>
+        <p>Nenhum projeto cadastrado ainda.<br>Clique em "Novo projeto" para começar.</p>
+      </div>
+    </section>
+
+    <!-- ===== TAB: APRESENTACAO ===== -->
+    <section class="tab" id="tabApresentacao">
+      <header class="top">
+        <div>
+          <p class="top__eyebrow">Comercial</p>
+          <h1>Apresentação</h1>
+        </div>
+        <a href="intro/index.html" target="_blank" rel="noopener" class="btn btn--ghost">
+          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
+          Abrir em tela cheia
+        </a>
+      </header>
+      <p class="pres-info" style="margin-bottom:20px">Apresentação comercial interativa da OJO Studio. Use a versão em tela cheia para reuniões. Edite os textos dentro da própria apresentação, e recarregue para ver as alterações.</p>
+      <div class="pres-frame">
+        <iframe src="intro/index.html" title="Apresentação comercial OJO Studio" allow="fullscreen" id="presFrame"></iframe>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- DRAWER: PROJETO -->
+<div class="drawer wide view--gone" id="projectDrawer">
+  <div class="drawer__backdrop" data-close></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="pdTitle">
+    <header class="drawer__head">
+      <div>
+        <p class="top__eyebrow">Projeto</p>
+        <h2 id="pdTitle">Novo projeto</h2>
+      </div>
+      <button class="icon-btn" data-close aria-label="Fechar">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+
+    <div class="drawer__body">
+      <form id="projectForm" novalidate>
+
+        <div class="grid2" style="margin-bottom:16px">
+          <div class="f">
+            <span>Cliente *</span>
+            <input name="client" maxlength="80" required placeholder="BMW Group">
+          </div>
+          <div class="f">
+            <span>Categoria</span>
+            <input name="category" maxlength="60" placeholder="Branding">
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-bottom:16px">
+          <div class="f">
+            <span>Título *</span>
+            <input name="title" maxlength="120" required placeholder="BMW — Identidade global 2024">
+          </div>
+          <div class="f">
+            <span>Slug *</span>
+            <input name="slug" maxlength="80" required placeholder="bmw-identidade-2024" id="slugInput">
+            <small>URL do case. Letras minúsculas, hífens.</small>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-bottom:16px">
+          <div class="f">
+            <span>Ano</span>
+            <input name="year" type="number" min="2000" max="2099" placeholder="2024">
+          </div>
+          <div class="f">
+            <span>Ordem</span>
+            <input name="order_index" type="number" min="0" placeholder="0">
+            <small>Menor número aparece primeiro.</small>
+          </div>
+        </div>
+
+        <div class="f" style="margin-bottom:16px">
+          <span>Descrição PT-BR</span>
+          <textarea name="locale_pt" rows="3" maxlength="600" placeholder="Descreva o projeto em português..."></textarea>
+        </div>
+
+        <div class="f" style="margin-bottom:16px">
+          <span>Descrição EN</span>
+          <textarea name="locale_en" rows="3" maxlength="600" placeholder="Describe the project in English..."></textarea>
+        </div>
+
+        <!-- Cover image -->
+        <fieldset class="group" style="margin-bottom:16px">
+          <legend>Imagem de capa</legend>
+          <div class="drop" id="drop">
+            <input type="file" id="imageFile" accept="image/*" hidden>
+            <div class="drop__empty" id="dropEmpty">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg>
+              <strong>Arraste ou clique para enviar</strong>
+              <span>JPEG, PNG, WebP. Ideal 1600 x 900.</span>
+            </div>
+            <div class="drop__img view--gone" id="dropImg">
+              <img id="dropPreview" alt="">
+              <div class="drop__bar">
+                <span id="imgInfo"></span>
+                <button type="button" class="btn-text" id="imgChange">Trocar</button>
+                <button type="button" class="btn-text btn-text--danger" id="imgRemove">Remover</button>
+              </div>
+            </div>
+            <div class="drop__busy view--gone" id="dropBusy">
+              <div class="loader loader--sm"></div>Enviando imagem...
+            </div>
+          </div>
+          <div class="f">
+            <span>Ou cole uma URL</span>
+            <input name="cover_image" type="url" placeholder="https://...">
+            <small>Se você enviou uma imagem acima, este campo é preenchido automaticamente.</small>
+          </div>
+        </fieldset>
+
+        <!-- Toggles -->
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:16px">
+          <label class="switch">
+            <input type="checkbox" name="published" checked>
+            <span class="switch__ui"></span>
+            <span><strong>Publicado</strong><small>Aparece no site.</small></span>
+          </label>
+          <label class="switch">
+            <input type="checkbox" name="featured">
+            <span class="switch__ui"></span>
+            <span><strong>Destaque</strong><small>Exibido com prioridade na homepage.</small></span>
+          </label>
+        </div>
+
+        <p class="form-msg-inline" id="pdMsg"></p>
+      </form>
+    </div>
+
+    <footer class="drawer__foot">
+      <button class="btn btn--danger" id="pdDelete" type="button" style="visibility:hidden">Excluir projeto</button>
+      <div class="drawer__foot-r">
+        <button class="btn btn--ghost" type="button" data-close>Cancelar</button>
+        <button class="btn btn--or" type="submit" form="projectForm" id="pdSave">Salvar projeto</button>
+      </div>
+    </footer>
+  </aside>
+</div>
+
+<!-- CONFIRM -->
+<div class="confirm view--gone" id="confirm">
+  <div class="confirm__card" role="alertdialog" aria-modal="true">
+    <h3 id="confirmTitle"></h3>
+    <p id="confirmText"></p>
+    <div class="confirm__actions">
+      <button class="btn btn--ghost" id="confirmNo">Cancelar</button>
+      <button class="btn btn--danger" id="confirmYes">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONFIG — anon key é seguro no frontend (read + write via RLS)
+   ═══════════════════════════════════════════════════════════════ */
+const SB_URL   = 'https://znlglyeaceenywgkfhid.supabase.co'
+const SB_ANON  = 'sb_publishable_QO1RQqlZpVjriLlLzl55iA_jbFO5XSN'
+const STORAGE_BUCKET = 'covers' // Supabase Storage bucket for cover images
+
+/* ═══════════════════════════════════════════════════════════════
+   SUPABASE CLIENT (vanilla fetch, sem lib externa)
+   ═══════════════════════════════════════════════════════════════ */
+class SupaClient {
+  constructor(url, key) {
+    this.url = url
+    this.key = key
+    this._session = null
+    this._accessToken = null
+  }
+
+  get headers() {
+    const h = {
+      'apikey': this.key,
+      'Content-Type': 'application/json',
+    }
+    if (this._accessToken) h['Authorization'] = `Bearer ${this._accessToken}`
+    return h
+  }
+
+  // ── AUTH ──────────────────────────────────────────────────
+  async signIn(email, password) {
+    const r = await fetch(`${this.url}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { 'apikey': this.key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    })
+    const data = await r.json()
+    if (!r.ok) throw new Error(data.error_description || data.message || 'Erro ao entrar')
+    this._session = data
+    this._accessToken = data.access_token
+    this._saveSession(data)
+    return data
+  }
+
+  async signOut() {
+    try {
+      await fetch(`${this.url}/auth/v1/logout`, {
+        method: 'POST',
+        headers: this.headers
+      })
+    } catch {}
+    this._session = null
+    this._accessToken = null
+    this._clearSession()
+  }
+
+  async refreshSession() {
+    const saved = this._loadSession()
+    if (!saved) return null
+    try {
+      const r = await fetch(`${this.url}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST',
+        headers: { 'apikey': this.key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: saved.refresh_token })
+      })
+      if (!r.ok) { this._clearSession(); return null }
+      const data = await r.json()
+      this._session = data
+      this._accessToken = data.access_token
+      this._saveSession(data)
+      return data
+    } catch { this._clearSession(); return null }
+  }
+
+  async forgotPassword(email) {
+    const r = await fetch(`${this.url}/auth/v1/recover`, {
+      method: 'POST',
+      headers: { 'apikey': this.key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    })
+    if (!r.ok) {
+      const d = await r.json()
+      throw new Error(d.error_description || d.message || 'Erro')
+    }
+  }
+
+  _saveSession(s) {
+    try { localStorage.setItem('ojo_session', JSON.stringify(s)) } catch {}
+  }
+  _loadSession() {
+    try { return JSON.parse(localStorage.getItem('ojo_session') || 'null') } catch { return null }
+  }
+  _clearSession() {
+    try { localStorage.removeItem('ojo_session') } catch {}
+  }
+
+  // ── DATABASE ──────────────────────────────────────────────
+  async select(table, { columns = '*', order, eq, limit } = {}) {
+    let u = `${this.url}/rest/v1/${table}?select=${encodeURIComponent(columns)}`
+    if (order) u += `&order=${encodeURIComponent(order)}`
+    if (eq) Object.entries(eq).forEach(([k,v]) => u += `&${k}=eq.${encodeURIComponent(v)}`)
+    if (limit) u += `&limit=${limit}`
+    const r = await fetch(u, { headers: { ...this.headers, 'Prefer': 'return=representation' } })
+    if (!r.ok) { const d = await r.json(); throw new Error(d.message || 'Erro ao buscar dados') }
+    return r.json()
+  }
+
+  async insert(table, body) {
+    const r = await fetch(`${this.url}/rest/v1/${table}`, {
+      method: 'POST',
+      headers: { ...this.headers, 'Prefer': 'return=representation' },
+      body: JSON.stringify(body)
+    })
+    if (!r.ok) { const d = await r.json(); throw new Error(d.message || d.details || 'Erro ao criar') }
+    const data = await r.json()
+    return Array.isArray(data) ? data[0] : data
+  }
+
+  async update(table, id, body) {
+    const r = await fetch(`${this.url}/rest/v1/${table}?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { ...this.headers, 'Prefer': 'return=representation' },
+      body: JSON.stringify(body)
+    })
+    if (!r.ok) { const d = await r.json(); throw new Error(d.message || d.details || 'Erro ao salvar') }
+    const data = await r.json()
+    return Array.isArray(data) ? data[0] : data
+  }
+
+  async remove(table, id) {
+    const r = await fetch(`${this.url}/rest/v1/${table}?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: this.headers
+    })
+    if (!r.ok) { const d = await r.json(); throw new Error(d.message || 'Erro ao excluir') }
+  }
+
+  // ── STORAGE ───────────────────────────────────────────────
+  async uploadFile(bucket, path, file) {
+    const r = await fetch(`${this.url}/storage/v1/object/${bucket}/${path}`, {
+      method: 'POST',
+      headers: {
+        'apikey': this.key,
+        'Authorization': `Bearer ${this._accessToken}`,
+        'Content-Type': file.type,
+        'x-upsert': 'true'
+      },
+      body: file
+    })
+    if (!r.ok) {
+      const d = await r.json()
+      throw new Error(d.message || d.error || 'Erro ao enviar imagem')
+    }
+    return `${this.url}/storage/v1/object/public/${bucket}/${path}`
+  }
+}
+
+const sb = new SupaClient(SB_URL, SB_ANON)
+
+/* ═══════════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════════ */
+let projects = []
+let editingId = null
+let pendingImageFile = null
+let pendingConfirm = null
+
+/* ═══════════════════════════════════════════════════════════════
+   DOM REFS
+   ═══════════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id)
+const viewLoading   = $('viewLoading')
+const viewLogin     = $('viewLogin')
+const viewApp       = $('viewApp')
+const loginForm     = $('loginForm')
+const loginMsg      = $('loginMsg')
+const loginBtn      = $('loginBtn')
+const forgotBtn     = $('forgotBtn')
+const userEmail     = $('userEmail')
+const logoutBtn     = $('logoutBtn')
+const projectGrid   = $('projectGrid')
+const projectsEmpty = $('projectsEmpty')
+const projectDrawer = $('projectDrawer')
+const projectForm   = $('projectForm')
+const pdTitle       = $('pdTitle')
+const pdMsg         = $('pdMsg')
+const pdSave        = $('pdSave')
+const pdDelete      = $('pdDelete')
+const drop          = $('drop')
+const dropEmpty     = $('dropEmpty')
+const dropImg       = $('dropImg')
+const dropBusy      = $('dropBusy')
+const dropPreview   = $('dropPreview')
+const imgInfo       = $('imgInfo')
+const imageFile     = $('imageFile')
+const confirm       = $('confirm')
+const confirmTitle  = $('confirmTitle')
+const confirmText   = $('confirmText')
+const confirmYes    = $('confirmYes')
+const confirmNo     = $('confirmNo')
+const toast         = $('toast')
+const slugInput     = $('slugInput')
+
+/* ═══════════════════════════════════════════════════════════════
+   UI HELPERS
+   ═══════════════════════════════════════════════════════════════ */
+function show(el) { el.classList.remove('view--gone') }
+function hide(el) { el.classList.add('view--gone') }
+function toggle(el, v) { v ? show(el) : hide(el) }
+
+let toastTimer
+function showToast(msg, err = false) {
+  toast.textContent = msg
+  toast.className = 'toast on' + (err ? ' err' : '')
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => toast.classList.remove('on'), 3000)
+}
+
+function showConfirm(title, text, cb) {
+  confirmTitle.textContent = title
+  confirmText.textContent  = text
+  pendingConfirm = cb
+  show(confirm)
+}
+
+confirmYes.onclick = () => { hide(confirm); pendingConfirm?.() }
+confirmNo.onclick  = () => { hide(confirm) }
+
+/* ═══════════════════════════════════════════════════════════════
+   TABS
+   ═══════════════════════════════════════════════════════════════ */
+document.querySelectorAll('.side__link[data-tab]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.side__link').forEach(b => b.classList.remove('active'))
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+    btn.classList.add('active')
+    document.getElementById('tab' + capitalize(btn.dataset.tab)).classList.add('active')
+  }
+})
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1) }
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH FLOW
+   ═══════════════════════════════════════════════════════════════ */
+async function init() {
+  // Try to restore session
+  const restored = await sb.refreshSession()
+  if (restored) {
+    enterApp(restored.user?.email || '')
+  } else {
+    hide(viewLoading)
+    show(viewLogin)
+  }
+}
+
+function enterApp(email) {
+  hide(viewLoading)
+  hide(viewLogin)
+  show(viewApp)
+  userEmail.textContent = email
+  loadProjects()
+}
+
+loginForm.onsubmit = async e => {
+  e.preventDefault()
+  const fd = new FormData(loginForm)
+  loginMsg.textContent = ''
+  loginBtn.textContent = 'Entrando...'
+  loginBtn.disabled = true
+  try {
+    const session = await sb.signIn(fd.get('email'), fd.get('password'))
+    enterApp(session.user?.email || fd.get('email'))
+  } catch (err) {
+    loginMsg.textContent = err.message
+    loginBtn.textContent = 'Entrar'
+    loginBtn.disabled = false
+  }
+}
+
+forgotBtn.onclick = async () => {
+  const email = loginForm.querySelector('[name=email]').value.trim()
+  if (!email) { loginMsg.textContent = 'Digite seu e-mail primeiro.'; return }
+  forgotBtn.textContent = 'Enviando...'
+  forgotBtn.disabled = true
+  try {
+    await sb.forgotPassword(email)
+    loginMsg.textContent = ''
+    showToast('Link de recuperação enviado!')
+  } catch (err) {
+    loginMsg.textContent = err.message
+  } finally {
+    forgotBtn.textContent = 'Esqueci minha senha'
+    forgotBtn.disabled = false
+  }
+}
+
+logoutBtn.onclick = async () => {
+  await sb.signOut()
+  hide(viewApp)
+  show(viewLogin)
+  loginForm.reset()
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROJECTS
+   ═══════════════════════════════════════════════════════════════ */
+async function loadProjects() {
+  try {
+    projects = await sb.select('projects', { order: 'order_index.asc,created_at.asc' })
+    renderProjects()
+  } catch (err) {
+    showToast('Erro ao carregar projetos: ' + err.message, true)
+    // Show empty state to allow creating
+    renderProjects()
+  }
+}
+
+function renderProjects() {
+  const total     = projects.length
+  const published = projects.filter(p => p.published).length
+  const featured  = projects.filter(p => p.featured).length
+  const draft     = total - published
+
+  $('kTotal').textContent     = total
+  $('kPublished').textContent = published
+  $('kFeatured').textContent  = featured
+  $('kDraft').textContent     = draft
+
+  if (!total) {
+    projectGrid.innerHTML = ''
+    show(projectsEmpty)
+    return
+  }
+  hide(projectsEmpty)
+
+  projectGrid.innerHTML = projects.map((p, i) => `
+    <div class="proj-card" data-id="${p.id}">
+      <div class="proj-card__cover">
+        ${p.cover_image
+          ? `<img src="${escHtml(p.cover_image)}" alt="${escHtml(p.title)}" loading="lazy">`
+          : `<div class="cover-fallback">${escHtml((p.client||p.title||'?').charAt(0))}</div>`
+        }
+        <div class="proj-card__status">
+          ${p.published ? '<span class="proj-card__pill proj-card__pill--on">Publicado</span>' : '<span class="proj-card__pill proj-card__pill--off">Rascunho</span>'}
+          ${p.featured  ? '<span class="proj-card__pill proj-card__pill--feat">Destaque</span>' : ''}
+        </div>
+        <div class="proj-card__order">${p.order_index ?? i}</div>
+      </div>
+      <div class="proj-card__body">
+        <div class="proj-card__cat">${escHtml(p.category || 'Sem categoria')}</div>
+        <div class="proj-card__title">${escHtml(p.title || 'Sem título')}</div>
+        <div class="proj-card__meta">${escHtml(p.client || '')}${p.year ? ' · ' + p.year : ''}</div>
+      </div>
+    </div>
+  `).join('')
+
+  projectGrid.querySelectorAll('.proj-card').forEach(card => {
+    card.onclick = () => openProjectDrawer(card.dataset.id)
+  })
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+/* ─── NEW PROJECT BUTTON ─────────────────────────────────────── */
+$('btnNewProject').onclick = () => openProjectDrawer(null)
+
+/* ─── OPEN DRAWER ────────────────────────────────────────────── */
+function openProjectDrawer(id) {
+  editingId = id || null
+  pendingImageFile = null
+  projectForm.reset()
+  pdMsg.textContent = ''
+
+  // Reset image drop
+  show(dropEmpty)
+  hide(dropImg)
+  hide(dropBusy)
+  dropPreview.src = ''
+  imgInfo.textContent = ''
+
+  if (editingId) {
+    const p = projects.find(x => x.id == editingId)
+    if (!p) return
+    pdTitle.textContent = p.title || 'Editar projeto'
+    pdDelete.style.visibility = 'visible'
+
+    // Fill form
+    setField('client',      p.client)
+    setField('title',       p.title)
+    setField('slug',        p.slug)
+    setField('category',    p.category)
+    setField('year',        p.year)
+    setField('order_index', p.order_index)
+    setField('locale_pt',   p.locale_pt)
+    setField('locale_en',   p.locale_en)
+    setField('cover_image', p.cover_image)
+    setCheck('published', p.published)
+    setCheck('featured',  p.featured)
+
+    if (p.cover_image) {
+      dropPreview.src = p.cover_image
+      imgInfo.textContent = 'Imagem atual'
+      hide(dropEmpty)
+      show(dropImg)
+    }
+  } else {
+    pdTitle.textContent = 'Novo projeto'
+    pdDelete.style.visibility = 'hidden'
+    setCheck('published', true)
+    setCheck('featured', false)
+    // Default order = max + 1
+    const maxOrder = projects.reduce((m, p) => Math.max(m, p.order_index ?? 0), -1)
+    setField('order_index', maxOrder + 1)
+  }
+
+  show(projectDrawer)
+  document.body.style.overflow = 'hidden'
+}
+
+function setField(name, val) {
+  const el = projectForm.querySelector(`[name="${name}"]`)
+  if (el) el.value = val ?? ''
+}
+function setCheck(name, val) {
+  const el = projectForm.querySelector(`[name="${name}"]`)
+  if (el) el.checked = !!val
+}
+
+/* ─── CLOSE DRAWER ───────────────────────────────────────────── */
+function closeDrawer() {
+  hide(projectDrawer)
+  document.body.style.overflow = ''
+}
+
+projectDrawer.querySelectorAll('[data-close]').forEach(el => el.onclick = closeDrawer)
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { hide(confirm); closeDrawer() } })
+
+/* ─── SLUG AUTO-GENERATE ─────────────────────────────────────── */
+projectForm.querySelector('[name=title]').addEventListener('input', e => {
+  if (!editingId) {
+    slugInput.value = slugify(e.target.value)
+  }
+})
+
+function slugify(s) {
+  return s.toLowerCase()
+    .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+/* ─── IMAGE DROP / UPLOAD ────────────────────────────────────── */
+drop.onclick = e => {
+  if (e.target.closest('#imgChange, #imgRemove')) return
+  imageFile.click()
+}
+drop.ondragover = e => { e.preventDefault(); drop.style.borderColor = 'var(--or)' }
+drop.ondragleave = ()  => drop.style.borderColor = ''
+drop.ondrop = e => {
+  e.preventDefault()
+  drop.style.borderColor = ''
+  const f = e.dataTransfer.files[0]
+  if (f && f.type.startsWith('image/')) handleImageFile(f)
+}
+imageFile.onchange = () => { if (imageFile.files[0]) handleImageFile(imageFile.files[0]) }
+
+function handleImageFile(file) {
+  pendingImageFile = file
+  const url = URL.createObjectURL(file)
+  dropPreview.src = url
+  imgInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(0)} KB)`
+  hide(dropEmpty)
+  show(dropImg)
+
+  // Also fill the URL field with a placeholder until upload
+  projectForm.querySelector('[name=cover_image]').value = ''
+}
+
+$('imgChange').onclick = e => { e.stopPropagation(); imageFile.click() }
+$('imgRemove').onclick = e => {
+  e.stopPropagation()
+  pendingImageFile = null
+  dropPreview.src = ''
+  projectForm.querySelector('[name=cover_image]').value = ''
+  show(dropEmpty)
+  hide(dropImg)
+  imageFile.value = ''
+}
+
+async function uploadPendingImage(slug) {
+  if (!pendingImageFile) return null
+  show(dropBusy)
+  hide(dropImg)
+  const ext = pendingImageFile.name.split('.').pop()
+  const path = `${slug}-${Date.now()}.${ext}`
+  try {
+    const url = await sb.uploadFile(STORAGE_BUCKET, path, pendingImageFile)
+    return url
+  } finally {
+    hide(dropBusy)
+    show(dropImg)
+  }
+}
+
+/* ─── SAVE PROJECT ───────────────────────────────────────────── */
+projectForm.onsubmit = async e => {
+  e.preventDefault()
+  const fd = new FormData(projectForm)
+  pdMsg.textContent = ''
+  pdSave.textContent = 'Salvando...'
+  pdSave.disabled = true
+
+  try {
+    const slug = fd.get('slug').trim() || slugify(fd.get('title') || 'projeto')
+
+    // Upload image if pending
+    let coverUrl = fd.get('cover_image').trim() || null
+    if (pendingImageFile) {
+      try {
+        coverUrl = await uploadPendingImage(slug)
+      } catch (uploadErr) {
+        // If storage not configured, warn but continue with URL field
+        if (fd.get('cover_image').trim()) {
+          coverUrl = fd.get('cover_image').trim()
+          showToast('Upload direto não disponível. URL manual mantida.', true)
+        } else {
+          showToast('Falha no upload. Configure o bucket "covers" no Supabase Storage, ou cole uma URL.', true)
+          coverUrl = null
+        }
+      }
+    }
+
+    const payload = {
+      slug,
+      title:        fd.get('title').trim(),
+      client:       fd.get('client').trim() || null,
+      category:     fd.get('category').trim() || null,
+      year:         fd.get('year') ? parseInt(fd.get('year')) : null,
+      order_index:  fd.get('order_index') !== '' ? parseInt(fd.get('order_index')) : 0,
+      locale_pt:    fd.get('locale_pt').trim() || null,
+      locale_en:    fd.get('locale_en').trim() || null,
+      cover_image:  coverUrl,
+      published:    fd.get('published') === 'on',
+      featured:     fd.get('featured') === 'on',
+    }
+
+    if (editingId) {
+      const updated = await sb.update('projects', editingId, payload)
+      const idx = projects.findIndex(p => p.id == editingId)
+      if (idx >= 0) projects[idx] = { ...projects[idx], ...updated }
+    } else {
+      const created = await sb.insert('projects', payload)
+      projects.push(created)
+    }
+
+    // Re-sort
+    projects.sort((a, b) => (a.order_index ?? 999) - (b.order_index ?? 999))
+    renderProjects()
+    closeDrawer()
+    showToast(editingId ? 'Projeto atualizado.' : 'Projeto criado.')
+    pendingImageFile = null
+  } catch (err) {
+    pdMsg.textContent = err.message
+  } finally {
+    pdSave.textContent = 'Salvar projeto'
+    pdSave.disabled = false
+  }
+}
+
+/* ─── DELETE PROJECT ─────────────────────────────────────────── */
+pdDelete.onclick = () => {
+  const p = projects.find(x => x.id == editingId)
+  if (!p) return
+  showConfirm(
+    'Excluir projeto',
+    `"${p.title || p.slug}" será removido permanentemente. Essa ação não pode ser desfeita.`,
+    async () => {
+      try {
+        await sb.remove('projects', editingId)
+        projects = projects.filter(x => x.id != editingId)
+        renderProjects()
+        closeDrawer()
+        showToast('Projeto excluído.')
+      } catch (err) {
+        showToast('Erro ao excluir: ' + err.message, true)
+      }
+    }
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   START
+   ═══════════════════════════════════════════════════════════════ */
+init()
+</script>
+</body>
+</html>
