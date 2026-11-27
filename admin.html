@@ -1231,6 +1231,7 @@ function renderPresentations() {
           <button class="pc-btn pc-btn--or" data-open="${p.id}">Abrir</button>
           <button class="pc-btn" data-edit="${p.id}">Editar</button>
           ${!isMatriz ? `<button class="pc-btn" data-pdf="${p.id}">PDF</button>` : ''}
+          ${!isMatriz ? `<button class="pc-btn" data-copy="${p.id}">Copiar link</button>` : ''}
           ${!isMatriz ? `<button class="pc-btn pc-btn--danger" data-del="${p.id}">Excluir</button>` : ''}
         </div>
       </div>`
@@ -1245,6 +1246,13 @@ function renderPresentations() {
   })
   presGrid.querySelectorAll('[data-pdf]').forEach(b => b.onclick = () => {
     window.open(`intro/index.html?pid=${b.dataset.pdf}&print=1`, '_blank')
+  })
+  presGrid.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => {
+    const url = `${location.origin}${location.pathname.replace('admin.html','').replace(/\/$/, '')}/intro/index.html?pid=${b.dataset.copy}`
+    navigator.clipboard.writeText(url).then(() => {
+      const orig = b.textContent; b.textContent = 'Copiado!'; b.disabled = true
+      setTimeout(() => { b.textContent = orig; b.disabled = false }, 2000)
+    }).catch(() => { prompt('Copie o link:', url) })
   })
   presGrid.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
     const p = presentations.find(x => x.id == b.dataset.del)
